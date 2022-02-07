@@ -1,0 +1,3 @@
+[submodule "src/Blazor.Diagrams"]
+	path = src/Blazor.Diagrams
+	url = https://github.com/chunliu/Blazor.Diagrams.git
