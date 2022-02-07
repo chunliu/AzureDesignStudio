@@ -1,0 +1,37 @@
+﻿@using AzureDesignStudio.Models
+@using AzureDesignStudio.Services
+@inherits FeedbackComponent<string, string>
+@inject NavigationManager navManager
+@inject AdsContext adsContext
+@inject DesignGrpcService designService
+
+<AuthorizeView>
+    <Authorized>
+        <Form @ref="@form" Model="@designName" Context="formContext" ValidateMode="@FormValidateMode.Complex"
+            LabelColSpan="24" WrapperColSpan="24">
+            <FormItem Label="Design name" Rules="@designNameRules">
+                <Input @bind-Value="@formContext.Name" Placeholder="azure design studio" />
+            </FormItem>
+        </Form>
+        <br />
+        <br />
+        <Button Type="primary" OnClick="HandleButtonClick" Disabled="@(savedDesignCount >= 10)">Save</Button>
+        <br />
+        <br />
+        <Alert Type="@AlertType.Info" ShowIcon="true">
+            <MessageTemplate>
+                You can save up to 10 designs. Currently you have: @(savedDesignCount < 0 ? "Unavailable" : $"{savedDesignCount}/10").
+            </MessageTemplate>
+        </Alert>
+    </Authorized>
+    <NotAuthorized>
+        <div>Please log in with your user account first.</div>
+        <br />
+        <Button Type="primary" OnClick="BeginLogin">Log in</Button>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+}

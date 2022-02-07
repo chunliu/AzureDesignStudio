@@ -1,0 +1,47 @@
+﻿@using AzureDesignStudio.Core.Components
+@using Blazor.Diagrams.Core
+@using Blazor.Diagrams.Core.Models
+
+<Form Model="@pip" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
+    <NameAndLocation Node="@context" />
+    <FormItem>
+        <RadioGroup @bind-Value="@context.IpVersion" ButtonStyle="@RadioButtonStyle.Solid" Size="small">
+            <Radio RadioButton Value="@("IPv4")">IPv4</Radio>
+            <Radio RadioButton Value="@("IPv6")">IPv6</Radio>
+        </RadioGroup>
+    </FormItem>
+    <FormItem>
+        <RadioGroup @bind-Value="@context.Sku" ButtonStyle="@RadioButtonStyle.Solid" Size="small">
+            <Radio RadioButton Value="@("Basic")">Basic</Radio>
+            <Radio RadioButton Value="@("Standard")">Standard</Radio>
+        </RadioGroup>
+    </FormItem>
+    <FormItem>
+        <RadioGroup @bind-Value="@context.Tier" ButtonStyle="@RadioButtonStyle.Solid" Size="small">
+            <Radio RadioButton Value="@("Regional")">Regional</Radio>
+            <Radio RadioButton Value="@("Global")">Global</Radio>
+        </RadioGroup>
+    </FormItem>
+    <FormItem>
+        <RadioGroup @bind-Value="@context.IpAllocationMethod" ButtonStyle="@RadioButtonStyle.Solid" Size="small">
+            <Radio RadioButton Value="@("Dynamic")">Dynamic</Radio>
+            <Radio RadioButton Value="@("Static")">Static</Radio>
+        </RadioGroup>
+    </FormItem>
+</Form>
+
+@code {
+    [CascadingParameter]
+    public NodeModel Node { get; set; } = null!;
+    [CascadingParameter]
+    public Diagram Diagram { get; set; } = null!;
+
+    private PublicIpModel pip = null!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        pip = (PublicIpModel)Node;
+    }
+}

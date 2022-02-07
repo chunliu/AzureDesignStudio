@@ -1,0 +1,25 @@
+﻿@using AzureDesignStudio.Core.Models
+@using Blazor.Diagrams.Components.Renderers
+@using Blazor.Diagrams.Core.Models
+@using Microsoft.Extensions.Logging
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
+@inject ILogger<AzureNodeComponent> logger
+
+<div class="ads-azure-node @(Node.Group != null ? "grouped" : "") @(Node.Selected ? "selected" : "")">
+    <img src="@(configuration["ResourceRoot"] + Node.ImagePath)" alt=@Node.Name />
+    <div class="ads-azure-node-label">@Node.Name</div>
+    @if (!Node.IsValid)
+    {
+        <Icon Type="exclamation-circle" Theme="fill" Class="ads-node-status"/>
+    }
+    @foreach (var port in Node.Ports)
+    {
+        <PortRenderer Port="port" Class="ads-port"></PortRenderer>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public AzureNodeBase Node { get; set; } = null!;
+}

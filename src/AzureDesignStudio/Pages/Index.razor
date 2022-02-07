@@ -1,0 +1,124 @@
+﻿@page "/"
+@page "/authentication/{action}"
+@using AzureDesignStudio.Components
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using System.Reflection
+@inject ILogger<Index> logger
+@inject ModalService modalService
+@inject NavigationManager navManager
+@inject ConfirmService confirmService
+@inject IApplicationInsights AppInsights
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<Layout>
+    <Sider Class="ads-sider" Width="295" Collapsible Collapsed=@collapsed NoTrigger CollapsedWidth="40" Theme="SiderTheme.Light">
+        <div class="ads-toggle-sider-button">
+            @if (collapsed)
+            {
+                <div title="Open"><Icon Type="menu-unfold" OnClick="toggleSider" /></div>
+            }
+            else
+            {
+
+                <div title="Close"><Icon Type="menu-fold" OnClick="toggleSider" /></div>
+            }
+        </div>
+        <StencilPanel></StencilPanel>
+        <div>
+            <div class="ads-about"><Button Shape="circle" Icon="question" Size="@ButtonSize.Small" OnClick="OpenAbout"></Button></div>
+            <div class="ads-version">Version: @version</div>
+        </div>
+    </Sider>
+
+    <Content>
+        <DiagramPanel></DiagramPanel>
+    </Content>
+
+</Layout>
+
+@if (string.IsNullOrEmpty(Action))
+{
+    <Modal></Modal>
+}
+else
+{
+    if (Action == "login")
+    {
+        <Modal Visible="true" Centered="true" Closable="false" Footer="@null">
+            <RemoteAuthenticatorView Action="@Action"/>
+        </Modal>
+    }
+    else
+    {
+        <Modal Visible="true" Centered="true" Closable="false" Footer="@modalFooter" OnOk="HandleModalOk">
+            <RemoteAuthenticatorView Action="@Action" />
+        </Modal>
+    }
+}
+
+@code {
+    [Parameter] public string? Action { get; set; }
+    [CascadingParameter] public Task<AuthenticationState> AuthenticationState { get; set; } = null!;
+
+    RenderFragment modalFooter = 
+    @<LoginModalFooter />
+    ;
+
+    private static string version = $"v{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}-α";
+
+    bool collapsed;
+
+    protected override void OnInitialized()
+    {
+        AuthenticationStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        base.OnInitialized();
+    }
+
+    private void OnAuthenticationStateChanged(Task<AuthenticationState> authenticationStateTask)
+    {
+        // https://github.com/dotnet/aspnetcore/issues/29235
+        _ = InvokeAsync(async () =>
+        {
+            var authState = await authenticationStateTask;
+            var user = authState.User;
+            if (user.Identity?.IsAuthenticated ?? false)
+            {
+                await AppInsights.SetAuthenticatedUserContext(user.FindFirst("oid")?.Value!);
+                logger.LogInformation("User logged in. User Id: {userId}", user.FindFirst("oid")?.Value!);
+            }
+            else
+            {
+                await AppInsights.ClearAuthenticatedUserContext();
+                logger.LogInformation("User logged out.");
+            }
+        });
+    }
+
+    void toggleSider()
+    {
+        this.collapsed = !collapsed;
+    }
+
+    void HandleModalOk()
+    {
+        navManager.NavigateTo("/");
+    }
+
+    async Task OpenAbout()
+    {
+        RenderFragment content =
+    @<div>
+        <p><b>Author: </b><a href="https://github.com/chunliu">Chun Liu</a></p>
+        <p><b>Version: </b> @version</p>
+        <p>
+            <b>Disclaimer: </b>
+            <span>The app is a personal project without any warranty. It is neither an official product from Microsoft nor supported by Microsoft. Use it at your own risk.</span>
+        </p>
+        <p>Please feel free to share if you have any <a href="mailto:chunliu@microsoft.com">feedback</a>.</p>
+    </div>
+    ;
+        var title = "About";
+
+        await confirmService.Show(content, title, ConfirmButtons.OK);
+    }
+}

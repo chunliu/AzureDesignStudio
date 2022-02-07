@@ -1,0 +1,20 @@
+﻿@using AzureDesignStudio.Components
+@inherits LayoutComponentBase
+
+<Layout>
+    <Header Class="ads-header">
+        <Row>
+            <Col Span="8">
+                <div class="ads-logo"><img src="icon-192.png" /></div>
+                <div class="ads-site-title">Azure Design Studio</div>
+            </Col>
+            <Col Span="8" Offset="8">
+                <TopMenu></TopMenu>
+            </Col>
+        </Row>
+    </Header>
+    <Content>@Body</Content>
+</Layout>
+
+@code {
+}

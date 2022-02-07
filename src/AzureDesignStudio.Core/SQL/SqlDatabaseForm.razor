@@ -1,0 +1,29 @@
+﻿@using AzureDesignStudio.Core.Components
+@using Blazor.Diagrams.Core
+@using Blazor.Diagrams.Core.Models
+
+<Form Model="@sqlDatabase" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
+    <NameAndLocation Node="@context" />
+    <FormItem>
+        <Input @bind-Value="@context.SkuName" Size="small" />
+    </FormItem>
+    <FormItem>
+        <Input @bind-Value="@context.SkuTier" Size="small" />
+    </FormItem>
+</Form>
+
+@code {
+    [CascadingParameter]
+    public NodeModel Node { get; set; } = null!;
+    [CascadingParameter]
+    public Diagram Diagram { get; set; } = null!;
+
+    private SqlDatabaseModel sqlDatabase = null!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        sqlDatabase = (Node as SqlDatabaseModel)!;
+    }
+}

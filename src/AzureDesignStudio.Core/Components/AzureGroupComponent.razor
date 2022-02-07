@@ -1,0 +1,32 @@
+﻿@using AzureDesignStudio.Core.Models
+@using Blazor.Diagrams.Core.Geometry
+@using Blazor.Diagrams.Components.Groups
+@using Blazor.Diagrams.Components.Renderers
+@using Blazor.Diagrams.Core.Models
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration configuration
+
+<div>
+    <GroupContainer Group="Group" Class="@(Group.CssClassName)" Style="@(Group.CssStyle)">
+        @if (!string.IsNullOrEmpty(Group.ImagePath))
+        {
+            <img src="@(configuration["ResourceRoot"] + Group.ImagePath)" alt=@Group.Name />
+        }
+        <span class="title">@Group.Name</span>
+        @if (!Group.IsValid)
+        {
+            <Icon Type="exclamation-circle" Theme="fill" Class="ads-node-status"/>
+        }
+        @foreach (var port in Group.Ports)
+        {
+            <PortRenderer Port="port" Class="ads-port"></PortRenderer>
+        }
+        <GroupLinks></GroupLinks>
+        <GroupNodes></GroupNodes>
+    </GroupContainer>
+</div>
+
+@code {
+    [Parameter]
+    public AzureGroupBase Group { get; set; } = null!;
+}

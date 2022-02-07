@@ -1,0 +1,33 @@
+﻿@using AzureDesignStudio.Core.Models
+@using Blazor.Diagrams.Core
+@using Blazor.Diagrams.Core.Models
+@using AzureDesignStudio.Core.Components
+
+<Form Model="@bastion" LabelColSpan="6" WrapperColSpan="18" Size="@AntSizeLDSType.Small">
+    <NameAndLocation Node="@context" />
+    <FormItem>
+        <RadioGroup @bind-Value="@context.Sku" ButtonStyle="@RadioButtonStyle.Solid" Size="small">
+            <Radio RadioButton Value="@("Basic")">Basic</Radio>
+            <Radio RadioButton Value="@("Standard")">Standard</Radio>
+        </RadioGroup>
+    </FormItem>
+    <FormItem>
+        <InputNumber DefaultValue="2" @bind-Value="@context.ScaleUnits" Size="small"></InputNumber>
+    </FormItem>
+</Form>
+
+@code {
+    [CascadingParameter]
+    public NodeModel Node { get; set; } = null!;
+    [CascadingParameter]
+    public Diagram Diagram { get; set; } = null!;
+
+    private BastionsModel bastion = null!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        bastion = (BastionsModel)Node;
+    }
+}

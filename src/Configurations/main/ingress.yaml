@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ads-main-ingress
+  namespace: ads
+  labels:
+    name: ads-main
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-issuer
+    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+    nginx.ingress.kubernetes.io/limit-rps: "30"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - www.azuredesign.app
+    secretName: tls-main-secret
+  rules:
+  - host: www.azuredesign.app
+    http:
+      paths:
+      - pathType: ImplementationSpecific
+        path: /
+        backend:
+          service:
+            name: ads-main-svc
+            port: 
+              number: 80

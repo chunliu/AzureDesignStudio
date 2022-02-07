@@ -1,0 +1,93 @@
+﻿.ads-azure-node {
+    /*display: table-cell;*/
+    width: 81px;
+    height: 81px;
+    overflow: hidden;
+    outline: 1px solid transparent;
+    border-radius: 4px;
+}
+
+    .ads-azure-node.selected {
+        outline: 2px solid #1890ff;
+        z-index: 10;
+    }
+
+    .ads-azure-node > img {
+        display: block;
+        width: 60px;
+        height: 60px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+.ads-azure-node-label {
+    text-align: center;
+    font-size: 11px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin: auto;
+    vertical-align: top;
+    max-width: 81px;
+}
+
+/*
+ *   Port style
+*/
+::deep .port.left.ads-port,
+::deep .port.top.ads-port,
+::deep .port.right.ads-port,
+::deep .port.bottom.ads-port {
+    position: absolute;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+    ::deep .port.left.ads-port:hover,
+    ::deep .port.top.ads-port:hover,
+    ::deep .port.right.ads-port:hover,
+    ::deep .port.bottom.ads-port:hover {
+        background-color: #cccccc;
+        opacity: 0.5;
+    }
+
+::deep .port.top.ads-port,
+::deep .port.bottom.ads-port {
+    width: 60%;
+    height: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+::deep .port.top.ads-port {
+    top: -5px;
+}
+
+::deep .port.bottom.ads-port {
+    bottom: -5px;
+}
+
+::deep .port.left.ads-port,
+::deep .port.right.ads-port {
+    height: 60%;
+    width: 10px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+::deep .port.left.ads-port {
+    left: -5px;
+}
+
+::deep .port.right.ads-port {
+    right: -5px;
+}
+/*
+ * Node status
+*/
+::deep .ads-node-status {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    color: #ff4d4f;
+}

@@ -1,0 +1,52 @@
+﻿.ads-diagram-wrapper {
+/*    display: flex;*/
+    position: relative;
+    overflow: hidden;
+}
+
+.ads-diagram-container {
+/*    flex: 1;*/
+    height: calc(100vh - 48px);
+    background: #fff;
+    background-size: 20px 20px;
+    background-image: linear-gradient(to right, rgb(0, 0, 0, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgb(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+/* Overwrite the svg style of antd.
+    https://github.com/Blazor-Diagrams/Blazor.Diagrams/issues/132
+*/
+::deep .ads-diagram-container svg {
+    overflow: visible !important;
+}
+
+.ads-context-menu {
+    height: 44px;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 1px;
+    right: 0;
+    z-index: 1;
+    background-color: #ffffff; /* #efefef; */
+    box-shadow: 1px 0 2px rgb(0, 0, 0, 0.15);
+    transform: translateY(-44px);
+    transition: transform .2s cubic-bezier(0,0,0,.99);
+    transition-delay: .3s;
+    pointer-events: none;
+}
+
+.ads-context-menu-active {
+    transform: translate(0);
+    pointer-events: all;
+}
+
+.ads-context-btn-container {
+    padding: 6px 0;
+    position: relative;
+}
+
+::deep .ads-context-btn {
+    padding: 2.4px 8px;
+    border-radius: 2px;
+    vertical-align: -1px;
+}

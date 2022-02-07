@@ -1,0 +1,50 @@
+﻿@using AzureDesignStudio.Models
+@inject ILogger<DiagramPanel> logger
+@inject AdsContext adsContext
+@inject MessageService messageService
+@inject DrawerService drawerService
+@inject ModalService modalService
+
+<div class="ads-diagram-wrapper" ondragover="event.preventDefault();" @ondragover:preventDefault @ondrop="HandleDrop">
+    <CascadingValue Value="@diagram">
+        <div class="ads-diagram-container">
+            <DiagramCanvas Id="ads-diagram-canvas"></DiagramCanvas>
+        </div>
+    </CascadingValue>
+    <div class="ads-context-menu @(showCtxMenu ? "ads-context-menu-active" : "")">
+        <div class="ads-context-btn-container">
+            <Button Type="@ButtonType.Text" Class="ads-context-btn" Icon="Edit" OnClick="_=>OpenNodeDrawer()" Disabled="@(!nodeEditable)">
+                Edit
+            </Button>
+            <Button Type="@ButtonType.Text" Class="ads-context-btn" Icon="Delete" OnClick="_=>ConfirmDelete()">
+                Delete
+            </Button>
+        </div>
+    </div>
+</div>
+
+@code {
+    private void ConfirmDelete()
+    {
+        RenderFragment icon =
+    @<Icon Type="exclamation-circle" Theme="outline"></Icon>
+    ;
+
+        modalService.Confirm(new ConfirmOptions()
+        {
+            Title = "Delete the selected node(s)?",
+            Icon = icon,
+            Content = "The node(s) will be deleted and there is no way to revert back.",
+            OnCancel = (e) =>
+            {
+                return Task.CompletedTask;
+            },
+            OnOk = (e) =>
+            {
+                diagram.DeleteSelectedModel();
+                return Task.CompletedTask;
+            },
+            OkType = "danger",
+        });
+    }
+}

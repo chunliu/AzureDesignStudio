@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ads-main-svc
+  namespace: ads
+  labels:
+    app: ads-main
+spec:
+  type: ClusterIP
+  selector:
+    app: ads-main
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP

@@ -1,0 +1,45 @@
+﻿@inherits AntDomComponentBase
+
+@{
+    var okProps = ModalProps!.OkButtonProps ?? new ButtonProps();
+    okProps.Type = ModalProps!.OkType;
+    okProps.Loading = ModalProps!.ConfirmLoading;
+    var cancelProps = ModalProps!.CancelButtonProps ?? new ButtonProps();
+}
+
+<div>
+    <Button OnClick="@HandleOk"
+            Loading="@okProps.Loading"
+            Type="@okProps.Type"
+            Block="@okProps.Block"
+            Ghost="@okProps.Ghost"
+            Shape="@okProps.Shape"
+            Size="@okProps.Size"
+            Icon="@okProps.Icon"
+            Disabled="@okProps.Disabled">
+        @{
+            if (ModalProps.OkText.IsT0)
+            {
+                @(ModalProps.OkText.AsT0)
+            }
+            else
+            {
+                @(ModalProps.OkText.AsT1)
+            }
+        }
+    </Button>
+</div>
+
+@code {
+    [CascadingParameter]
+    public DialogOptions? ModalProps { get; set; }
+
+    private async Task HandleOk(MouseEventArgs e)
+    {
+        var onOk = ModalProps!.OnOk;
+        if (onOk != null)
+        {
+            await onOk.Invoke(e);
+        }
+    }
+}

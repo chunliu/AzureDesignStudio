@@ -1,0 +1,22 @@
+﻿@using AzureDesignStudio.Core.Models
+<FormItem>
+    <Input Placeholder="resource name" TValue="string" Size=@InputSize.Small
+        @bind-Value="@Node.Name"></Input>
+</FormItem>
+<FormItem>
+    <Switch @bind-Value="@Node.UseResourceGroupLocation" Size="small"
+    CheckedChildren="Parameter" UnCheckedChildren="Select"></Switch>
+        @if (!Node.UseResourceGroupLocation)
+        {
+            <Select DataSource="AzureRegions.AllRegions" @bind-Value="@Node.Location"
+                LabelName="@nameof(Region.Name)" ValueName="@nameof(Region.Value)"
+                Placeholder="Select the region" DefaultActiveFirstItem="false" Size="small"
+                EnableSearch>
+            </Select>
+        }
+</FormItem>
+
+@code {
+    [Parameter]
+    public IAzureResource Node { get; set; } = null!;
+}

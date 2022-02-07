@@ -1,0 +1,30 @@
+﻿.ads-stencil {
+    display: table-cell;
+    width: 69px;
+    height: 71px;
+    padding: 6px 6px 4px;
+}
+
+    .ads-stencil:hover {
+        background-color: lightgrey;
+    }
+
+    .ads-stencil > img {
+        display: block;
+        width: 69px;
+        height: 45px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+.ads-stencil-label {
+    text-align: center;
+    font-size: 11px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 69px;
+    height: 26px;
+    line-height: 26px;
+    margin: auto;
+}

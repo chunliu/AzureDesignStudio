@@ -1,0 +1,35 @@
+﻿::deep .ads-icon-panel-container {
+    clear: both;
+}
+
+    ::deep .ads-icon-panel-container .ant-tabs-card .ant-tabs-tab {
+        padding: 5px;
+    }
+
+    ::deep .ads-icon-panel-container .ant-tabs-left .ant-tabs-nav {
+        min-width: 40px;
+    }
+
+    ::deep .ads-icon-panel-container>.ant-tabs-left> .ant-tabs-nav .ant-tabs-tab {
+        padding: 6px 2px;
+    }
+    ::deep .ads-icon-panel-container .ant-tabs-tab .anticon {
+        margin-right: 0px;
+    }
+
+    ::deep .ads-icon-panel-container .ant-tabs-tab-btn {
+        font-size: 24px;
+        width: 32px;
+        line-height: 32px;
+    }
+
+    ::deep .ads-icon-panel-container .ant-tabs-left .ant-tabs-content-holder {
+        border-top: 1px solid #f0f0f0;
+        border-left: 1px solid #f0f0f0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        ::deep .ads-icon-panel-container .ant-tabs-left .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane {
+            padding-left: 0px;
+            height: calc(100vh - 126px);
+        }

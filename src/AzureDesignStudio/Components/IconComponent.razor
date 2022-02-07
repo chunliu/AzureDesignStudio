@@ -1,0 +1,27 @@
+﻿@inject IHttpClientFactory clientFactory
+
+<Icon Component="component"></Icon>
+
+@code {
+    [Parameter]
+    public string IconPath { get; set; } = null!;
+
+    RenderFragment component =
+    @<div></div>
+    ;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!string.IsNullOrEmpty(IconPath))
+        {
+            var httpClient = clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
+            var svgMarkup = await httpClient.GetStringAsync(IconPath);
+            component = builder =>
+            {
+                builder.AddMarkupContent(0, svgMarkup);
+            };
+        }
+
+        await base.OnInitializedAsync();
+    }
+}

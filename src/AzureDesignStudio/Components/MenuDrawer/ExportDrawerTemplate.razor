@@ -1,0 +1,18 @@
+﻿@inherits FeedbackComponent<string, string>
+
+<RadioGroup @bind-Value="@exportType">
+    <Radio Value="@("arm")">Export as ARM template</Radio>
+    <Radio Value="@("img")">Export as PNG image</Radio>
+</RadioGroup>
+<br />
+<br />
+<Button Type="primary" OnClick="HandleButtonClick" >Preview</Button>
+
+@code {
+    string exportType = "arm";
+    async void HandleButtonClick()
+    {
+        DrawerRef<string> dr = (base.FeedbackRef as DrawerRef<string>)!;
+        await dr!.CloseAsync(exportType);
+    }
+}

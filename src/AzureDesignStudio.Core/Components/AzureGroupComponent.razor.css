@@ -1,0 +1,86 @@
+﻿::deep .group.ads-group {
+    outline-width: var(--olwidth, 2px);
+    outline-style: var(--olstyle, dotted);
+    outline-color: var(--olcolor, #0078d7);
+    border-radius: 4px;
+    background-color: var(--bgcolor, #f5f5f5);
+}
+
+::deep .group.selected.ads-group {
+    outline: 2px solid #1890ff;
+    z-index: 10;
+}
+
+/* Center align the title
+ * Responsive solution from https://stackoverflow.com/questions/1776915/how-can-i-center-an-absolutely-positioned-element-in-a-div
+*/
+.group.ads-group > span.title {
+    position: absolute;
+    left: 50%;
+    bottom: 0%;
+    white-space: nowrap;
+    transform: translate(-50%, 0);
+    font-size: 11px;
+}
+
+.group.ads-group > img {
+    position: absolute;
+    right: -5px;
+    bottom: -5px;
+}
+
+/*
+ *   Port style
+*/
+::deep .port.left.ads-port,
+::deep .port.top.ads-port,
+::deep .port.right.ads-port,
+::deep .port.bottom.ads-port {
+    position: absolute;
+    background-color: transparent;
+    border-radius: 5px;
+}
+
+    ::deep .port.left.ads-port:hover,
+    ::deep .port.top.ads-port:hover,
+    ::deep .port.right.ads-port:hover,
+    ::deep .port.bottom.ads-port:hover {
+        background-color: #cccccc;
+        opacity: 0.5;
+    }
+
+::deep .port.top.ads-port,
+::deep .port.bottom.ads-port {
+    width: 80%;
+    height: 10px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+::deep .port.top.ads-port {
+    top: -5px;
+}
+::deep .port.bottom.ads-port {
+    bottom: -5px;
+}
+
+::deep .port.left.ads-port,
+::deep .port.right.ads-port {
+    height: 80%;
+    width: 10px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+::deep .port.left.ads-port {
+    left: -5px;
+}
+::deep .port.right.ads-port {
+    right: -5px;
+}
+/*
+ * Node status
+*/
+::deep .ads-node-status {
+    position: absolute;
+    right: 0px;
+    color: #ff4d4f;
+}

@@ -1,0 +1,29 @@
+﻿::deep .ant-menu-horizontal {
+    background-color: #484644;
+    color: #ffffff;
+    border-bottom: 0px;
+}
+    ::deep .ant-menu-horizontal .ant-menu-item {
+        padding: 0px 12px;
+        margin-top: 0px;
+        float: right;
+    }
+    ::deep .ant-menu-horizontal .ant-menu-item:hover {
+        background-color: #0e0d0d;
+        color: #ffffff;
+    }
+    ::deep .ant-menu-horizontal > .ant-menu-item::after {
+        display: none;
+    }
+    ::deep .ant-menu-horizontal .ant-menu-item-selected,
+    ::deep .ant-menu-horizontal .ant-menu-item-selected:hover {
+        color: #000000;
+        background-color: #ffffff;
+    }
+    ::deep .ant-menu-horizontal .ant-menu-item .anticon {
+        font-size: 24px;
+    }
+
+        ::deep .ant-menu-horizontal .ant-menu-item .anticon + span {
+            margin-left: 3px;
+        }

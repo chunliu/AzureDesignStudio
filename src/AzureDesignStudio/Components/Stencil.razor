@@ -1,0 +1,22 @@
+﻿@using AzureDesignStudio.Models
+@inject ILogger<Stencil> logger
+@inject IConfiguration configuration
+@inject AdsContext adsContext
+
+<div title="@Model.Label" style="display: inline-block;">
+    <div class="ads-stencil" draggable="true" @ondragstart=HandleDragStart>
+        <img src="@(configuration["ResourceRoot"] + Model.IconPath)" alt=@Model.Label />
+        <div class="ads-stencil-label">@Model.Label</div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public StencilModel Model { get; set; } = null!;
+
+    void HandleDragStart(DragEventArgs e)
+    {
+        adsContext.DraggedStencilKey = Model.Key;
+        logger.LogInformation($"Drag start. Key: {adsContext.DraggedStencilKey}");
+    }
+}

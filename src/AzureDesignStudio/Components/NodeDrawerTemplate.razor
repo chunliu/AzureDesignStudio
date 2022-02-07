@@ -1,0 +1,16 @@
+﻿@using AzureDesignStudio.Models
+@inject AdsContext adsContext
+
+<CascadingValue Value="@adsContext.Diagram">
+    <CascadingValue Value="@Node">
+    @ChildContent
+    </CascadingValue>
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public NodeModel Node { get; set; } = null!;
+    [Parameter]
+    public RenderFragment ChildContent { get; set; } = 
+    @<div></div>;
+}

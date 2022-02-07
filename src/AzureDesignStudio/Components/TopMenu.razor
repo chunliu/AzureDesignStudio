@@ -1,0 +1,82 @@
+﻿@using AutoMapper
+@using AzureDesignStudio.Models
+@using AzureDesignStudio.Services
+@inject IJSRuntime JS
+@inject AdsContext adsContext
+@inject ILogger<TopMenu> logger
+@inject IMapper mapper
+@inject MessageService messageService
+@inject DrawerService drawerService
+@inject DesignGrpcService designService
+@inject IHttpClientFactory clientFactory
+
+<div>
+    <Menu @ref="@topMenu" Mode="@MenuMode.Horizontal" OnMenuItemClicked="HandleMenuItemClicked">        
+        <div title="User account">
+            <AuthorizeView>
+                <NotAuthorized>
+                    <MenuItem Key="user" Icon="@IconType.Outline.User" RouterMatch="@NavLinkMatch.Prefix"></MenuItem>
+                </NotAuthorized>
+                <Authorized>
+                    <MenuItem Key="user" Icon="@IconType.Outline.User" RouterMatch="@NavLinkMatch.Prefix">
+                        @context.User.Identity?.Name
+                    </MenuItem>
+                </Authorized>
+            </AuthorizeView>
+        </div>
+        <div title="Export"><MenuItem Key="export" Icon="@IconType.Outline.Export" RouterMatch="@NavLinkMatch.Prefix"></MenuItem></div>
+        <div title="Load"><MenuItem Key="load" Icon="@IconType.Outline.Book" RouterMatch="@NavLinkMatch.Prefix"></MenuItem></div>
+        <div title="Save"><MenuItem Key="save" Icon="@IconType.Outline.Save" RouterMatch="@NavLinkMatch.Prefix"></MenuItem></div>
+    </Menu>
+</div>
+
+@if (!string.IsNullOrEmpty(imgUrl))
+{
+    // Based on the ImagePreview of ant design.
+    <Dialog Config="@GetDialogOptions()" Visible="@showImgPreview">
+        <ul class="ant-image-preview-operations" style="width:84px;left:50%;right:50%;color:rgba(0,0,0,.85)">
+            <li class="ant-image-preview-operations-operation" style="margin-left:0;" @onclick="HandleImgPreviewClose" @onclick:stopPropagation>
+                <Icon Type="close" Class="ant-image-preview-operations-icon" />
+            </li>
+            <li class="ant-image-preview-operations-operation" style="margin-left:0;" @onclick="HandleImgDownload" @onclick:stopPropagation>
+                <Icon Type="download" Class="ant-image-preview-operations-icon" />
+            </li>
+        </ul>
+        <div class="ant-image-preview-img-wrapper" style="transform: translate3d(0px, 0px, 0px);">
+            <img class="ant-image-preview-img" src="@imgUrl">
+        </div>
+    </Dialog>
+}
+
+@code {
+    Menu topMenu = null!;
+    bool showImgPreview = true;
+
+    private DialogOptions GetDialogOptions()
+    {
+        return new DialogOptions()
+        {
+            PrefixCls = "ant-image-preview",
+            Closable = false,
+            Footer = null,
+            MaskClosable = false,
+            OnCancel = async (e) =>
+            {
+                await HandleImgPreviewClose();
+            }
+        };
+    }
+
+    private async Task HandleImgPreviewClose()
+    {
+        imgUrl = null!;
+        showImgPreview = false;
+        StateHasChanged();
+        await Task.Delay(200);
+    }
+
+    private async Task HandleImgDownload()
+    {
+        await JS.InvokeVoidAsync("triggerFileDownload", "ads-design.png", imgUrl);
+    }
+}

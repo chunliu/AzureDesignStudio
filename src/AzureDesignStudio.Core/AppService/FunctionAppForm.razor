@@ -1,0 +1,29 @@
+﻿@using AzureDesignStudio.Core.VirtualNetwork
+@inherits WebAppForm
+
+@{ 
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    private FunctionAppModel funcApp = null!;
+    protected override void OnInitialized()
+    {
+        funcApp = (Node as FunctionAppModel)!;
+
+        ChildContent = 
+            @<FormItem LabelColSpan="null" WrapperColSpan="null">
+                <SimpleSelect @bind-Value="@funcApp.HostingPlan" OnSelectedItemChanged="@(_ => funcApp.CreateHostingPlan())">
+                    <SelectOptions>
+                        <SimpleSelectOption Label="Consumption" Value="@("consumption")" 
+                            Disabled="@(funcApp.Publish == "docker" || funcApp.Group?.Group is SubnetModel)" />
+                        <SimpleSelectOption Label="Premium" Value="@("premium")" />
+                        <SimpleSelectOption Label="App service plan" Value="@("asp")" />
+                    </SelectOptions>
+                </SimpleSelect>
+            </FormItem>
+        ;
+        
+        base.OnInitialized();
+    }
+}

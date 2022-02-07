@@ -1,0 +1,50 @@
+﻿@using AzureDesignStudio.Core.Common
+@using AzureDesignStudio.Models
+@inject ILogger<Index> logger
+@inject AdsContext adsContext
+
+<div>
+    <div class="ads-icon-panel-container">
+        <Tabs DefaultActiveKey="1" TabPosition="TabPosition.Left" >
+            <ChildContent>
+                <TabPane Key="1">
+                    <TabTemplate>
+                        <IconComponent IconPath="assets/icons/networking.svg" />
+                    </TabTemplate>
+                    <ChildContent>
+                        @foreach(var stencil in adsContext.AllStencils.Where(s => s.Category == StencilCategory.Networking))
+                        {
+                            <Stencil Model=@stencil/>
+                        }
+                    </ChildContent>
+                </TabPane>
+                <TabPane Key="2">
+                    <TabTemplate>
+                        <IconComponent IconPath="assets/icons/compute.svg" />
+                    </TabTemplate>
+                    <ChildContent>
+                        @foreach(var stencil in adsContext.AllStencils.Where(s => s.Category == StencilCategory.Compute))
+                        {
+                            <Stencil Model=@stencil/>
+                        }
+                    </ChildContent>
+                </TabPane>
+                <TabPane Key="3">
+                    <TabTemplate>
+                        <IconComponent IconPath="assets/icons/database.svg" />
+                    </TabTemplate>
+                    <ChildContent>
+                        @foreach(var stencil in adsContext.AllStencils.Where(s => s.Category == StencilCategory.Database))
+                        {
+                            <Stencil Model=@stencil/>
+                        }
+                    </ChildContent>
+                </TabPane>
+            </ChildContent>
+        </Tabs>
+    </div>
+</div>
+
+@code {
+
+}
