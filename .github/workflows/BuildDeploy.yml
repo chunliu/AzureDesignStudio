@@ -1,4 +1,5 @@
 name: Build and deploy .NET Core application to Web App
+on:
   push:
     branches:
     - HackOn2022
