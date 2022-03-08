@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: xuhonglazuredesignstudio 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xuhonglazuredesignstudio
+  template:
+    metadata:
+      labels:
+        app: xuhonglazuredesignstudio 
+    spec:
+      containers:
+        - name: xuhonglazuredesignstudio 
+          image: xxxuhong.azurecr.io/xuhonglazuredesignstudio
+          ports:
+          - containerPort: 80
