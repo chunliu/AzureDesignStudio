@@ -7,6 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
+CMD ["ls"]
 COPY ["AzureDesignStudio.Server/AzureDesignStudio.Server.csproj", "AzureDesignStudio.Server/"]
 COPY ["AzureDesignStudio.SharedModels/AzureDesignStudio.SharedModels.csproj", "AzureDesignStudio.SharedModels/"]
 COPY ["AzureDesignStudio/AzureDesignStudio.csproj", "AzureDesignStudio/"]
