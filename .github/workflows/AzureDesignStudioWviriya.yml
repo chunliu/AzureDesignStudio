@@ -8,7 +8,7 @@ env:
   AZURE_WEBAPP_PACKAGE_PATH: AzureDesignStudio.Server/published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
-  WORKING_DIRECTORY: AzureDesignStudio.Server
+  WORKING_DIRECTORY: src/AzureDesignStudio.Server
 jobs:
   build:
     runs-on: ubuntu-latest
