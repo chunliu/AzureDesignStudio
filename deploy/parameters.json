@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "acrName": {
+            "value": ""
+        },
+        "acrSku":{
+            "value": "Basic"   
+        },
+        "appServicePlanName": {
+            "value": "value"
+        },
+        "appServicePlanSKU": {
+            "value": "S1"
+        },
+        "appServiceCapacityCount": {
+            "value": 1
+        },
+        "appServiceName": {
+            "value": ""
+        },
+        "appInsightsName": {
+            "value": ""
+        },
+        "keyVaultName": {
+            "value": ""
+        },
+        "keyVaultSku": {
+            "value": ""
+        },
+        "sqlServerName": {
+            "value": ""
+        },
+        "sqlAdminLogin": {
+            "value": ""
+        },
+        "sqlDatabaseName": {
+            "value": ""
+        },
+        "storageAccountName": {
+            "value": ""
+        },
+        "storageSku": {
+            "value": "Standard"
+        },
+        "blobContainerName": {
+            "value": ""
+        }
+    }
+}
