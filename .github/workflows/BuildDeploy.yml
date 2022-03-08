@@ -1,5 +1,4 @@
-name: Build and deploy .NET Core application to Web App AzureDesignStudioWviriya
-on:
+name: Build and deploy .NET Core application to Web App
   push:
     branches:
     - HackOn2022
