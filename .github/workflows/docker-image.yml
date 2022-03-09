@@ -14,7 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build the Docker image
     - uses: docker/build-push-action@v1
       with:
        context: ./src
