@@ -10,6 +10,12 @@ param acrUsername string
 @description('The password for the Azure Container Registry')
 param acrPassword string
 
+@description('The name of the Virtual Network')
+param virutalNetworkName string
+
+@description('The name of the subnet in the vNET')
+param subnetName string
+
 @description('Name of the Log Analytcis workspace')
 param logAnalyticsName string
 
@@ -61,6 +67,26 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-12-01-pr
   }
   properties: {
     adminUserEnabled: true
+  }
+}
+
+resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-05-01' = {
+  name: virutalNetworkName
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        '10.2.0.0/20'
+      ]
+    }
+    subnets: [
+      {
+        name: subnetName
+        properties: {
+          addressPrefix: '10.2.0.0/20'
+        }
+      }
+    ]
   }
 }
 
@@ -126,7 +152,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
       containers: [
         {
           name: containerAppName
-          image: ''
+          image: 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
           resources: {
             cpu: '0.5'
             memory: '1Gi'
@@ -198,8 +224,12 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   identity: {
     type: 'SystemAssigned'
   }
-}
 
-resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
-  name: blobContainerName
+  resource blobServices 'blobServices' = {
+    name: 'default'
+
+    resource container 'containers' = {
+      name: blobContainerName
+    }
+  }
 }
