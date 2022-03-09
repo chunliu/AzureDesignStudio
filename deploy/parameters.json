@@ -8,17 +8,20 @@
         "acrSku":{
             "value": "Basic"   
         },
-        "appServicePlanName": {
+        "acrUsername": {
+            "value": ""
+        },
+        "acrPassword": {
             "value": "value"
         },
-        "appServicePlanSKU": {
-            "value": "S1"
+        "logAnalyticsName": {
+            "value": "value"
         },
-        "appServiceCapacityCount": {
-            "value": 1
+        "containerAppEnvironmentName": {
+            "value": "azuredesignstudioenv"
         },
-        "appServiceName": {
-            "value": ""
+        "containerAppName": {
+            "value": "azuredesignstudio"
         },
         "appInsightsName": {
             "value": ""
