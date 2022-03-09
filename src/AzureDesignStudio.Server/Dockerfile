@@ -13,7 +13,7 @@ RUN ls -l
 COPY ["./src/AzureDesignStudio.Server/AzureDesignStudio.Server.csproj", "AzureDesignStudio.Server/"]
 COPY ["./src/AzureDesignStudio.SharedModels/AzureDesignStudio.SharedModels.csproj", "AzureDesignStudio.SharedModels/"]
 COPY ["./src/AzureDesignStudio/AzureDesignStudio.csproj", "AzureDesignStudio/"]
-COPY ["./src/Blazor.Diagrams/src/Blazor.Diagrams.Core/Blazor.Diagrams.Core.csproj", "Blazor.Diagrams/src/Blazor.Diagrams.Core/"]
+COPY ["./src/Blazor.Diagrams @ 466108b/src/Blazor.Diagrams.Core/Blazor.Diagrams.Core.csproj", "Blazor.Diagrams/src/Blazor.Diagrams.Core/"]
 COPY ["./src/Blazor.Diagrams/src/Blazor.Diagrams/Blazor.Diagrams.csproj", "Blazor.Diagrams/src/Blazor.Diagrams/"]
 COPY ["./src/AzureDesignStudio.Core/AzureDesignStudio.Core.csproj", "AzureDesignStudio.Core/"]
 RUN dotnet restore "AzureDesignStudio.Server/AzureDesignStudio.Server.csproj"
