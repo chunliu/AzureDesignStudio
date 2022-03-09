@@ -1,10 +1,11 @@
 name: Build and deploy .NET Core application to Web App
 on:
-  push:
-    branches:
-    - HackOn2022
+  workflow_dispatch:
+    inputs:
+      AZURE_WEBAPP_NAME:
+        description: 'Azure Web App Name'     
+        required: true
 env:
-  AZURE_WEBAPP_NAME: AzureDesignStudioWviriya
   AZURE_WEBAPP_PACKAGE_PATH: AzureDesignStudio.Server/published
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
@@ -33,8 +34,8 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AzureDesignStudioWviriya_FFFF }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        publish-profile: ${{ secrets.AzureCredential }}
+        package: ${{ github.event.inputs.AZURE_WEBAPP_PACKAGE_PATH }}
     - name: Publish Artifacts
       uses: actions/upload-artifact@v1.0.0
       with:
