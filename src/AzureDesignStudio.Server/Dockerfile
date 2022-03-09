@@ -10,7 +10,7 @@ WORKDIR /src
 RUN pwd
 RUN echo "hello world"
 RUN ls -l
-COPY ["AzureDesignStudio.Server/AzureDesignStudio.Server.csproj", "AzureDesignStudio.Server/"]
+COPY ["src/AzureDesignStudio.Server/AzureDesignStudio.Server.csproj", "AzureDesignStudio.Server/"]
 COPY ["AzureDesignStudio.SharedModels/AzureDesignStudio.SharedModels.csproj", "AzureDesignStudio.SharedModels/"]
 COPY ["AzureDesignStudio/AzureDesignStudio.csproj", "AzureDesignStudio/"]
 COPY ["Blazor.Diagrams/src/Blazor.Diagrams.Core/Blazor.Diagrams.Core.csproj", "Blazor.Diagrams/src/Blazor.Diagrams.Core/"]
