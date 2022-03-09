@@ -10,7 +10,7 @@ WORKDIR /src
 RUN pwd
 RUN echo "hello world"
 RUN ls -l
-COPY *.csproj ./
+COPY ./src/*.csproj ./
 RUN dotnet restore "AzureDesignStudio.Server/AzureDesignStudio.Server.csproj"
 COPY . .
 WORKDIR "/src/AzureDesignStudio.Server"
