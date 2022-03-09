@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "acrName": {
-            "value": "adscontainerregistry"
+            "value": "wvadscontainerregistry"
         },
         "acrSku":{
             "value": "Basic"   
@@ -36,7 +36,7 @@
             "value": "Standard"
         },
         "sqlServerName": {
-            "value": "adssqlserver"
+            "value": "wvadssqlserver"
         },
         "sqlAdminLogin": {
             "value": "willvelida"
