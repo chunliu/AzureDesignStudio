@@ -2,7 +2,7 @@
 param acrName string
 
 @description('The SKU size for the ACR')
-param acrSKU string
+param acrSku string
 
 @description('Name of the App Service Plan that will be deployed.')
 param appServicePlanName string
@@ -61,7 +61,7 @@ resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-12-01-pr
   name: acrName
   location: location
   sku: {
-    name: acrSKU
+    name: acrSku
   }
   identity: {
     type: 'SystemAssigned'
