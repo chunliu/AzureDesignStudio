@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: xuhonglazuredesignstudio 
-          image: xxxuhong.azurecr.io/azuredesign
+          image: xxxuhong.azurecr.io/xuhonglazuredesignstudio
           ports:
           - containerPort: 80
