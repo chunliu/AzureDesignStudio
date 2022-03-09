@@ -51,7 +51,7 @@
             "value": "adswebresources"
         },
         "storageSku": {
-            "value": "Standard"
+            "value": "Standard_ZRS"
         },
         "blobContainerName": {
             "value": "$web"
