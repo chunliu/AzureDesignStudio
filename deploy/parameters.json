@@ -48,7 +48,7 @@
             "value": "Standard"
         },
         "blobContainerName": {
-            "value": ""
+            "value": "$web"
         }
     }
 }
