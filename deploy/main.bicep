@@ -4,17 +4,20 @@ param acrName string
 @description('The SKU size for the ACR')
 param acrSKU string
 
-@description('Name of the App Service Plan that will be deployed.')
-param appServicePlanName string
+@description('The username for the Azure Container Registry')
+param acrUsername string
 
-@description('The SKU size for our App Service Plan')
-param appServicePlanSKU string
+@description('The password for the Azure Container Registry')
+param acrPassword string
 
-@description('The capacity size for our App Service Plan')
-param appServiceCapacityCount int
+@description('Name of the Log Analytcis workspace')
+param logAnalyticsName string
 
-@description('Name of the App Service that will be deployed')
-param appServiceName string
+@description('Name of the Container App environment')
+param containerAppEnvironmentName string
+
+@description('Name of the Container App')
+param containerAppName string
 
 @description('Name of the App Insights Instance')
 param appInsightsName string
@@ -50,48 +53,91 @@ param blobContainerName string
 @description('Location to deploy the Azure resources too. Default is the location of the resource group')
 param location string = resourceGroup().location
 
-var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
-
 resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-12-01-preview' = {
   name: acrName
   location: location
   sku: {
     name: acrSKU
   }
-  identity: {
-    type: 'SystemAssigned'
+  properties: {
+    adminUserEnabled: true
   }
 }
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: appServicePlanName
+resource logAnalytics 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
+  name: logAnalyticsName
   location: location
-  sku: {
-    name: appServicePlanSKU
-    capacity: appServiceCapacityCount
-  }
-  kind: 'linux'
   properties: {
-    reserved: true
-  }
+    sku: {
+      name: 'PerGB2018'
+    }
+  } 
 }
 
-resource appService 'Microsoft.Web/sites@2021-03-01' = {
-  name: appServiceName
+resource containerAppEnvironment 'Microsoft.Web/kubeEnvironments@2021-03-01' = {
+  name: containerAppEnvironmentName
   location: location
-  kind: 'app,linux,container'
+  kind: 'containerenvironment'
   properties: {
-    serverFarmId: appServicePlan.id
-    siteConfig: {
-      appSettings: [
-        
-      ]
-      acrUseManagedIdentityCreds: true
-      linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}'
+    environmentType: 'managed'
+    internalLoadBalancerEnabled: false
+    appLogsConfiguration: {
+      logAnalyticsConfiguration: {
+        customerId: logAnalytics.properties.customerId
+        sharedKey: logAnalytics.listKeys().primarySharedKey
+      }
     }
   }
-  identity: {
-    type: 'SystemAssigned'
+}
+
+// Change to Azure Container Apps
+resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
+  name: containerAppName
+  location: location 
+  properties: {
+    kubeEnvironmentId: containerAppEnvironment.id
+    configuration: {
+      ingress: {
+        external: true
+        targetPort: 80
+        allowInsecure: false
+        traffic: [
+          {
+            latestRevision: true
+            weight: 100
+          }
+        ]
+      }
+      registries: [
+        {
+          server: containerRegistry.properties.loginServer
+          username: acrUsername
+          passwordSecretRef: 'container-registry-password'
+        }
+      ]
+      secrets: [
+        {
+          name: 'container-registry-password'
+          value: acrPassword
+        }
+      ]
+    }
+    template: {
+      containers: [
+        {
+          name: containerAppName
+          image: ''
+          resources: {
+            cpu: '0.5'
+            memory: '1Gi'
+          }
+        }
+      ]
+      scale: {
+        minReplicas: 1
+        maxReplicas: 1
+      }
+    }
   }
 }
 
@@ -156,13 +202,4 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
 
 resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
   name: blobContainerName
-}
-
-resource appServiceAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = {
-  name: guid(containerRegistry.id, appService.id, acrPullRoleDefinitionId)
-  properties: {
-    principalId: appService.identity.principalId
-    roleDefinitionId: acrPullRoleDefinitionId
-    principalType: 'ServicePrincipal'
-  }
 }
