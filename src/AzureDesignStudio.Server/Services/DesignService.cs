@@ -17,7 +17,7 @@ namespace AzureDesignStudio.Server.Services
         public DesignService(DesignDbContext context, ILogger<DesignService> logger)
         {
             designContext = context;
-            designContext.Database.EnsureCreated();
+           designContext.Database.EnsureCreated();
 
             this.logger = logger;
         }
