@@ -11,11 +11,11 @@ RUN pwd
 RUN echo "hello world"
 RUN ls -l
 COPY ["./src/AzureDesignStudio.Server/AzureDesignStudio.Server.csproj", "AzureDesignStudio.Server/"]
-COPY ["AzureDesignStudio.SharedModels/AzureDesignStudio.SharedModels.csproj", "AzureDesignStudio.SharedModels/"]
-COPY ["AzureDesignStudio/AzureDesignStudio.csproj", "AzureDesignStudio/"]
-COPY ["Blazor.Diagrams/src/Blazor.Diagrams.Core/Blazor.Diagrams.Core.csproj", "Blazor.Diagrams/src/Blazor.Diagrams.Core/"]
-COPY ["Blazor.Diagrams/src/Blazor.Diagrams/Blazor.Diagrams.csproj", "Blazor.Diagrams/src/Blazor.Diagrams/"]
-COPY ["AzureDesignStudio.Core/AzureDesignStudio.Core.csproj", "AzureDesignStudio.Core/"]
+COPY ["./src/AzureDesignStudio.SharedModels/AzureDesignStudio.SharedModels.csproj", "AzureDesignStudio.SharedModels/"]
+COPY ["./src/AzureDesignStudio/AzureDesignStudio.csproj", "AzureDesignStudio/"]
+COPY ["./src/Blazor.Diagrams/src/Blazor.Diagrams.Core/Blazor.Diagrams.Core.csproj", "Blazor.Diagrams/src/Blazor.Diagrams.Core/"]
+COPY ["./src/Blazor.Diagrams/src/Blazor.Diagrams/Blazor.Diagrams.csproj", "Blazor.Diagrams/src/Blazor.Diagrams/"]
+COPY ["./src/AzureDesignStudio.Core/AzureDesignStudio.Core.csproj", "AzureDesignStudio.Core/"]
 RUN dotnet restore "AzureDesignStudio.Server/AzureDesignStudio.Server.csproj"
 COPY . .
 WORKDIR "/src/AzureDesignStudio.Server"
