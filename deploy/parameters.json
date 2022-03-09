@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "acrName": {
-            "value": ""
+            "value": "adscontainerregistry"
         },
         "acrSku":{
             "value": "Basic"   
@@ -12,10 +12,10 @@
             "value": ""
         },
         "acrPassword": {
-            "value": "value"
+            "value": ""
         },
         "logAnalyticsName": {
-            "value": "value"
+            "value": "adsloganalytics"
         },
         "containerAppEnvironmentName": {
             "value": "azuredesignstudioenv"
@@ -24,16 +24,16 @@
             "value": "azuredesignstudio"
         },
         "appInsightsName": {
-            "value": ""
+            "value": "adsappinsights"
         },
         "keyVaultName": {
-            "value": ""
+            "value": "adskeyvault"
         },
         "keyVaultSku": {
-            "value": ""
+            "value": "Standard"
         },
         "sqlServerName": {
-            "value": ""
+            "value": "adssqlserver"
         },
         "sqlAdminLogin": {
             "value": ""
@@ -42,7 +42,7 @@
             "value": ""
         },
         "storageAccountName": {
-            "value": ""
+            "value": "adswebresources"
         },
         "storageSku": {
             "value": "Standard"
