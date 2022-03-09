@@ -20,6 +20,12 @@
         "appServiceName": {
             "value": "adswebapp"
         },
+        "virutalNetworkName": {
+            "value": "adsvnet"
+        },
+        "subnetName": {
+            "value": "WebappSubnet"
+        },
         "appInsightsName": {
             "value": "adsappinsights"
         },
