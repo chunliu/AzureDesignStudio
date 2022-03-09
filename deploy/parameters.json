@@ -8,20 +8,17 @@
         "acrSku":{
             "value": "Basic"   
         },
-        "acrUsername": {
-            "value": ""
+        "appServicePlanName": {
+            "value": "value"
         },
-        "acrPassword": {
-            "value": ""
+        "appServicePlanSKU": {
+            "value": "S1"
         },
-        "logAnalyticsName": {
-            "value": "adsloganalytics"
+        "appServiceCapacityCount": {
+            "value": 1
         },
-        "containerAppEnvironmentName": {
-            "value": "azuredesignstudioenv"
-        },
-        "containerAppName": {
-            "value": "azuredesignstudio"
+        "appServiceName": {
+            "value": "adswebapp"
         },
         "appInsightsName": {
             "value": "adsappinsights"
@@ -36,10 +33,13 @@
             "value": "adssqlserver"
         },
         "sqlAdminLogin": {
-            "value": ""
+            "value": "willvelida"
+        },
+        "sqlAdminPassword": {
+            "value": "Dem@p@ssw@rd2022!"
         },
         "sqlDatabaseName": {
-            "value": ""
+            "value": "adsb"
         },
         "storageAccountName": {
             "value": "adswebresources"
