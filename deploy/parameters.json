@@ -32,12 +32,6 @@
         "appInsightsName": {
             "value": "adsappinsights"
         },
-        "keyVaultName": {
-            "value": "adskeyvault"
-        },
-        "keyVaultSku": {
-            "value": "Standard"
-        },
         "sqlServerName": {
             "value": "wvadssqlserver"
         },
