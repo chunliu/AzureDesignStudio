@@ -15,25 +15,24 @@ env:
   WORKING_DIRECTORY: src/AzureDesignStudio.Server
 
 jobs:
-  build:
+  build_deploy:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v3
+      with:
+        Default: ${{ github.repository }}
+        submodules: 'true'
+
     # Connect to Azure Container registry (ACR)
     - name: Azure Login
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS  }}
-    # Container build and push to a Azure Container registry (ACR)
-    - run: |
-        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ./${{ env.WORKING_DIRECTORY }}
 
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS  }}
+    # Container build and push to a Azure Container registry (ACR)
+    - name: Build and Push to ACR
+      run: |
+        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ./${{ env.WORKING_DIRECTORY }}
 
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
