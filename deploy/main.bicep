@@ -4,6 +4,9 @@ param acrName string
 @description('The SKU size for the ACR')
 param acrSku string
 
+@description('Name of the container image in ACR')
+param containerImage string
+
 @description('Name of the App Service Plan that will be deployed.')
 param appServicePlanName string
 
@@ -24,12 +27,6 @@ param subnetName string
 
 @description('Name of the App Insights Instance')
 param appInsightsName string
-
-@description('Name of the Azure Key Vault')
-param keyVaultName string
-
-@description('The SKU size of the Azure Key Vault')
-param keyVaultSku string
 
 @description('Name of the SQL Server')
 param sqlServerName string
@@ -55,48 +52,35 @@ param blobContainerName string
 @description('Location to deploy the Azure resources too. Default is the location of the resource group')
 param location string = resourceGroup().location
 
-var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
-
-resource containerRegistry 'Microsoft.ContainerRegistry/registries@2021-12-01-preview' = {
-  name: acrName
-  location: location
-  sku: {
-    name: acrSku
-  }
-  identity: {
-    type: 'SystemAssigned'
-  }
-}
-
-resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+module appServicePlan 'modules/appServicePlan.bicep' = {
   name: appServicePlanName
-  location: location
-  sku: {
-    name: appServicePlanSKU
-    capacity: appServiceCapacityCount
-  }
-  kind: 'linux'
-  properties: {
-    reserved: true
+  params: {
+    appServiceCapacityCount: appServiceCapacityCount
+    appServicePlanName: appServicePlanName
+    appServicePlanSKU: appServicePlanSKU
+    location: location
   }
 }
 
-resource appService 'Microsoft.Web/sites@2021-03-01' = {
-  name: appServiceName
-  location: location
-  kind: 'app,linux,container'
-  properties: {
-    serverFarmId: appServicePlan.id
-    siteConfig: {
-      appSettings: [
-
-      ]
-      acrUseManagedIdentityCreds: true
-      linuxFxVersion: 'DOCKER|${containerRegistry.properties.loginServer}'
-    }
+module containerRegistry 'modules/containerRegistry.bicep' = {
+  name: acrName
+  params: {
+    acrName: acrName
+    acrSku: acrSku
+    location: location
   }
-  identity: {
-    type: 'SystemAssigned'
+}
+
+module appService 'modules/appService.bicep' = {
+  name: appServiceName
+  params: {
+    acrName: acrName
+    appServiceName: appServiceName
+    appServicePlanId: appServicePlan.outputs.appServicePlanId
+    containerImage: containerImage
+    containerRegistryLoginServer: containerRegistry.outputs.loginServer
+    subnetResourceId: virtualNetwork.properties.subnets[0].id
+    location: location
   }
 }
 
@@ -114,6 +98,22 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-05-01' = {
         name: subnetName
         properties: {
           addressPrefix: '10.2.0.0/20'
+          delegations: [
+            {
+              name: 'appServiceDelegation'
+              properties: {
+                serviceName: 'Microsoft.Web/serverfarms'
+              }
+            }
+          ]
+          serviceEndpoints: [
+            {
+              locations: [
+                location
+              ]
+              service: 'Microsoft.Sql'
+            }
+          ]
         }
       }
     ]
@@ -140,6 +140,7 @@ resource sqlServer 'Microsoft.Sql/servers@2021-08-01-preview' = {
   properties: {
     administratorLogin: sqlAdminLogin
     administratorLoginPassword: sqlAdminPassword
+    publicNetworkAccess: 'Enabled' 
   }
 }
 
@@ -155,28 +156,12 @@ resource sqlDb 'Microsoft.Sql/servers/databases@2021-08-01-preview' = {
   } 
 }
 
-// Azure Key Vault
-resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' = {
-  name: keyVaultName
-  location: location
+resource sqlVnetRules 'Microsoft.Sql/servers/virtualNetworkRules@2021-08-01-preview' = {
+  name: 'sqlVnetRule'
+  parent: sqlServer
   properties: {
-    sku: {
-      family: 'A'
-      name: keyVaultSku
-    }
-    tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        tenantId: appService.identity.tenantId
-        objectId: appService.identity.principalId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-      }
-    ]
+    virtualNetworkSubnetId: virtualNetwork.properties.subnets[0].id
+    ignoreMissingVnetServiceEndpoint: false
   }
 }
 
@@ -198,14 +183,5 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
     resource container 'containers' = {
       name: blobContainerName
     }
-  }
-}
-
-resource appServiceAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2020-10-01-preview' = {
-  name: guid(containerRegistry.id, appService.id, acrPullRoleDefinitionId)
-  properties: {
-    principalId: appService.identity.principalId
-    roleDefinitionId: acrPullRoleDefinitionId
-    principalType: 'ServicePrincipal'
   }
 }
