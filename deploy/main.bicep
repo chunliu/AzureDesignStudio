@@ -2,7 +2,7 @@
 param namePrefix string = 'azuredesignstudio'
 
 @description('The name of the ACR that will be deployed')
-param acrName string = '${namePrefix}-acr'
+param acrName string = '${namePrefix}registry'
 
 @description('The SKU size for the ACR')
 param acrSku string = 'Basic'
