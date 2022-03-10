@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "acrName": {
+            "value": "wvadscontainerregistry"
+        },
+        "acrSku":{
+            "value": "Basic"   
+        },
+        "appServicePlanName": {
+            "value": "wvadsappserviceplan"
+        },
+        "appServicePlanSKU": {
+            "value": "S1"
+        },
+        "appServiceCapacityCount": {
+            "value": 1
+        },
+        "appServiceName": {
+            "value": "wvadswebapp"
+        },
+        "virutalNetworkName": {
+            "value": "adsvnet"
+        },
+        "subnetName": {
+            "value": "WebappSubnet"
+        },
+        "appInsightsName": {
+            "value": "adsappinsights"
+        },
+        "keyVaultName": {
+            "value": "adskeyvault"
+        },
+        "keyVaultSku": {
+            "value": "Standard"
+        },
+        "sqlServerName": {
+            "value": "wvadssqlserver"
+        },
+        "sqlAdminLogin": {
+            "value": "willvelida"
+        },
+        "sqlAdminPassword": {
+            "value": "Dem@p@ssw@rd2022!"
+        },
+        "sqlDatabaseName": {
+            "value": "adsb"
+        },
+        "storageAccountName": {
+            "value": "adswebresources"
+        },
+        "storageSku": {
+            "value": "Standard_ZRS"
+        },
+        "blobContainerName": {
+            "value": "$web"
+        }
+    }
+}
