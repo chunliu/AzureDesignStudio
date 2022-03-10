@@ -2,7 +2,7 @@
 param acrName string
 
 @description('The SKU size for the ACR')
-param acrSku string
+param acrSku string = 'Basic'
 
 @description('Location to deploy the ACR registry. Default set to resource group location.')
 param location string = resourceGroup().location

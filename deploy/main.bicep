@@ -1,53 +1,63 @@
+@description('The prefix to be used in naming of resources')
+param namePrefix string = 'azuredesignstudio'
+
 @description('The name of the ACR that will be deployed')
-param acrName string
+param acrName string = '${namePrefix}-acr'
 
 @description('The SKU size for the ACR')
-param acrSku string
+param acrSku string = 'Basic'
 
 @description('Name of the container image in ACR')
-param containerImage string
+param containerImage string = namePrefix
 
 @description('Name of the App Service Plan that will be deployed.')
-param appServicePlanName string
+param appServicePlanName string = '${namePrefix}-plan'
 
 @description('The SKU size for our App Service Plan')
-param appServicePlanSKU string
+param appServicePlanSKU string = 'S1'
 
 @description('The capacity size for our App Service Plan')
-param appServiceCapacityCount int
+param appServiceCapacityCount int = 1
 
 @description('Name of the App Service that will be deployed')
-param appServiceName string
+param appServiceName string = namePrefix
 
 @description('The name of the Virtual Network')
-param virutalNetworkName string
+param virutalNetworkName string = '${namePrefix}-vnet'
 
 @description('The name of the subnet in the vNET')
-param subnetName string
+param subnetName string = 'WebappSubnet'
 
 @description('Name of the App Insights Instance')
-param appInsightsName string
+param appInsightsName string = '${namePrefix}-ai'
 
 @description('Name of the SQL Server')
-param sqlServerName string
+param sqlServerName string = '${namePrefix}-sql'
 
 @description('The admin username for the SQL Server')
-param sqlAdminLogin string
+param sqlAdminLogin string = 'sysadmin'
 
+@secure()
 @description('The admin password for the SQL Server')
 param sqlAdminPassword string
 
+@description('The admin AAD username for the SQL Server')
+param adSqlAdminLogin string
+
+@description('The admin SID of AAD user for the SQL Server')
+param adSqlAdminSid string
+
 @description('Name of the SQL Database')
-param sqlDatabaseName string
+param sqlDatabaseName string = 'adsdb'
 
 @description('The name of the Azure Storage Account')
-param storageAccountName string
+param storageAccountName string = '${namePrefix}webresources'
 
 @description('The SKU size of the Storage Account')
-param storageSku string
+param storageSku string = 'Standard_ZRS'
 
 @description('Name of the blob container')
-param blobContainerName string
+param blobContainerName string = '$web'
 
 @description('Location to deploy the Azure resources too. Default is the location of the resource group')
 param location string = resourceGroup().location
@@ -140,6 +150,14 @@ resource sqlServer 'Microsoft.Sql/servers@2021-08-01-preview' = {
   properties: {
     administratorLogin: sqlAdminLogin
     administratorLoginPassword: sqlAdminPassword
+    administrators: {
+      administratorType: 'ActiveDirectory'
+      azureADOnlyAuthentication: false
+      login: adSqlAdminLogin
+      principalType: 'User'
+      sid: adSqlAdminSid
+      tenantId: subscription().tenantId
+    }
     publicNetworkAccess: 'Enabled'
   }
 }
