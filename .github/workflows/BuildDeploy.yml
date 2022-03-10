@@ -38,6 +38,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}
-        images: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }}
+        images: ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }}
 
 
