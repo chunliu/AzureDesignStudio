@@ -17,9 +17,16 @@ jobs:
       with:
         Default: ${{github.repository}}
         submodules: 'true'
+    - name: Log into registry
+      uses: docker/login-action@v1
+      with:
+        registry: 'xxxuhong.azurecr.io'
+        username: 'xxxuhong'
+        password: '9MIOvqBKw8AK/XFHCiCaALMArgmLYjhb'
     - uses: docker/build-push-action@v2
       with:
        context: ./src
        file: ./src/AzureDesignStudio.Server/Dockerfile
-       tags: xxxuhong.azurecr.io/design:latest
+       tags: xxxuhong.azurecr.io/git-design:latest
+       push: true
       
