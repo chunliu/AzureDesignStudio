@@ -11,7 +11,9 @@ on:
       IMAGE_NAME:
         description: 'Image Name'     
         required: true
-        
+env:
+  WORKING_DIRECTORY: src
+
 jobs:
   build_deploy:
     runs-on: ubuntu-latest
@@ -30,7 +32,7 @@ jobs:
     # Container build and push to a Azure Container registry (ACR)
     - name: Build and Push to ACR
       run: |
-        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} .
+        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ./${{ env.WORKING_DIRECTORY }}
 
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
