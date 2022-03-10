@@ -35,7 +35,7 @@ jobs:
           deploymentName: ${{ github.run_number }}
           resourceGroupName: ${{ secrets.AZURE_RG }}
           template: ./deploy/main.bicep
-          parameters: ./deploy/parameters.json
+          parameters: namePrefix=env.NAME_PREFIX sqlAdminPassword=secrets.SQL_ADMIN_PASSWORD adSqlAdminLogin=env.AD_SQL_ADMIN_LOGIN adSqlAdminSid=env.AD_SQL_ADMIN_SID
           deploymentMode: Validate
 
   preview:
@@ -51,7 +51,7 @@ jobs:
         name: Run what-if
         with:
           inlineScript: |
-            az deployment group what-if --resource-group ${{ secrets.AZURE_RG }} --template-file ./deploy/main.bicep --parameters ./deploy/parameters.json
+            az deployment group what-if --resource-group ${{ secrets.AZURE_RG }} --template-file ./deploy/main.bicep --parameters namePrefix=env.NAME_PREFIX sqlAdminPassword=secrets.SQL_ADMIN_PASSWORD adSqlAdminLogin=env.AD_SQL_ADMIN_LOGIN adSqlAdminSid=env.AD_SQL_ADMIN_SID
   deploy:
     runs-on: ubuntu-latest
     environment: Dev
