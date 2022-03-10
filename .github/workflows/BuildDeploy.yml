@@ -25,7 +25,7 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS  }}
     # Container build and push to a Azure Container registry (ACR)
     - run: |
-        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ${{ env.WORKING_DIRECTORY }}
+        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ./${{ env.WORKING_DIRECTORY }}
 
   deploy:
     runs-on: ubuntu-latest
