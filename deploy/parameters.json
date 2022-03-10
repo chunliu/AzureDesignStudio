@@ -8,6 +8,9 @@
         "acrSku":{
             "value": "Basic"   
         },
+        "containerImage": {
+            "value": ""
+        },
         "appServicePlanName": {
             "value": "wvadsappserviceplan"
         },
@@ -39,10 +42,10 @@
             "value": "wvadssqlserver"
         },
         "sqlAdminLogin": {
-            "value": "willvelida"
+            "value": ""
         },
         "sqlAdminPassword": {
-            "value": "Dem@p@ssw@rd2022!"
+            "value": ""
         },
         "sqlDatabaseName": {
             "value": "adsb"
