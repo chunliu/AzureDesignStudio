@@ -14,6 +14,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+      with:
+        Default: ${{github.repository}}
+        submodules: 'true'
     - uses: docker/build-push-action@v2
       with:
        context: ./src
