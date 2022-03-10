@@ -36,7 +36,7 @@ jobs:
           deploymentName: ${{ github.run_number }}
           resourceGroupName: ${{ env.AZURE_RG }}
           template: ./deploy/main.bicep
-          parameters: namePrefix=env.NAME_PREFIX sqlAdminPassword=secrets.SQL_ADMIN_PASSWORD adSqlAdminLogin=env.AD_SQL_ADMIN_LOGIN adSqlAdminSid=env.AD_SQL_ADMIN_SID
+          parameters: namePrefix=${{ env.NAME_PREFIX }} sqlAdminPassword=${{ secrets.SQL_ADMIN_PASSWORD }} adSqlAdminLogin=${{ env.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ env.AD_SQL_ADMIN_SID }}
           deploymentMode: Validate
 
   preview:
@@ -52,7 +52,7 @@ jobs:
         name: Run what-if
         with:
           inlineScript: |
-            az deployment group what-if --resource-group ${{ env.AZURE_RG }} --template-file ./deploy/main.bicep --parameters namePrefix=env.NAME_PREFIX sqlAdminPassword=secrets.SQL_ADMIN_PASSWORD adSqlAdminLogin=env.AD_SQL_ADMIN_LOGIN adSqlAdminSid=env.AD_SQL_ADMIN_SID
+            az deployment group what-if --resource-group ${{ env.AZURE_RG }} --template-file ./deploy/main.bicep --parameters namePrefix=${{ env.NAME_PREFIX }} sqlAdminPassword=${{ secrets.SQL_ADMIN_PASSWORD }} adSqlAdminLogin=${{ env.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ env.AD_SQL_ADMIN_SID }}
   deploy:
     runs-on: ubuntu-latest
     environment: Dev
@@ -70,5 +70,5 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           resourceGroupName: ${{ env.AZURE_RG }}
           template: ./deploy/main.bicep
-          parameters: namePrefix=env.NAME_PREFIX sqlAdminPassword=secrets.SQL_ADMIN_PASSWORD adSqlAdminLogin=env.AD_SQL_ADMIN_LOGIN adSqlAdminSid=env.AD_SQL_ADMIN_SID
+          parameters: namePrefix=${{ env.NAME_PREFIX }} sqlAdminPassword=${{ secrets.SQL_ADMIN_PASSWORD }} adSqlAdminLogin=${{ env.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ env.AD_SQL_ADMIN_SID }}
           failOnStdErr: false
