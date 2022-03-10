@@ -5,99 +5,31 @@ on:
       AZURE_WEBAPP_NAME:
         description: 'Azure Web App Name'     
         required: true
+      REGISTRY_NAME:
+        description: 'Container Registry Name'     
+        required: true
+      IMAGE_NAME:
+        description: 'Image Name'     
+        required: true
 env:
-  AZURE_WEBAPP_PACKAGE_PATH: AzureDesignStudio.Server/published
-  CONFIGURATION: Release
-  DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src/AzureDesignStudio.Server
 
 jobs:
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run Bicep Linter
-        run: az bicep build --file ./deploy/main.bicep
-
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: azure/login@v1
-        name: Sign in to Azure
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      
-      - uses: azure/arm-deploy@v1
-        name: Run preflight validation
-        with:
-          deploymentName: ${{ github.run_number }}
-          resourceGroupName: ${{ secrets.AZURE_RG }}
-          template: ./deploy/main.bicep
-          parameters: ./deploy/parameters.json
-          deploymentMode: Validate
-
-  preview:
-    runs-on: ubuntu-latest
-    needs: [lint, validate]
-    steps:
-      - uses: actions/checkout@v2
-      - uses: azure/login@v1
-        name: Sign in to Azure
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - uses: Azure/cli@v1
-        name: Run what-if
-        with:
-          inlineScript: |
-            az deployment group what-if --resource-group ${{ secrets.AZURE_RG }} --template-file ./deploy/main.bicep --parameters ./deploy/parameters.json
-
-  deploy:
-    runs-on: ubuntu-latest
-    environment: Dev
-    needs: preview
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
-      - name: Deploy Bicep File
-        uses: azure/arm-deploy@v1
-        with:
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          resourceGroupName: ${{ secrets.AZURE_RG }}
-          template: ./deploy/main.bicep
-          parameters: ./deploy/parameters.json
-          failOnStdErr: false
-
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    # Connect to Azure Container registry (ACR)
+    - name: Azure Login
+      uses: azure/login@v1
       with:
-        Default: ${{ github.repository }}
-        submodules: 'true'
+        creds: ${{ secrets.AZURE_CREDENTIALS  }}
+    # Container build and push to a Azure Container registry (ACR)
+    - run: |
+        az acr build --registry ${{ env.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ${{ env.WORKING_DIRECTORY }}
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-
-    - name: Restore
-      run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
-
-    - name: Build
-      run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
-
-    - name: Test
-      run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
-
-    - name: Publish
-      run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
     - name: Azure Login
       uses: azure/login@v1
       with:
@@ -107,10 +39,6 @@ jobs:
       uses: azure/webapps-deploy@v2
       with:
         app-name: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        images: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }}
 
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: webapp
-        path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+
