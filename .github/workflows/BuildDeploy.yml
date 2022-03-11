@@ -109,6 +109,8 @@ jobs:
     - uses: cschleiden/replace-tokens@v1
       with:
         files: '["${{ env.WORKING_DIRECTORY }}/AzureDesignStudio/wwwroot/appsettings.json"]'
+        tokenPrefix: '__'
+        tokenSuffix: '__'
       env:
         StaticWebURL: ${{ steps.static_content.outputs.url }}
 
