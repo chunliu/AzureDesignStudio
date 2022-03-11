@@ -1,0 +1,107 @@
+[
+  {
+    "key": "resource-group",
+    "name": "rg",
+    "iconPath": "assets/azure/resource-group.svg",
+    "label": "Resource Group",
+    "category": 4
+  },
+  {
+    "key": "storage-account",
+    "name": "storage",
+    "iconPath": "assets/azure/storage-account.svg",
+    "label": "Storage Account",
+    "category": 3
+  },
+  {
+    "key": "virtual-network",
+    "name": "vnet",
+    "iconPath": "assets/azure/virtual-network.svg",
+    "label": "Virtual Network",
+    "category": 0
+  },
+  {
+    "key": "virtual-machine",
+    "name": "vm",
+    "iconPath": "assets/azure/virtual-machine.svg",
+    "label": "Virtual Machine",
+    "category": 1
+  },
+  {
+    "key": "azure-firewall",
+    "name": "firewall",
+    "iconPath": "assets/azure/azure-firewall.svg",
+    "label": "Azure Firewall",
+    "category": 0
+  },
+  {
+    "key": "azure-bastions",
+    "name": "bastion-host",
+    "iconPath": "assets/azure/azure-bastions.svg",
+    "label": "Azure Bastions",
+    "category": 0
+  },
+  {
+    "key": "public-ip",
+    "name": "pip",
+    "iconPath": "assets/azure/public-ip.svg",
+    "label": "Public IP",
+    "category": 0
+  },
+  {
+    "key": "sql-server",
+    "name": "sql-server",
+    "iconPath": "assets/azure/sql-server.svg",
+    "label": "Azure SQL Server",
+    "category": 2
+  },
+  {
+    "key": "sql-database",
+    "name": "sql-database",
+    "iconPath": "assets/azure/sql-database.svg",
+    "label": "Azure SQL Database",
+    "category": 2
+  },
+  {
+    "key": "appservice-plan",
+    "name": "appservice-plan",
+    "iconPath": "assets/azure/appservice-plan.svg",
+    "label": "App Service Plan",
+    "category": 1
+  },
+  {
+    "key": "function-app",
+    "name": "function-app",
+    "iconPath": "assets/azure/function-apps.svg",
+    "label": "Function App",
+    "category": 1
+  },
+  {
+    "key": "web-app",
+    "name": "web-app",
+    "iconPath": "assets/azure/webapp.svg",
+    "label": "Web App",
+    "category": 1
+  },
+  {
+    "key": "aks-cluster",
+    "name": "cluster1",
+    "iconPath": "assets/azure/aks.svg",
+    "label": "AKS",
+    "category": 1
+  },
+  {
+    "key": "apim",
+    "name": "api-management",
+    "iconPath": "assets/azure/apim.svg",
+    "label": "API Management",
+    "category": 1
+  },
+  {
+    "key": "app-gateway",
+    "name": "app-gateway",
+    "iconPath": "assets/azure/app-gateway.svg",
+    "label": "Application Gateway",
+    "category": 0
+  }   
+]

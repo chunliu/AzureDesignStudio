@@ -2,6 +2,18 @@ name: Build and deploy .NET Core application to Web App
 on:
   workflow_dispatch:
     inputs:
+      AZURE_RG:
+        description: 'Target Resource Group Name'     
+        required: true       
+      NAME_PREFIX:
+        description: 'Name Prefix'     
+        required: true
+      AD_SQL_ADMIN_LOGIN:
+        description: 'AAD SQL Admin Login'     
+        required: true
+      AD_SQL_ADMIN_SID:
+        description: 'AAD Login SID'     
+        required: true
       AZURE_WEBAPP_NAME:
         description: 'Azure Web App Name'     
         required: true
@@ -11,12 +23,75 @@ on:
       IMAGE_NAME:
         description: 'Image Name'     
         required: true
+      STORAGE_ACCOUNT_NAME:
+        description: 'Storage Account Name for Static Content'     
+        required: true
 env:
   WORKING_DIRECTORY: src
 
 jobs:
-  build_deploy:
+  lint:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Bicep Linter
+        run: az bicep build --file ./deploy/main.bicep
+
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/login@v1
+        name: Sign in to Azure
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - uses: azure/arm-deploy@v1
+        name: Run preflight validation
+        with:
+          deploymentName: ${{ github.run_number }}
+          resourceGroupName: ${{ github.event.inputs.AZURE_RG }}
+          template: ./deploy/main.bicep
+          parameters: namePrefix=${{ github.event.inputs.NAME_PREFIX }} sqlAdminPassword=${{ secrets.SQL_ADMIN_PASSWORD }} adSqlAdminLogin=${{ github.event.inputs.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ github.event.inputs.AD_SQL_ADMIN_SID }}
+          deploymentMode: Validate
+
+  preview:
+    runs-on: ubuntu-latest
+    needs: [lint, validate]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: azure/login@v1
+        name: Sign in to Azure
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: Azure/cli@v1
+        name: Run what-if
+        with:
+          inlineScript: |
+            az deployment group what-if --resource-group ${{ github.event.inputs.AZURE_RG }} --template-file ./deploy/main.bicep --parameters namePrefix=${{ github.event.inputs.NAME_PREFIX }} sqlAdminPassword=SQL_ADMIN_PASSWORD adSqlAdminLogin=${{ github.event.inputs.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ github.event.inputs.AD_SQL_ADMIN_SID }}
+  deploy_infra:
+    runs-on: ubuntu-latest
+    environment: Dev
+    needs: preview
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+      - name: Deploy Bicep File
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          resourceGroupName: ${{ github.event.inputs.AZURE_RG }}
+          template: ./deploy/main.bicep
+          parameters: namePrefix=${{ github.event.inputs.NAME_PREFIX }} sqlAdminPassword=${{ secrets.SQL_ADMIN_PASSWORD }} adSqlAdminLogin=${{ github.event.inputs.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ github.event.inputs.AD_SQL_ADMIN_SID }}
+          failOnStdErr: false
+  
+  build_deploy_container:
+    runs-on: ubuntu-latest
+    needs: deploy_infra
     steps:
     - uses: actions/checkout@v3
       with:
@@ -28,6 +103,21 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS  }}
+
+    - name: Deploy static content
+      id: static_content
+      run: |
+        az storage blob service-properties update --account-name ${{ github.event.inputs.STORAGE_ACCOUNT_NAME }} --static-website
+        az storage blob upload-batch --account-name ${{ github.event.inputs.STORAGE_ACCOUNT_NAME }} -s ./statics -d '$web'
+        
+        staticweburl=$(az storage account show --name ${{ github.event.inputs.STORAGE_ACCOUNT_NAME }} --resource-group ${{ github.event.inputs.AZURE_RG }} --query "primaryEndpoints.web" --output tsv
+        echo "::set-output name=url::$staticweburl"
+
+    - uses: cschleiden/replace-tokens@v1
+      with:
+        files: '["**/*.js"]'
+      env:
+        StaticWebURL: ${{ steps.static_content.outputs.url }}
 
     # Container build and push to a Azure Container registry (ACR)
     - name: Build and Push to ACR

@@ -67,3 +67,5 @@ resource appServiceAcrPullRoleAssignment 'Microsoft.Authorization/roleAssignment
     principalType: 'ServicePrincipal'
   }
 }
+
+output webappUrl string = 'https://${appService.properties.hostNames[0]}'

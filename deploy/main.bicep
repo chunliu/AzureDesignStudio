@@ -194,12 +194,32 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   identity: {
     type: 'SystemAssigned'
   }
+}
 
-  resource blobServices 'blobServices' = {
-    name: 'default'
 
-    resource container 'containers' = {
-      name: blobContainerName
+resource symbolicname 'Microsoft.Storage/storageAccounts/blobServices@2018-07-01' = {
+  name: 'default'
+  parent: storageAccount
+  properties: {
+    cors: {
+      corsRules: [
+        {
+          allowedHeaders: [
+            '*'
+          ]
+          allowedMethods: [
+            'GET'
+            'OPTIONS'
+          ]
+          allowedOrigins: [
+            appService.outputs.webappUrl
+          ]
+          exposedHeaders: [
+            '*'
+          ]
+          maxAgeInSeconds: 200
+        }
+      ]
     }
   }
 }
