@@ -20,6 +20,7 @@ on:
 env:
   WORKING_DIRECTORY: src
   REGISTRY_NAME: ${{ github.event.inputs.NAME_PREFIX }}registry
+  STORAGE_ACCOUNT: ${{ github.event.inputs.NAME_PREFIX }}asa
 
 jobs:
   lint:
@@ -100,9 +101,9 @@ jobs:
     - name: Deploy static content
       id: static_content
       run: |
-        az storage blob service-properties update --account-name ${{ github.event.inputs.NAME_PREFIX }} --static-website
-        az storage blob upload-batch --account-name ${{ github.event.inputs.NAME_PREFIX }} -s ./statics -d '$web'
-        staticweburl=$(az storage account show --name ${{ github.event.inputs.NAME_PREFIX }} --resource-group ${{ github.event.inputs.AZURE_RG }} --query "primaryEndpoints.web" --output tsv)
+        az storage blob service-properties update --account-name ${{ env.STORAGE_ACCOUNT }} --static-website
+        az storage blob upload-batch --account-name ${{ env.STORAGE_ACCOUNT }} -s ./statics -d '$web'
+        staticweburl=$(az storage account show --name ${{ env.STORAGE_ACCOUNT }} --resource-group ${{ github.event.inputs.AZURE_RG }} --query "primaryEndpoints.web" --output tsv)
         echo "::set-output name=url::$staticweburl"
 
     - uses: cschleiden/replace-tokens@v1
