@@ -51,7 +51,7 @@ param adSqlAdminSid string
 param sqlDatabaseName string = 'adsdb'
 
 @description('The name of the Azure Storage Account')
-param storageAccountName string = namePrefix
+param storageAccountName string = '${namePrefix}asa'
 
 @description('The SKU size of the Storage Account')
 param storageSku string = 'Standard_ZRS'

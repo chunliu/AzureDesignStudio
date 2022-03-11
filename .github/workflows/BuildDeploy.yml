@@ -61,6 +61,7 @@ jobs:
         with:
           inlineScript: |
             az deployment group what-if --resource-group ${{ github.event.inputs.AZURE_RG }} --template-file ./deploy/main.bicep --parameters namePrefix=${{ github.event.inputs.NAME_PREFIX }} sqlAdminPassword=SQL_ADMIN_PASSWORD adSqlAdminLogin=${{ github.event.inputs.AD_SQL_ADMIN_LOGIN }} adSqlAdminSid=${{ github.event.inputs.AD_SQL_ADMIN_SID }}
+
   deploy_infra:
     runs-on: ubuntu-latest
     environment: Dev
