@@ -1,9 +1,6 @@
 name: Deploy Azure Infrastructure
 
 on:
-  push:
-    paths:
-      - 'deploy/*'
   workflow_dispatch:
 
 env:

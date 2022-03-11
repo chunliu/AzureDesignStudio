@@ -14,20 +14,12 @@ on:
       AD_SQL_ADMIN_SID:
         description: 'AAD Login SID'     
         required: true
-      AZURE_WEBAPP_NAME:
-        description: 'Azure Web App Name'     
-        required: true
-      REGISTRY_NAME:
-        description: 'Container Registry Name'     
-        required: true
       IMAGE_NAME:
         description: 'Image Name'     
         required: true
-      STORAGE_ACCOUNT_NAME:
-        description: 'Storage Account Name for Static Content'     
-        required: true
 env:
   WORKING_DIRECTORY: src
+  REGISTRY_NAME: ${{ github.event.inputs.NAME_PREFIX }}registry
 
 jobs:
   lint:
@@ -107,10 +99,10 @@ jobs:
     - name: Deploy static content
       id: static_content
       run: |
-        az storage blob service-properties update --account-name ${{ github.event.inputs.STORAGE_ACCOUNT_NAME }} --static-website
-        az storage blob upload-batch --account-name ${{ github.event.inputs.STORAGE_ACCOUNT_NAME }} -s ./statics -d '$web'
+        az storage blob service-properties update --account-name ${{ github.event.inputs.NAME_PREFIX }} --static-website
+        az storage blob upload-batch --account-name ${{ github.event.inputs.NAME_PREFIX }} -s ./statics -d '$web'
         
-        staticweburl=$(az storage account show --name ${{ github.event.inputs.STORAGE_ACCOUNT_NAME }} --resource-group ${{ github.event.inputs.AZURE_RG }} --query "primaryEndpoints.web" --output tsv
+        staticweburl=$(az storage account show --name ${{ github.event.inputs.NAME_PREFIX }} --resource-group ${{ github.event.inputs.AZURE_RG }} --query "primaryEndpoints.web" --output tsv
         echo "::set-output name=url::$staticweburl"
 
     - uses: cschleiden/replace-tokens@v1
@@ -122,12 +114,12 @@ jobs:
     # Container build and push to a Azure Container registry (ACR)
     - name: Build and Push to ACR
       run: |
-        az acr build --registry ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ./${{ env.WORKING_DIRECTORY }}
+        az acr build --registry ${{ env.REGISTRY_NAME }}.azurecr.io --image ${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }} ./${{ env.WORKING_DIRECTORY }}
 
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
-        app-name: ${{ github.event.inputs.AZURE_WEBAPP_NAME }}
-        images: ${{ github.event.inputs.REGISTRY_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }}
+        app-name: ${{ github.event.inputs.NAME_PREFIX }}
+        images: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ github.event.inputs.IMAGE_NAME }}:${{ github.sha }}
 
 
