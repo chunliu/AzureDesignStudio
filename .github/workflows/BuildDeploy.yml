@@ -101,8 +101,8 @@ jobs:
     - name: Deploy static content
       id: static_content
       run: |
-        az storage blob service-properties update --account-name ${{ env.STORAGE_ACCOUNT }} --static-website
-        az storage blob upload-batch --account-name ${{ env.STORAGE_ACCOUNT }} -s ./statics -d '$web'
+        az storage blob service-properties update --account-name ${{ env.STORAGE_ACCOUNT }} --static-website true
+        az storage blob upload-batch --account-name ${{ env.STORAGE_ACCOUNT }} -s ./statics -d '$web' --overwrite true
         staticweburl=$(az storage account show --name ${{ env.STORAGE_ACCOUNT }} --resource-group ${{ github.event.inputs.AZURE_RG }} --query "primaryEndpoints.web" --output tsv)
         echo "::set-output name=url::$staticweburl"
 
