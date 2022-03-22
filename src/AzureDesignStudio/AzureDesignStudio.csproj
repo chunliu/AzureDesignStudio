@@ -9,20 +9,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.10.2" />
-    <PackageReference Include="AutoMapper" Version="11.0.0" />
+    <PackageReference Include="AntDesign" Version="0.10.5" />
+    <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="BlazorApplicationInsights" Version="1.6.0" />
     <PackageReference Include="Google.Protobuf" Version="3.19.4" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.43.0-pre1" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.43.0-pre1" />
-    <PackageReference Include="Grpc.Tools" Version="2.44.0-pre2">
+    <PackageReference Include="Grpc.Net.Client" Version="2.44.0" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.44.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.44.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.3" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.2-mauipre.1.22054.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.2-mauipre.1.22054.8" />
     <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
