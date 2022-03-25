@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32210.308
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDesignStudio.CodeGeneration", "AzureDesignStudio.CodeGeneration.csproj", "{FFAFCE55-AA5B-4BB8-AAD4-DF51DA785DE1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CB5283B2-2115-4F71-A47B-5421187AFFF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDesignStudio.CodeGenerationTests", "..\AzureDesignStudio.CodeGenerationTests\AzureDesignStudio.CodeGenerationTests.csproj", "{74E6456C-CDAB-4114-B437-19D8D0A79CB1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFAFCE55-AA5B-4BB8-AAD4-DF51DA785DE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFAFCE55-AA5B-4BB8-AAD4-DF51DA785DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFAFCE55-AA5B-4BB8-AAD4-DF51DA785DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFAFCE55-AA5B-4BB8-AAD4-DF51DA785DE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74E6456C-CDAB-4114-B437-19D8D0A79CB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74E6456C-CDAB-4114-B437-19D8D0A79CB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74E6456C-CDAB-4114-B437-19D8D0A79CB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74E6456C-CDAB-4114-B437-19D8D0A79CB1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C3990322-F1E8-44FB-8ED3-2D777E9F7462}
+	EndGlobalSection
+EndGlobal
