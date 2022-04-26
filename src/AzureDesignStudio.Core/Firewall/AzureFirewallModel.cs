@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AzureDesignStudio.AzureResources.Base;
+using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.PublicIp;
@@ -18,8 +20,8 @@ namespace AzureDesignStudio.Core.Firewall
             AddPort(PortAlignment.Bottom);
         }
         public override string ServiceName => "Azure Firewall";
-        public override string ApiVersion => "2021-03-01";
-        public override string ResourceType => "Microsoft.Network/azureFirewalls";
+        private readonly AzureFirewalls _firewall = new();
+        public override ResourceBase ArmResource => _firewall;
         public override Type? DataFormType => typeof(AzureFirewallForm);
         private string sku = "Premium";
         [DisplayName("SKU")]
@@ -53,10 +55,16 @@ namespace AzureDesignStudio.Core.Firewall
             return mapper.Map<AzureFirewallDto>(this);
         }
 
-        public override IList<IDictionary<string, dynamic>> GetArmResources()
+        protected override void PopulateArmAttributes()
         {
+            base.PopulateArmAttributes();
+
             if (Group is not SubnetModel s)
                 throw new Exception($"Firewall is not associated with a subnet.");
+
+            // Depends on subnet is not enough. Must depend on vnet.
+            if (s.Group is not VirtualNetworkModel vnet)
+                throw new Exception($"Subnet must be in a vnet.");
 
             PublicIpModel? publicIp = null;
             foreach (var port in Ports)
@@ -68,69 +76,41 @@ namespace AzureDesignStudio.Core.Firewall
             if (publicIp == null)
                 throw new Exception($"Firewall needs a public IP address.");
 
-            var subnet = new Dictionary<string, string>()
+            _firewall.Properties = new()
             {
-                {"id", s.ResourceId},
-            };
-            var publicIpAddress = new Dictionary<string, string>()
-            {
-                {"id", publicIp.ResourceId},
-            };
-
-            Dictionary<string, dynamic> ipConfiguration = new()
-            {
-                { "name", Name + "-ipcfg" },
+                Sku = new()
                 {
-                    "properties",
-                    new Dictionary<string, dynamic>()
-                    {
-                        { "subnet", subnet },
-                        { "publicIPAddress", publicIpAddress },
-                    }
+                    Name = "AZFW_VNet",
+                    Tier = Sku
                 },
+                IpConfigurations = new List<AzureFirewallIPConfiguration> 
+                { 
+                    new AzureFirewallIPConfiguration
+                    {
+                        Name = Name + "-ipcfg",
+                        Properties = new()
+                        {
+                            Subnet = new SubResource { Id = s.ResourceId },
+                            PublicIPAddress = new SubResource { Id = publicIp.ResourceId },
+                        }
+                    } 
+                },
+                FirewallPolicy = new() { Id = FirewallPolicy.ResourceId },
             };
-            List<Dictionary<string, dynamic>> ipConfigurations = new()
-            {
-                ipConfiguration,
-            };
-
-            var result = new List<IDictionary<string, dynamic>>();
-            result.AddRange(FirewallPolicy.GetArmResources());
-
-            // Depends on subnet is not enough. Must depend on vnet.
-            if (s.Group is not VirtualNetworkModel vnet)
-                throw new Exception($"Subnet must be in a vnet.");
-            List<string> dependsOn = new()
+            _firewall.DependsOn = new List<string>
             {
                 vnet.ResourceId,
                 s.ResourceId,
                 publicIp.ResourceId,
                 FirewallPolicy.ResourceId,
             };
+        }
 
-            Properties.Clear();
-            Properties["sku"] = new Dictionary<string, string>()
-            {
-                {"name", "AZFW_VNet" },
-                {"tier", Sku },
-            };
-            Properties["ipConfigurations"] = ipConfigurations;
-            Properties["firewallPolicy"] = new Dictionary<string, string>()
-            {
-                {"id", FirewallPolicy.ResourceId }
-            };
+        public override IList<ResourceBase> GetArmResources()
+        {
+            var result = base.GetArmResources().ToList();
 
-            var fwArm = new Dictionary<string, dynamic>()
-            {
-                {"type", ResourceType },
-                {"apiVersion", ApiVersion },
-                {"name", Name},
-                {"location", Location},
-                {"properties", Properties },
-                {"dependsOn", dependsOn},
-            };
-
-            result.Add(fwArm);
+            result.AddRange(FirewallPolicy.GetArmResources());
 
             return result;
         }

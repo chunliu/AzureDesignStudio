@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.Core.DTO;
 using Blazor.Diagrams.Core.Geometry;
 using Blazor.Diagrams.Core.Models;
@@ -29,30 +30,31 @@ namespace AzureDesignStudio.Core.Models
         #endregion
 
         #region IAzureResource
-        public virtual string ResourceId => $"[resourceId('{ResourceType}', '{Name}')]";
+        public virtual ResourceBase ArmResource => throw new NotImplementedException();
+        public virtual string ResourceId => $"[resourceId('{ArmResource.Type}', '{Name}')]";
         public string Name { get; set; } = string.Empty;
-        private string location = string.Empty;
         public virtual string Location
         {
-            get => UseResourceGroupLocation ? "[parameters('location')]" : location;
-            set => location = value;
+            get => UseResourceGroupLocation ? "[parameters('location')]" : ArmResource.Location;
+            set => ArmResource.Location = value;
         }
-        public virtual string ResourceType => throw new NotImplementedException();
-
-        public IDictionary<string, string> Tags { get; set; } = new Dictionary<string, string>();
-        public IDictionary<string, dynamic> Properties { get; set; } = new Dictionary<string, dynamic>();
-
-        public virtual string ApiVersion => throw new NotImplementedException();
         public virtual bool UseResourceGroupLocation { get; set; } = true;
-
-        public virtual IList<IDictionary<string, dynamic>> GetArmResources()
+        protected virtual void PopulateArmAttributes()
         {
-            throw new NotImplementedException();
+            ArmResource.Name = Name;
+            ArmResource.Location = Location;
         }
 
-        public virtual IDictionary<string, dynamic> GetArmParameters()
+        public virtual IList<ResourceBase> GetArmResources()
         {
-            return new Dictionary<string, dynamic>();
+            PopulateArmAttributes();
+            
+            return new List<ResourceBase> { ArmResource };
+        }
+
+        public virtual IDictionary<string, Parameter> GetArmParameters()
+        {
+            return new Dictionary<string, Parameter>();
         }
         #endregion
     }

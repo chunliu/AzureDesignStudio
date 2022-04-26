@@ -146,14 +146,7 @@ namespace AzureDesignStudio.Components
                 return;
             }
 
-            // Somehow using SerializeAsync to a stream and use it for the download directly doesn't work...
-            var armString = JsonSerializer.Serialize(armTemplate.Template,
-                new JsonSerializerOptions(JsonSerializerDefaults.Web)
-                {
-                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-                    WriteIndented = true,
-                }
-            );
+            var armString = armTemplate.GenerateArmTemplate();
 
             await OpenJsonDrawer(armString);
         }

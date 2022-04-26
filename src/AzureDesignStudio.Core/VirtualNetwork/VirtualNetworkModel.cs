@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AzureDesignStudio.AzureResources.Base;
+using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
@@ -21,8 +23,8 @@ namespace AzureDesignStudio.Core.VirtualNetwork
         }
         public override string ServiceName => "Virtual Network";
         public override Type? DataFormType => typeof(VirtualNetworkForm);
-        public override string ApiVersion => "2021-03-01";
-        public override string ResourceType => "Microsoft.Network/virtualNetworks";
+        private readonly VirtualNetworks _vnet = new();
+        public override ResourceBase ArmResource => _vnet;
         public List<AddressSpace> IpSpace { get; set; } = new List<AddressSpace>()
         {
             new AddressSpace()
@@ -49,25 +51,17 @@ namespace AzureDesignStudio.Core.VirtualNetwork
             return subnet;
         }
 
-        public override IList<IDictionary<string, dynamic>> GetArmResources()
+        public override IList<ResourceBase> GetArmResources()
         {
-            var result = new List<IDictionary<string, dynamic>>();
-
-            Properties.Clear();
-
-            Properties.Add("addressSpace", new Dictionary<string, dynamic>()
+            _vnet.Properties = new()
             {
-                {"addressPrefixes", IpSpace.Select(ip => ip.AddressPrefix).ToList()},
-            });
+                AddressSpace = new()
+                {
+                    AddressPrefixes = IpSpace.Select(p => p.AddressPrefix).ToList(),
+                }
+            };
 
-            result.Add(new Dictionary<string, dynamic>()
-            {
-                {"type", ResourceType },
-                {"apiVersion", ApiVersion },
-                {"name", Name},
-                {"location", Location},
-                {"properties", Properties },
-            });
+            var result = base.GetArmResources().ToList();
 
             foreach(var subnet in Subnets)
             {
@@ -93,7 +87,7 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                         };
                         peering.DependsOn.Add(ResourceId);
                         peering.DependsOn.Add(n.ResourceId);
-                        result.Add(peering.GetArmResource());
+                        result.Add(peering.ArmResource);
                     }
                 }
             }

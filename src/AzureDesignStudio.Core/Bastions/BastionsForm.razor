@@ -5,7 +5,7 @@
 
 <Form Model="@bastion" LabelColSpan="6" WrapperColSpan="18" Size="@AntSizeLDSType.Small">
     <NameAndLocation Node="@context" />
-    <FormItem>
+@*    <FormItem>
         <RadioGroup @bind-Value="@context.Sku" ButtonStyle="@RadioButtonStyle.Solid" Size="small">
             <Radio RadioButton Value="@("Basic")">Basic</Radio>
             <Radio RadioButton Value="@("Standard")">Standard</Radio>
@@ -13,7 +13,7 @@
     </FormItem>
     <FormItem>
         <InputNumber DefaultValue="2" @bind-Value="@context.ScaleUnits" Size="small"></InputNumber>
-    </FormItem>
+    </FormItem>*@
 </Form>
 
 @code {

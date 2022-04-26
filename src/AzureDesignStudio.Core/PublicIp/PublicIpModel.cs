@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using AzureDesignStudio.AzureResources.Base;
+using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.PublicIp
 {
@@ -18,17 +19,45 @@ namespace AzureDesignStudio.Core.PublicIp
         }
 
         public override string ServiceName => "Public IP";
-        public override string ApiVersion => "2021-03-01";
-        public override string ResourceType => "Microsoft.Network/publicIPAddresses";
+        private readonly PublicIPAddresses _pipAddress = new()
+        {
+            Sku = new()
+            {
+                Name = "Standard",
+                Tier = "Regional"
+            },
+            Properties = new()
+            {
+                PublicIPAddressVersion = "IPv4",
+                PublicIPAllocationMethod = "Static",
+            },
+        };
+        public override ResourceBase ArmResource => _pipAddress;
         public override Type? DataFormType => typeof(PublicIpForm);
         [DisplayName("IP version")]
-        public string IpVersion { get; set; } = "IPv4";
+        public string IpVersion 
+        { 
+            get => _pipAddress.Properties.PublicIPAddressVersion; 
+            set => _pipAddress.Properties.PublicIPAddressVersion = value; 
+        }
         [DisplayName("IP assignment")]
-        public string IpAllocationMethod { get; set; } = "Static";
+        public string IpAllocationMethod 
+        { 
+            get => _pipAddress.Properties.PublicIPAllocationMethod;
+            set => _pipAddress.Properties.PublicIPAllocationMethod = value; 
+        }
         [DisplayName("SKU")]
-        public string Sku { get; set; } = "Standard";
+        public string Sku 
+        { 
+            get => _pipAddress.Sku.Name; 
+            set => _pipAddress.Sku.Name = value; 
+        }
         [DisplayName("Tier")]
-        public string Tier { get; set; } = "Regional";
+        public string Tier 
+        { 
+            get => _pipAddress.Sku.Tier; 
+            set => _pipAddress.Sku.Tier = value; 
+        }
         public override (bool result, string message) IsDrappable(GroupModel overlappedGroup)
         {
             if (overlappedGroup != null)
@@ -39,33 +68,6 @@ namespace AzureDesignStudio.Core.PublicIp
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
             return mapper.Map<PublicIpDto>(this);
-        }
-        public override IList<IDictionary<string, dynamic>> GetArmResources()
-        {
-            return new List<IDictionary<string, dynamic>>()
-            {
-                GetArmResource(),
-            };
-        }
-        private IDictionary<string, dynamic> GetArmResource()
-        {
-            var sku = new Dictionary<string, string>()
-            {
-                {"name", Sku},
-                {"tier", Tier},
-            };
-            Properties.Clear();
-            Properties["publicIPAllocationMethod"] = IpAllocationMethod;
-            Properties["publicIPAddressVersion"] = IpVersion;
-            return new Dictionary<string, dynamic>()
-            {
-                {"type", ResourceType },
-                {"apiVersion", ApiVersion },
-                {"name", Name},
-                {"location", Location},
-                {"sku", sku},
-                {"properties", Properties },
-            };
         }
     }
 }

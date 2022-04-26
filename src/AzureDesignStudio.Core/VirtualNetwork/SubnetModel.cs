@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
-using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.AzureResources.Base;
+using AzureDesignStudio.AzureResources.Network;
+//using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
-using AzureDesignStudio.Core.SQL;
+//using AzureDesignStudio.Core.SQL;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -20,6 +22,16 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                 OutlineColor = "#cccccc"
             };
         }
+        private readonly VirtualNetworks_subnets _subnet = new()
+        {
+            Properties = new()
+            {
+                AddressPrefix = "10.0.0.0/24",
+                PrivateEndpointNetworkPolicies = "Enabled",
+                PrivateLinkServiceNetworkPolicies = "Enabled"
+            }
+        };
+        public override ResourceBase ArmResource => _subnet;
         public override string ResourceId
         {
             get
@@ -27,13 +39,15 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                 if (Group is not VirtualNetworkModel vnet)
                     throw new Exception($"Subnet needs to be in a vnet.");
 
-                return $"[resourceId('{ResourceType}', '{vnet.Name}','{Name}')]";
+                return $"[resourceId('{_subnet.Type}', '{vnet.Name}','{Name}')]";
             }
         }
-        public override string ApiVersion => "2021-03-01";
-        public override string ResourceType => "Microsoft.Network/virtualNetworks/subnets";
         [Required, DisplayName("Address space")]
-        public string AddressPrefix { get; set; } = "10.0.0.0/24";
+        public string AddressPrefix 
+        { 
+            get => _subnet.Properties.AddressPrefix; 
+            set => _subnet.Properties.AddressPrefix = value; 
+        }
         private static void PopulateServiceEndpoints(NodeModel node, List<IDictionary<string, dynamic>> serviceEndpoints)
         {
             foreach (var port in node.Ports)
@@ -43,58 +57,64 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                     if (link.TargetPort?.Parent == node)
                         continue;
 
-                    if (link.TargetPort?.Parent is SqlDatabaseModel sqlDb
-                        && serviceEndpoints.FirstOrDefault(d => d["service"] == "Microsoft.Sql") is null)
-                    {
-                        serviceEndpoints.Add(new Dictionary<string, dynamic>
-                            {
-                                {"service", "Microsoft.Sql" },
-                                {"locations", new List<string>{ sqlDb.Location } }
-                            });
-                    }
-                    if (link.TargetPort?.Parent is WebAppModel webapp
-                        && serviceEndpoints.FirstOrDefault(d => d["service"] == "Microsoft.Web") is null)
-                    {
-                        serviceEndpoints.Add(new Dictionary<string, dynamic>
-                            {
-                                {"service", "Microsoft.Web" },
-                                {"locations", new List<string>{ "*" } }
-                            });
-                    }
+                    //if (link.TargetPort?.Parent is SqlDatabaseModel sqlDb
+                    //    && serviceEndpoints.FirstOrDefault(d => d["service"] == "Microsoft.Sql") is null)
+                    //{
+                    //    serviceEndpoints.Add(new Dictionary<string, dynamic>
+                    //        {
+                    //            {"service", "Microsoft.Sql" },
+                    //            {"locations", new List<string>{ sqlDb.Location } }
+                    //        });
+                    //}
+                    //if (link.TargetPort?.Parent is WebAppModel webapp
+                    //    && serviceEndpoints.FirstOrDefault(d => d["service"] == "Microsoft.Web") is null)
+                    //{
+                    //    serviceEndpoints.Add(new Dictionary<string, dynamic>
+                    //        {
+                    //            {"service", "Microsoft.Web" },
+                    //            {"locations", new List<string>{ "*" } }
+                    //        });
+                    //}
                 }
             }
         }
-        private IDictionary<string, dynamic> GetArmResource()
+
+        protected override void PopulateArmAttributes()
+        {
+            base.PopulateArmAttributes();
+
+            if (Group is not VirtualNetworkModel vnet)
+                throw new Exception($"Subnet must be in a vnet.");
+
+            ArmResource.Name = $"{vnet.Name}/{Name}";
+        }
+
+        public override IList<ResourceBase> GetArmResources()
         {
             if (Group is not VirtualNetworkModel vnet)
                 throw new Exception($"Subnet must be in a vnet.");
 
-            Properties.Clear();
-            Properties["addressPrefix"] = AddressPrefix;
-            Properties["privateEndpointNetworkPolicies"] = "Enabled";
-            Properties["privateLinkServiceNetworkPolicies"] = "Enabled";
-
             var serviceEndpoints = new List<IDictionary<string, dynamic>>();
             var delegations = new List<IDictionary<string, dynamic>>();
-            foreach(var child in Children)
+            foreach (var child in Children)
             {
-                if (child is AppServicePlanModel
-                    && delegations.FirstOrDefault(d => d["properties"]["serviceName"] == "Microsoft.Web/serverfarms") is null)
-                {
-                    delegations.Add(new Dictionary<string, dynamic>
-                    {
-                        {"name", "appsvc-delegation" },
-                        {"properties", new Dictionary<string, string>
-                            {
-                                {"serviceName", "Microsoft.Web/serverfarms" }
-                            }
-                        }
-                    });
-                }
+                //if (child is AppServicePlanModel
+                //    && delegations.FirstOrDefault(d => d["properties"]["serviceName"] == "Microsoft.Web/serverfarms") is null)
+                //{
+                //    delegations.Add(new Dictionary<string, dynamic>
+                //    {
+                //        {"name", "appsvc-delegation" },
+                //        {"properties", new Dictionary<string, string>
+                //            {
+                //                {"serviceName", "Microsoft.Web/serverfarms" }
+                //            }
+                //        }
+                //    });
+                //}
 
                 if (child is GroupModel group)
                 {
-                    foreach(var node in group.Children)
+                    foreach (var node in group.Children)
                     {
                         PopulateServiceEndpoints(node, serviceEndpoints);
                     }
@@ -104,29 +124,10 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                     PopulateServiceEndpoints(child, serviceEndpoints);
                 }
             }
-            Properties["serviceEndpoints"] = serviceEndpoints;
-            Properties["delegations"] = delegations;
+            //Properties["serviceEndpoints"] = serviceEndpoints;
+            //Properties["delegations"] = delegations;
 
-            return new Dictionary<string, dynamic>()
-            {
-                {"type", ResourceType },
-                {"apiVersion", ApiVersion },
-                {"name", $"{vnet.Name}/{Name}" },
-                {"properties", Properties },
-                {"dependsOn", new List<string>()
-                    {
-                        vnet.ResourceId,
-                    } 
-                }
-            };
-        }
-
-        public override IList<IDictionary<string, dynamic>> GetArmResources()
-        {
-            return new List<IDictionary<string, dynamic>>()
-            {
-                GetArmResource(),
-            };
+            return base.GetArmResources();
         }
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)

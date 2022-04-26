@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AzureDesignStudio.AzureResources.Base;
+using AzureDesignStudio.Core.Common;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace AzureDesignStudio.Core.Models
 {
     public class ArmTemplate
     {
-        public IDictionary<string, dynamic> Template { get; } = new Dictionary<string, dynamic>()
+        public DeploymentTemplate Template { get; } = new()
         {
-            {"$schema", "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#" },
-            {"contentVersion", "1.0.0.0" },
-            //{"apiProfile", "" },
-            {"parameters", new Dictionary<string, dynamic>()},
-            {"variables", new Dictionary<string, dynamic>()},
-            {"resources", new List<IDictionary<string, dynamic>>()}
+            Schema = "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+            ContentVersion = "1.0.0.0",
+            Parameters = new Dictionary<string, Parameter>(),
+            Variables = new Dictionary<string, object>(),
+            Resources = new List<ResourceBase>()
         };
 
         public ArmTemplate(bool useResourceGroupLocation = true)
@@ -26,15 +25,14 @@ namespace AzureDesignStudio.Core.Models
 
         protected void UseLocationParameter()
         {
-            Template["parameters"].Add("location", new Dictionary<string, dynamic>()
+            Template.Parameters.Add("location", new Parameter()
             {
-                {"type", "string" },
-                {"defaultValue", "[resourceGroup().location]" },
-                {"metadata", new Dictionary<string, string>()
-                    {
-                        {"description", "Location for all resources."},
-                    }
-                },
+                Type = "string",
+                DefaultValue = "[resourceGroup().location]",
+                Metadata = new Dictionary<string, string>()
+                {
+                    {"description", "Location for all resources."}
+                }
             });
         }
 
@@ -42,31 +40,46 @@ namespace AzureDesignStudio.Core.Models
         {
             // apiProfile is optional so don't include it by default.
             if (!string.IsNullOrEmpty(apiProfile))
-                Template.Add("apiProfile", apiProfile);
+                Template.ApiProfile = apiProfile;
         }
 
-        public void AddResource(IDictionary<string, dynamic> resource)
+        public void AddResource(ResourceBase resource)
         {
-            Template["resources"].Add(resource);
+            Template.Resources.Add(resource);
         }
 
-        public void AddResource(IList<IDictionary<string, dynamic>> resources)
+        public void AddResource(IList<ResourceBase> resources)
         {
-            Template["resources"].AddRange(resources);
+            foreach(var resource in resources)
+            {
+                Template.Resources.Add(resource);
+            }
         }
 
-        public void AddParameters(IDictionary<string, dynamic> parameters)
+        public void AddParameters(IDictionary<string, Parameter> parameters)
         {
             //Template["parameters"].AddRange(parameters);
             foreach (var parameter in parameters)
             {
-                Template["parameters"].Add(parameter.Key, parameter.Value);
+                Template.Parameters.Add(parameter.Key, parameter.Value);
             }
         }
 
         public void RemoveAllResources()
         {
-            Template["resources"].Clear();
+            Template.Resources.Clear();
+        }
+
+        public string GenerateArmTemplate()
+        {
+            return JsonSerializer.Serialize(Template,
+                new JsonSerializerOptions(JsonSerializerDefaults.Web)
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true,
+                    Converters = { new ResourceBaseJsonConverter() }
+                });
         }
     }
 }

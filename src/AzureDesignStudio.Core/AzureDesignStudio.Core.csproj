@@ -14,6 +14,7 @@
   <ItemGroup>
     <PackageReference Include="AntDesign" Version="0.10.5" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
+	<PackageReference Include="AzureDesignStudio.AzureResources.Network" Version="0.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
