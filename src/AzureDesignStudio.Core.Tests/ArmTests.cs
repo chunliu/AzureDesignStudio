@@ -4,7 +4,7 @@ using AzureDesignStudio.Core.Firewall;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.PublicIp;
 //using AzureDesignStudio.Core.ResourceGroup;
-//using AzureDesignStudio.Core.SQL;
+using AzureDesignStudio.Core.SQL;
 using AzureDesignStudio.Core.VirtualNetwork;
 using Blazor.Diagrams.Core.Models;
 using Microsoft.Azure.Management.Fluent;
@@ -206,91 +206,91 @@ namespace AzureDesignStudio.Core.Tests
             Assert.Null(validateRes.Error);
         }
 
-        //[Fact]
-        //public async Task SqlServerTest()
-        //{
-        //    var armTemplate = new ArmTemplate();
+        [Fact]
+        public async Task SqlServerTest()
+        {
+            var armTemplate = new ArmTemplate();
 
-        //    var sqlServer = new SqlServerModel()
-        //    {
-        //        Name = "azsqlserver"
-        //    };
+            var sqlServer = new SqlServerModel()
+            {
+                Name = "azsqlserver"
+            };
 
-        //    var parameters = new Dictionary<string, dynamic>()
-        //    {
-        //        {"sqlAdmin", new Dictionary<string, string>()
-        //            {
-        //                {"value", "dbadmin" }
-        //            }
-        //        },
-        //        {"sqlAdminPassword", new Dictionary<string, string>()
-        //            {
-        //                {"value", "password" }
-        //            } 
-        //        }
-        //    };
+            var parameters = new Dictionary<string, dynamic>()
+            {
+                {"sqlAdmin", new Dictionary<string, string>()
+                    {
+                        {"value", "dbadmin" }
+                    }
+                },
+                {"sqlAdminPassword", new Dictionary<string, string>()
+                    {
+                        {"value", "password" }
+                    }
+                }
+            };
 
-        //    string p = JsonSerializer.Serialize(parameters,
-        //        new JsonSerializerOptions(JsonSerializerDefaults.Web)
-        //        {
-        //            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        //            WriteIndented = true,
-        //        }
-        //    );
+            string p = JsonSerializer.Serialize(parameters,
+                new JsonSerializerOptions(JsonSerializerDefaults.Web)
+                {
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true,
+                }
+            );
 
-        //    armTemplate.AddParameters(sqlServer.GetArmParameters());
-        //    armTemplate.AddResource(sqlServer.GetArmResources());
+            armTemplate.AddParameters(sqlServer.GetArmParameters());
+            armTemplate.AddResource(sqlServer.GetArmResources());
 
-        //    var validateRes = await ValidateTemplate(armTemplate, p);
-        //    Assert.Null(validateRes?.Error);
-        //}
+            var validateRes = await ValidateTemplate(armTemplate, p);
+            Assert.Null(validateRes?.Error);
+        }
 
-        //[Fact]
-        //public async Task SqlDatabaseTest()
-        //{
-        //    var armTemplate = new ArmTemplate();
+        [Fact]
+        public async Task SqlDatabaseTest()
+        {
+            var armTemplate = new ArmTemplate();
 
-        //    var sqlServer = new SqlServerModel()
-        //    {
-        //        Name = "azsqlserver"
-        //    };
+            var sqlServer = new SqlServerModel()
+            {
+                Name = "azsqlserver"
+            };
 
-        //    var parameters = new Dictionary<string, dynamic>()
-        //    {
-        //        {"sqlAdmin", new Dictionary<string, string>()
-        //            {
-        //                {"value", "dbadmin" }
-        //            }
-        //        },
-        //        {"sqlAdminPassword", new Dictionary<string, string>()
-        //            {
-        //                {"value", "password" }
-        //            }
-        //        }
-        //    };
+            var parameters = new Dictionary<string, dynamic>()
+            {
+                {"sqlAdmin", new Dictionary<string, string>()
+                    {
+                        {"value", "dbadmin" }
+                    }
+                },
+                {"sqlAdminPassword", new Dictionary<string, string>()
+                    {
+                        {"value", "password" }
+                    }
+                }
+            };
 
-        //    string p = JsonSerializer.Serialize(parameters,
-        //        new JsonSerializerOptions(JsonSerializerDefaults.Web)
-        //        {
-        //            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
-        //            WriteIndented = true,
-        //        }
-        //    );
+            string p = JsonSerializer.Serialize(parameters,
+                new JsonSerializerOptions(JsonSerializerDefaults.Web)
+                {
+                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                    WriteIndented = true,
+                }
+            );
 
-        //    armTemplate.AddParameters(sqlServer.GetArmParameters());
-        //    armTemplate.AddResource(sqlServer.GetArmResources());
+            armTemplate.AddParameters(sqlServer.GetArmParameters());
+            armTemplate.AddResource(sqlServer.GetArmResources());
 
-        //    var sqlDatabase = new SqlDatabaseModel()
-        //    {
-        //        Name = "azsqldb1",
-        //        Group = sqlServer,
-        //    };
+            var sqlDatabase = new SqlDatabaseModel()
+            {
+                Name = "azsqldb1",
+                Group = sqlServer,
+            };
 
-        //    armTemplate.AddResource(sqlDatabase.GetArmResources());
+            armTemplate.AddResource(sqlDatabase.GetArmResources());
 
-        //    var validateRes = await ValidateTemplate(armTemplate, p);
-        //    Assert.Null(validateRes?.Error);
-        //}
+            var validateRes = await ValidateTemplate(armTemplate, p);
+            Assert.Null(validateRes?.Error);
+        }
 
         //[Fact]
         //public async Task AppServicePlanTest()

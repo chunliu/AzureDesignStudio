@@ -5,7 +5,7 @@ using AzureDesignStudio.Core.Bastions;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.Firewall;
 using AzureDesignStudio.Core.PublicIp;
-//using AzureDesignStudio.Core.SQL;
+using AzureDesignStudio.Core.SQL;
 using AzureDesignStudio.Core.VirtualNetwork;
 using Blazor.Diagrams.Core.Models;
 
@@ -34,17 +34,17 @@ namespace AzureDesignStudio.Core.DTO
             CreateMap<FirewallPolicyModel, FirewallPolicyDto>()
                 .ReverseMap();
 
-            //CreateMap<SqlServerModel, SqlServerDto>()
-            //    .AfterMap((s, d) => d.TypeKey = AdsConstants.SqlServer)
-            //    .ReverseMap()
-            //    .AfterMap((s, d) => d.Group = null);
+            CreateMap<SqlServerModel, SqlServerDto>()
+                .AfterMap((s, d) => d.TypeKey = AdsConstants.SqlServer)
+                .ReverseMap()
+                .AfterMap((s, d) => d.Group = null);
 
             CreateMapForAzureNode<VirtualNetworkModel, VirtualNetworkDto>(AdsConstants.VirtualNetwork);
             CreateMapForAzureNode<SubnetModel, SubnetDto>(AdsConstants.Subnet);
             CreateMapForAzureNode<PublicIpModel, PublicIpDto>(AdsConstants.PublicIp);
             CreateMapForAzureNode<BastionsModel, BastionsDto>(AdsConstants.Bastions);
             CreateMapForAzureNode<AzureFirewallModel, AzureFirewallDto>(AdsConstants.AzureFirewall);
-            //CreateMapForAzureNode<SqlDatabaseModel, SqlDatabaseDto>(AdsConstants.SqlDatabase);
+            CreateMapForAzureNode<SqlDatabaseModel, SqlDatabaseDto>(AdsConstants.SqlDatabase);
             //CreateMapForAzureNode<AppServicePlanModel, AppServicePlanDto>(AdsConstants.AppServicePlan);
             //CreateMapForAzureNode<WebAppModel, WebAppDto>(AdsConstants.WebApp);
             //CreateMapForAzureNode<FunctionAppModel, FunctionAppDto>(AdsConstants.FunctionApp);

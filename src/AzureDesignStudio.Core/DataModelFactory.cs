@@ -12,7 +12,7 @@ using AzureDesignStudio.Core.Models;
 //using AzureDesignStudio.Core.VirtualMachine;
 using AzureDesignStudio.Core.PublicIp;
 //using AzureDesignStudio.Core.ResourceGroup;
-//using AzureDesignStudio.Core.SQL;
+using AzureDesignStudio.Core.SQL;
 //using AzureDesignStudio.Core.Storage;
 using AzureDesignStudio.Core.VirtualNetwork;
 using Blazor.Diagrams.Core;
@@ -30,7 +30,7 @@ public static class DataModelFactory
         //diagram.RegisterModelComponent<ResourceGroupModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<VirtualNetworkModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<SubnetModel, AzureGroupComponent>();
-        //diagram.RegisterModelComponent<SqlServerModel, AzureGroupComponent>();
+        diagram.RegisterModelComponent<SqlServerModel, AzureGroupComponent>();
         //diagram.RegisterModelComponent<AppServicePlanModel, AzureGroupComponent>();
     }
     public static NodeModel CreateNodeModelFromKey(string key, string name, string imagePath)
@@ -45,8 +45,8 @@ public static class DataModelFactory
             AdsConstants.AzureFirewall => new AzureFirewallModel(),
             AdsConstants.Bastions => new BastionsModel(),
             AdsConstants.PublicIp => new PublicIpModel(),
-            //AdsConstants.SqlServer => new SqlServerModel(),
-            //AdsConstants.SqlDatabase => new SqlDatabaseModel(),
+            AdsConstants.SqlServer => new SqlServerModel(),
+            AdsConstants.SqlDatabase => new SqlDatabaseModel(),
             //AdsConstants.AppServicePlan => new AppServicePlanModel(),
             //AdsConstants.FunctionApp => new FunctionAppModel(),
             //AdsConstants.WebApp => new WebAppModel(),
@@ -96,8 +96,8 @@ public static class DataModelFactory
             AdsConstants.Bastions => typeof(BastionsDto),
             AdsConstants.PublicIp => typeof(PublicIpDto),
             AdsConstants.AzureFirewall => typeof(AzureFirewallDto),
-            //AdsConstants.SqlServer => typeof(SqlServerDto),
-            //AdsConstants.SqlDatabase => typeof(SqlDatabaseDto),
+            AdsConstants.SqlServer => typeof(SqlServerDto),
+            AdsConstants.SqlDatabase => typeof(SqlDatabaseDto),
             //AdsConstants.AppServicePlan => typeof(AppServicePlanDto),
             //AdsConstants.WebApp => typeof(WebAppDto),
             //AdsConstants.FunctionApp => typeof(FunctionAppDto),
@@ -115,8 +115,8 @@ public static class DataModelFactory
             AdsConstants.PublicIp => mapper.Map<PublicIpModel>(dto),
             AdsConstants.Bastions => mapper.Map<BastionsModel>(dto),
             AdsConstants.AzureFirewall => mapper.Map<AzureFirewallModel>(dto),
-            //AdsConstants.SqlServer => mapper.Map<SqlServerModel>(dto),
-            //AdsConstants.SqlDatabase => mapper.Map<SqlDatabaseModel>(dto),
+            AdsConstants.SqlServer => mapper.Map<SqlServerModel>(dto),
+            AdsConstants.SqlDatabase => mapper.Map<SqlDatabaseModel>(dto),
             //AdsConstants.AppServicePlan => mapper.Map<AppServicePlanModel>(dto),
             //AdsConstants.WebApp => mapper.Map<WebAppModel>(dto),
             //AdsConstants.FunctionApp => mapper.Map<FunctionAppModel>(dto),
