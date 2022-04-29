@@ -16,7 +16,7 @@
     <PackageReference Include="AutoMapper" Version="11.0.1" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Network" Version="0.2.2" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Sql" Version="0.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
