@@ -9,6 +9,7 @@
 @inject DrawerService drawerService
 @inject DesignGrpcService designService
 @inject IHttpClientFactory clientFactory
+@inject ModalService modalService
 
 <div>
     <Menu @ref="@topMenu" Mode="@MenuMode.Horizontal" OnMenuItemClicked="HandleMenuItemClicked">        

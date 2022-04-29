@@ -4,13 +4,12 @@ using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Microsoft.JSInterop;
 using System.Net.Http.Json;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using Blazor.Diagrams.Core.Models;
 using AzureDesignStudio.Components.MenuDrawer;
 using AzureDesignStudio.Models;
-using Microsoft.AspNetCore.Components;
 using AzureDesignStudio.Core.VirtualNetwork;
+using AzureDesignStudio.Services;
 
 namespace AzureDesignStudio.Components
 {
@@ -111,14 +110,16 @@ namespace AzureDesignStudio.Components
                     case "arm":
                         await ExportArmTemplate();
                         break;
+                    case "bicep":
+                        await ExportBicep();
+                        break;
                     case "img":
                         await InvokePrintJS();
                         break;
                 };
             };
         }
-
-        private async Task ExportArmTemplate()
+        private async Task<string> GetArmJson()
         {
             var armTemplate = new ArmTemplate();
             try
@@ -143,24 +144,87 @@ namespace AzureDesignStudio.Components
             catch (Exception ex)
             {
                 await messageService.Error($"{ex.Message}");
+                return string.Empty;
+            }
+
+            return armTemplate.GenerateArmTemplate();
+        }
+        private async Task ExportBicep()
+        {
+            var modalRef = await modalService.CreateModalAsync(new ModalOptions
+            {
+                Centered = true,
+                Footer = null,
+                Closable = false,
+                Visible = true,
+                MaskClosable = false,
+                Content = builder =>
+                {
+                    builder.OpenElement(0, "div");
+                    builder.AddAttribute(1, "style", "text-align: center;");
+                    builder.OpenComponent<Spin>(3);
+                    builder.AddAttribute(4, "Tip", "Working hard on it...");
+                    builder.CloseComponent();
+                    builder.CloseElement();
+                }
+            });
+            
+            await Task.Delay(10);
+
+            var jsonString = await GetArmJson();
+            if (string.IsNullOrEmpty(jsonString))
+            {
                 return;
             }
 
-            var armString = armTemplate.GenerateArmTemplate();
+            var bicep = BicepDecompiler.Decompile(jsonString);
+            await modalRef.CloseAsync();
 
-            await OpenJsonDrawer(armString);
+            if (!string.IsNullOrEmpty(bicep.Error))
+            {
+                logger.LogError($"Decompile Bicep failed: {bicep.Error}");
+                await messageService.Error($"{bicep.Error}");
+                return;
+            }
+
+            await OpenCodeDrawer(new CodeDrawerContent
+            {
+                Type = CodeDrawerContentType.Bicep,
+                Content = bicep.BicepFile!,
+            });
         }
-        private async Task OpenJsonDrawer(string json)
+        private async Task ExportArmTemplate()
+        {
+            var jsonString = await GetArmJson();
+            if (string.IsNullOrEmpty(jsonString))
+            {
+                return;
+            }
+            
+            await OpenCodeDrawer(new CodeDrawerContent 
+            { 
+                Type = CodeDrawerContentType.Json,
+                Content = jsonString
+            });
+        }
+        private async Task OpenCodeDrawer(CodeDrawerContent content)
         {
             var currentWindowSize = await JS.InvokeAsync<WindowSize>("getWindowSize");
+            var title = content.Type switch
+            {
+                CodeDrawerContentType.Json => "Arm Template",
+                CodeDrawerContentType.Bicep => "Bicep File",
+                _ => "Generated Code"
+            };
+
             var options = new DrawerOptions
             {
-                Title = "ARM Template",
+                Title = title,
                 Placement = "bottom",
                 Height = currentWindowSize.Height
             };
 
-            await drawerService.CreateAsync<CodeDrawerTemplate, string, string>(options, json);
+            await drawerService.CreateAsync<CodeDrawerTemplate, CodeDrawerContent, string>(options, content);
         }
 
         private async Task InvokePrintJS()

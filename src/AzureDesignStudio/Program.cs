@@ -32,13 +32,14 @@ builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
 builder.Services.AddBlazorApplicationInsights();
 // Grpc
 builder.Services.AddScoped<DesignGrpcService>();
-builder.Services.AddScoped(service =>
+builder.Services.AddGrpcClient<Design.DesignClient>("DesignClientWithAuth", o =>
 {
-    var baseAddressMessageHandler = service.GetRequiredService<BaseAddressAuthorizationMessageHandler>();
+    o.Address = new Uri(builder.HostEnvironment.BaseAddress);
+}).ConfigurePrimaryHttpMessageHandler(() =>
+{
+    var baseAddressMessageHandler = builder.Services.BuildServiceProvider().GetRequiredService<BaseAddressAuthorizationMessageHandler>();
     baseAddressMessageHandler.InnerHandler = new HttpClientHandler();
-    var grpcWebHandler = new GrpcWebHandler(GrpcWebMode.GrpcWeb, baseAddressMessageHandler);
-    var channel = GrpcChannel.ForAddress(builder.HostEnvironment.BaseAddress, new GrpcChannelOptions { HttpHandler = grpcWebHandler });
-    return new Design.DesignClient(channel);
+    return new GrpcWebHandler(GrpcWebMode.GrpcWeb, baseAddressMessageHandler);
 });
 
 builder.Services.AddAntDesign();

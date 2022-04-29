@@ -1,14 +1,18 @@
 ﻿@inherits FeedbackComponent<string, string>
 
+<Text>Export your design as: </Text>
+<br />
 <RadioGroup @bind-Value="@exportType">
-    <Radio Value="@("arm")">Export as ARM template</Radio>
-    <Radio Value="@("img")">Export as PNG image</Radio>
+    <Radio Style="@style" Value="@("arm")">ARM template</Radio>
+    <Radio Style="@style" Value="@("bicep")">Bicep file</Radio>
+    <Radio Style="@style" Value="@("img")">PNG image</Radio>
 </RadioGroup>
 <br />
 <br />
 <Button Type="primary" OnClick="HandleButtonClick" >Preview</Button>
 
 @code {
+    string style = "display: block;height:30px;line-height:30px";
     string exportType = "arm";
     async void HandleButtonClick()
     {

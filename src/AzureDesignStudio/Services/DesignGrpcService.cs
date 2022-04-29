@@ -1,12 +1,18 @@
 ﻿using AzureDesignStudio.SharedModels.Protos;
+using Grpc.Net.ClientFactory;
 
 namespace AzureDesignStudio.Services
 {
     public class DesignGrpcService
     {
-        private readonly Design.DesignClient designClient = null!;
+        private readonly Design.DesignClient _designClient = null!;
+        private readonly GrpcClientFactory _clientFactory = null!;
 
-        public DesignGrpcService(Design.DesignClient client) => designClient = client;
+        public DesignGrpcService(GrpcClientFactory grpcClientFactory)
+        {
+            _clientFactory = grpcClientFactory;
+            _designClient = _clientFactory.CreateClient<Design.DesignClient>("DesignClientWithAuth");
+        }
 
         public async Task<int> SaveDesign(string designName, string data)
         {
@@ -16,14 +22,14 @@ namespace AzureDesignStudio.Services
                 Data = data
             };
 
-            var response = await designClient.SaveAsync(design);
+            var response = await _designClient.SaveAsync(design);
 
             return response.StatusCode;
         }
 
         public async Task<(int, IList<string>?)> GetAllSavedDesign()
         {
-            var response = await designClient.GetSavedAsync(new GetSavedDesignRequest());
+            var response = await _designClient.GetSavedAsync(new GetSavedDesignRequest());
 
             return (response.StatusCode, response.Names?.ToList());
         }
@@ -34,7 +40,7 @@ namespace AzureDesignStudio.Services
             {
                 Name = name,
             };
-            var response = await designClient.LoadAsync(request);
+            var response = await _designClient.LoadAsync(request);
 
             return (response.StatusCode, response.Data);
         }
@@ -42,7 +48,7 @@ namespace AzureDesignStudio.Services
         public async Task<int> DeleteDesign(string name)
         {
             var request = new DeleteDesignRequest { Name = name };
-            var response = await designClient.DeleteAsync(request);
+            var response = await _designClient.DeleteAsync(request);
             return response.StatusCode;
         }
     }

@@ -1,22 +1,31 @@
 ﻿@using System.Text
-@inherits FeedbackComponent<string, string>
+@using AzureDesignStudio.Models
+@inherits FeedbackComponent<CodeDrawerContent, string>
 @inject IJSRuntime JS
 
 <Affix TargetSelector=".ant-drawer-body" OnChange="HandleAffixChange">
     <Button Icon="download" Style="@buttonStyle" OnClick="HandleButtonClick">Download</Button>
 </Affix>
-<pre class="line-numbers language-json"><code>
-    @json
+<pre><code class="@codeClass">
+    @drawerContent.Content
 </code></pre>
 
 @code {
-    private string json = null!;
+    private CodeDrawerContent drawerContent = null!;
+    private string codeClass = "line-numbers language-json";
     private const string upperRight = "position:absolute;top:86px;right:41px;z-index:10";
     private string buttonStyle = upperRight;
 
     protected override Task OnInitializedAsync()
     {
-        json = Options;
+        drawerContent = Options;
+        codeClass = drawerContent.Type switch
+        {
+            CodeDrawerContentType.Bicep => "line-numbers language-bicep",
+            CodeDrawerContentType.Json => "line-numbers language-json",
+            _ => "line-numbers language-json"
+        };
+
         return base.OnInitializedAsync();
     }
 
@@ -41,7 +50,14 @@
 
     async Task HandleButtonClick()
     {
-        await DownloadFile(json, "azure-design-studio.json", "application/json");
+        var filename = drawerContent.Type switch
+        {
+            CodeDrawerContentType.Json => "azure-design-studio.json",
+            CodeDrawerContentType.Bicep => "azure-design-studio.bicep",
+            _ => "azure-design-studio.json"
+        };
+
+        await DownloadFile(drawerContent.Content, filename, "application/json");
     }
 
     // According to: https://docs.microsoft.com/en-us/aspnet/core/blazor/file-downloads?view=aspnetcore-6.0
