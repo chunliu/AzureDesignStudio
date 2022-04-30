@@ -27,7 +27,19 @@ namespace AzureDesignStudio.Core.SQL
 
             return base.IsDrappable(overlappedGroup);
         }
-        private readonly Servers_databases _database = new();
+        private readonly ServersDatabases _database = new()
+        {
+            Sku = new()
+            {
+                Name = "GP_Gen5_2",
+                Tier = "GeneralPurpose"
+            },
+            Properties = new()
+            {
+                Collation = "SQL_Latin1_General_CP1_CI_AS",
+                CatalogCollation = "SQL_Latin1_General_CP1_CI_AS",
+            }
+        };
         public override ResourceBase ArmResource => _database;
         public override string ResourceId
         {
@@ -40,9 +52,17 @@ namespace AzureDesignStudio.Core.SQL
             }
         }
         [Required, DisplayName("SKU Name")]
-        public string SkuName { get; set; } = "GP_Gen5_2";
+        public string SkuName 
+        { 
+            get => _database.Sku.Name; 
+            set => _database.Sku.Name = value; 
+        }
         [Required, DisplayName("Tier")]
-        public string SkuTier { get; set; } = "GeneralPurpose";
+        public string SkuTier 
+        { 
+            get => _database.Sku.Tier; 
+            set => _database.Sku.Tier = value; 
+        }
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
@@ -56,18 +76,6 @@ namespace AzureDesignStudio.Core.SQL
                 throw new Exception("SQL database must be in a SQL server.");
 
             _database.Name = $"{sqlServer.Name}/{Name}";
-
-            _database.Sku = new()
-            {
-                Name = SkuName,
-                Tier = SkuTier,
-            };
-
-            _database.Properties = new()
-            {
-                Collation = "SQL_Latin1_General_CP1_CI_AS",
-                CatalogCollation = "SQL_Latin1_General_CP1_CI_AS",
-            };
 
             _database.DependsOn = new List<string> { sqlServer.ResourceId };
         }

@@ -22,7 +22,7 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                 OutlineColor = "#cccccc"
             };
         }
-        private readonly VirtualNetworks_subnets _subnet = new()
+        private readonly VirtualNetworksSubnets _subnet = new()
         {
             Properties = new()
             {

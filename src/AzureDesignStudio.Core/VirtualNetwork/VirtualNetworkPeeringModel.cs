@@ -6,7 +6,7 @@ namespace AzureDesignStudio.Core.VirtualNetwork
 {
     public class VirtualNetworkPeeringModel : IAzureResource
     {
-        private readonly VirtualNetworks_virtualNetworkPeerings _virtualNetworkPeerings = new()
+        private readonly VirtualNetworksVirtualNetworkPeerings _virtualNetworkPeerings = new()
         {
             Properties = new()
             {
