@@ -1,0 +1,34 @@
+﻿@using AzureDesignStudio.Core.Components
+@using Blazor.Diagrams.Core
+@using Blazor.Diagrams.Core.Models
+
+<Form Model="@appsvcPlan" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
+    <NameAndLocation Node="@context" />
+</Form>
+
+@code {
+    [CascadingParameter]
+    public NodeModel Node { get; set; } = null!;
+    [CascadingParameter]
+    public Diagram Diagram { get; set; } = null!;
+
+    private AppServicePlanModel appsvcPlan = null!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        appsvcPlan = (Node as AppServicePlanModel)!;
+    }
+
+    private void HandleOSChange(string value)
+    {
+        foreach(var child in appsvcPlan.Children)
+        {
+            if (child is WebAppModel w)
+            {
+                w.RuntimeStack = null!;
+            }
+        }
+    }
+}

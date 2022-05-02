@@ -2,7 +2,7 @@
 //using AzureDesignStudio.Core.AKS;
 //using AzureDesignStudio.Core.APIM;
 //using AzureDesignStudio.Core.AppGateway;
-//using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Bastions;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.Components;
@@ -13,7 +13,7 @@ using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.PublicIp;
 //using AzureDesignStudio.Core.ResourceGroup;
 using AzureDesignStudio.Core.SQL;
-//using AzureDesignStudio.Core.Storage;
+using AzureDesignStudio.Core.Storage;
 using AzureDesignStudio.Core.VirtualNetwork;
 using Blazor.Diagrams.Core;
 using Blazor.Diagrams.Core.Models;
@@ -31,14 +31,14 @@ public static class DataModelFactory
         diagram.RegisterModelComponent<VirtualNetworkModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<SubnetModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<SqlServerModel, AzureGroupComponent>();
-        //diagram.RegisterModelComponent<AppServicePlanModel, AzureGroupComponent>();
+        diagram.RegisterModelComponent<AppServicePlanModel, AzureGroupComponent>();
     }
     public static NodeModel CreateNodeModelFromKey(string key, string name, string imagePath)
     {
         var result = key switch
         {
             //AdsConstants.ResourceGroup => new ResourceGroupModel(),
-            //AdsConstants.StorageAccount => new StorageAccountModel(),
+            AdsConstants.StorageAccount => new StorageAccountModel(),
             AdsConstants.VirtualNetwork => new VirtualNetworkModel(),
             //AdsConstants.VirtualMachine => new VirtualMachineModel(),
             AdsConstants.Subnet => new SubnetModel(),
@@ -47,9 +47,9 @@ public static class DataModelFactory
             AdsConstants.PublicIp => new PublicIpModel(),
             AdsConstants.SqlServer => new SqlServerModel(),
             AdsConstants.SqlDatabase => new SqlDatabaseModel(),
-            //AdsConstants.AppServicePlan => new AppServicePlanModel(),
+            AdsConstants.AppServicePlan => new AppServicePlanModel(),
             //AdsConstants.FunctionApp => new FunctionAppModel(),
-            //AdsConstants.WebApp => new WebAppModel(),
+            AdsConstants.WebApp => new WebAppModel(),
             //AdsConstants.AKSCluster => new AKSModel(),
             //AdsConstants.APIM => new APIMModel(),
             //AdsConstants.AppGateway => new AppGatewayModel(),
@@ -98,8 +98,8 @@ public static class DataModelFactory
             AdsConstants.AzureFirewall => typeof(AzureFirewallDto),
             AdsConstants.SqlServer => typeof(SqlServerDto),
             AdsConstants.SqlDatabase => typeof(SqlDatabaseDto),
-            //AdsConstants.AppServicePlan => typeof(AppServicePlanDto),
-            //AdsConstants.WebApp => typeof(WebAppDto),
+            AdsConstants.AppServicePlan => typeof(AppServicePlanDto),
+            AdsConstants.WebApp => typeof(WebAppDto),
             //AdsConstants.FunctionApp => typeof(FunctionAppDto),
             //AdsConstants.APIM => typeof(APIMDto),
             _ => throw new NotImplementedException(),
@@ -117,8 +117,8 @@ public static class DataModelFactory
             AdsConstants.AzureFirewall => mapper.Map<AzureFirewallModel>(dto),
             AdsConstants.SqlServer => mapper.Map<SqlServerModel>(dto),
             AdsConstants.SqlDatabase => mapper.Map<SqlDatabaseModel>(dto),
-            //AdsConstants.AppServicePlan => mapper.Map<AppServicePlanModel>(dto),
-            //AdsConstants.WebApp => mapper.Map<WebAppModel>(dto),
+            AdsConstants.AppServicePlan => mapper.Map<AppServicePlanModel>(dto),
+            AdsConstants.WebApp => mapper.Map<WebAppModel>(dto),
             //AdsConstants.FunctionApp => mapper.Map<FunctionAppModel>(dto),
             //AdsConstants.APIM => mapper.Map<APIMModel>(dto),
             _ => throw new NotImplementedException(),

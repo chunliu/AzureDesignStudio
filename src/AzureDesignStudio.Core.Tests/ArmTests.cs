@@ -1,4 +1,4 @@
-//using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Bastions;
 using AzureDesignStudio.Core.Firewall;
 using AzureDesignStudio.Core.Models;
@@ -292,42 +292,44 @@ namespace AzureDesignStudio.Core.Tests
             Assert.Null(validateRes?.Error);
         }
 
-        //[Fact]
-        //public async Task AppServicePlanTest()
-        //{
-        //    var armTemplate = new ArmTemplate();
+        [Fact]
+        public async Task AppServicePlanTest()
+        {
+            var armTemplate = new ArmTemplate();
 
-        //    var appServicePlan = new AppServicePlanModel()
-        //    {
-        //        Name = "azappserviceplan"
-        //    };
+            var appServicePlan = new AppServicePlanModel()
+            {
+                Name = "azappserviceplan"
+            };
 
-        //    armTemplate.AddResource(appServicePlan.GetArmResources());
+            armTemplate.AddResource(appServicePlan.GetArmResources());
 
-        //    var validateRes = await ValidateTemplate(armTemplate);
-        //    Assert.Null(validateRes?.Error);
-        //}
-        //[Fact]
-        //public async Task WebAppTest()
-        //{
-        //    var armTemplate = new ArmTemplate();
+            var validateRes = await ValidateTemplate(armTemplate);
+            Assert.Null(validateRes?.Error);
+        }
+        [Fact]
+        public async Task WebAppTest()
+        {
+            var armTemplate = new ArmTemplate();
 
-        //    //var appServicePlan = new AppServicePlanModel()
-        //    //{
-        //    //    Name = "azappserviceplan"
-        //    //};
-        //    //armTemplate.AddResource(appServicePlan.GetArmResources());
+            var appServicePlan = new AppServicePlanModel()
+            {
+                Name = "azappserviceplan"
+            };
+            armTemplate.AddResource(appServicePlan.GetArmResources());
 
-        //    var webApp = new WebAppModel()
-        //    {
-        //        Name = "testwebapp4365",
-        //        //Group = appServicePlan,
-        //        RuntimeStack = "NODE|14-lts"
-        //    };
-        //    armTemplate.AddResource(webApp.GetArmResources());
+            var webApp = new WebAppModel()
+            {
+                Name = "testwebapp4365",
+                //Group = appServicePlan,
+                RuntimeStack = "NODE|14-lts"
+            };
+            appServicePlan.AddChild(webApp);
 
-        //    var validateRes = await ValidateTemplate(armTemplate);
-        //    Assert.Null(validateRes?.Error);
-        //}
+            armTemplate.AddResource(webApp.GetArmResources());
+
+            var validateRes = await ValidateTemplate(armTemplate);
+            Assert.Null(validateRes?.Error);
+        }
     }
 }
