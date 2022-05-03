@@ -48,7 +48,7 @@ public static class DataModelFactory
             AdsConstants.SqlServer => new SqlServerModel(),
             AdsConstants.SqlDatabase => new SqlDatabaseModel(),
             AdsConstants.AppServicePlan => new AppServicePlanModel(),
-            //AdsConstants.FunctionApp => new FunctionAppModel(),
+            AdsConstants.FunctionApp => new FunctionAppModel(),
             AdsConstants.WebApp => new WebAppModel(),
             //AdsConstants.AKSCluster => new AKSModel(),
             //AdsConstants.APIM => new APIMModel(),
@@ -100,7 +100,7 @@ public static class DataModelFactory
             AdsConstants.SqlDatabase => typeof(SqlDatabaseDto),
             AdsConstants.AppServicePlan => typeof(AppServicePlanDto),
             AdsConstants.WebApp => typeof(WebAppDto),
-            //AdsConstants.FunctionApp => typeof(FunctionAppDto),
+            AdsConstants.FunctionApp => typeof(FunctionAppDto),
             //AdsConstants.APIM => typeof(APIMDto),
             _ => throw new NotImplementedException(),
         };
@@ -119,7 +119,7 @@ public static class DataModelFactory
             AdsConstants.SqlDatabase => mapper.Map<SqlDatabaseModel>(dto),
             AdsConstants.AppServicePlan => mapper.Map<AppServicePlanModel>(dto),
             AdsConstants.WebApp => mapper.Map<WebAppModel>(dto),
-            //AdsConstants.FunctionApp => mapper.Map<FunctionAppModel>(dto),
+            AdsConstants.FunctionApp => mapper.Map<FunctionAppModel>(dto),
             //AdsConstants.APIM => mapper.Map<APIMModel>(dto),
             _ => throw new NotImplementedException(),
         };

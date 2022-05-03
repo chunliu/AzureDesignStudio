@@ -31,7 +31,7 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                 PrivateLinkServiceNetworkPolicies = "Enabled"
             }
         };
-        public override ResourceBase ArmResource => _subnet;
+        protected override ResourceBase ArmResource => _subnet;
         public override string ResourceId
         {
             get

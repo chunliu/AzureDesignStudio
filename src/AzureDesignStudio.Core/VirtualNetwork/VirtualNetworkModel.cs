@@ -24,7 +24,7 @@ namespace AzureDesignStudio.Core.VirtualNetwork
         public override string ServiceName => "Virtual Network";
         public override Type? DataFormType => typeof(VirtualNetworkForm);
         private readonly VirtualNetworks _vnet = new();
-        public override ResourceBase ArmResource => _vnet;
+        protected override ResourceBase ArmResource => _vnet;
         public List<AddressSpace> IpSpace { get; set; } = new List<AddressSpace>()
         {
             new AddressSpace()

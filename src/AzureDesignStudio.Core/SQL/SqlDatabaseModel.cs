@@ -40,7 +40,7 @@ namespace AzureDesignStudio.Core.SQL
                 CatalogCollation = "SQL_Latin1_General_CP1_CI_AS",
             }
         };
-        public override ResourceBase ArmResource => _database;
+        protected override ResourceBase ArmResource => _database;
         public override string ResourceId
         {
             get

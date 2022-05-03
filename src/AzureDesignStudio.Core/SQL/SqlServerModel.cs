@@ -33,7 +33,7 @@ namespace AzureDesignStudio.Core.SQL
         public override string ServiceName => "Azure SQL Server";
         public override Type? DataFormType => typeof(SqlServerForm);
         private readonly Servers _servers = new();
-        public override ResourceBase ArmResource => _servers;
+        protected override ResourceBase ArmResource => _servers;
 
         public override IDictionary<string, Parameter> GetArmParameters()
         {

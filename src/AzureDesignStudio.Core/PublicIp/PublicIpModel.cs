@@ -32,7 +32,7 @@ namespace AzureDesignStudio.Core.PublicIp
                 PublicIPAllocationMethod = "Static",
             },
         };
-        public override ResourceBase ArmResource => _pipAddress;
+        protected override ResourceBase ArmResource => _pipAddress;
         public override Type? DataFormType => typeof(PublicIpForm);
         [DisplayName("IP version")]
         public string IpVersion 

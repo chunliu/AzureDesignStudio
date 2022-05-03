@@ -30,7 +30,7 @@ namespace AzureDesignStudio.Core.Models
         #endregion
 
         #region IAzureResource
-        public virtual ResourceBase ArmResource => throw new NotImplementedException();
+        protected virtual ResourceBase ArmResource => throw new NotImplementedException();
         public virtual string ResourceId => $"[resourceId('{ArmResource.Type}', '{Name}')]";
         public string Name { get; set; } = string.Empty;
         public virtual string Location

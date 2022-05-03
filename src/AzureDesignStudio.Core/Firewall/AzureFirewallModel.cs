@@ -21,7 +21,7 @@ namespace AzureDesignStudio.Core.Firewall
         }
         public override string ServiceName => "Azure Firewall";
         private readonly AzureFirewalls _firewall = new();
-        public override ResourceBase ArmResource => _firewall;
+        protected override ResourceBase ArmResource => _firewall;
         public override Type? DataFormType => typeof(AzureFirewallForm);
         private string sku = "Premium";
         [DisplayName("SKU")]

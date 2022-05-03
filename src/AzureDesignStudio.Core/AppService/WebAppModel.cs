@@ -36,7 +36,7 @@ namespace AzureDesignStudio.Core.AppService
                 ClientAffinityEnabled = false,
             }
         };
-        public override ResourceBase ArmResource => _webapp;
+        protected override ResourceBase ArmResource => _webapp;
         public virtual string Kind => _webapp.Kind;
         [Required, DisplayName("Publish")]
         public string Publish { get; set; } = "code";

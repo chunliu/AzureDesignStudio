@@ -28,7 +28,7 @@ namespace AzureDesignStudio.Core.Storage
                 MinimumTlsVersion = "TLS1_2",
             }
         };
-        public override ResourceBase ArmResource => _storageAccount;
+        protected override ResourceBase ArmResource => _storageAccount;
         [Required, DisplayName("Sku")]
         public string SkuName 
         { 

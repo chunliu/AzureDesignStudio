@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
+using AzureDesignStudio.AzureResources.Web;
 using AzureDesignStudio.Core.DTO;
-//using AzureDesignStudio.Core.Storage;
+using AzureDesignStudio.Core.Storage;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,11 +13,11 @@ namespace AzureDesignStudio.Core.AppService
         public override Type? DataFormType => typeof(FunctionAppForm);
         [Required, DisplayName("Hosting plan")]
         public string HostingPlan { get; set; } = null!;
-        //public StorageAccountModel StorageAccount = new()
-        //{
-        //    Kind = "StorageV2",
-        //    SkuName = "Standard_LRS"
-        //};
+        public StorageAccountModel StorageAccount = new()
+        {
+            Kind = "StorageV2",
+            SkuName = "Standard_LRS"
+        };
         public override string Kind
         {
             get => ServicePlanOS == "linux" ? "functionapp,linux" : "functionapp";
@@ -31,158 +32,158 @@ namespace AzureDesignStudio.Core.AppService
         {
             return mapper.Map<FunctionAppDto>(this);
         }
-        private void CreateFuncAppSettings(IDictionary<string, dynamic> siteConfig)
+        private void CreateFuncAppSettings(ref SiteConfig siteConfig)
         {
-            var appSettings = new List<IDictionary<string, string>>();
+            if (siteConfig.AppSettings == null)
+                siteConfig.AppSettings = new List<NameValuePair>();
 
             var stacks = RuntimeStack.Split("|");
             if (Publish != "code" || (stacks[0] == "dotnet" && stacks[1] == "v3.1"))
             {
-                appSettings.Add(new Dictionary<string, string>
+                siteConfig.AppSettings.Add(new()
                 {
-                    {"name", "FUNCTIONS_EXTENSION_VERSION" },
-                    {"value", "~3" }
+                    Name = "FUNCTIONS_EXTENSION_VERSION",
+                    Value = "~3"
                 });
             }
             else
             {
-                appSettings.Add(new Dictionary<string, string>
+                siteConfig.AppSettings.Add(new()
                 {
-                    {"name", "FUNCTIONS_EXTENSION_VERSION" },
-                    {"value", "~4" }
+                    Name = "FUNCTIONS_EXTENSION_VERSION",
+                    Value = "~4"
                 });
             }
 
-            //StorageAccount.Name = "astg" + Name.ToLower();
-            //appSettings.Add(new Dictionary<string, string>
-            //{
-            //    {"name", "AzureWebJobsStorage" },
-            //    {"value", $"[concat('DefaultEndpointsProtocol=https;AccountName={StorageAccount.Name};AccountKey=',{StorageAccount.AccountKey})]" }
-            //});
+            StorageAccount.Name = "astg" + Name.ToLower();
+            siteConfig.AppSettings.Add(new()
+            {
+                Name = "AzureWebJobsStorage",
+                Value = $"[concat('DefaultEndpointsProtocol=https;AccountName={StorageAccount.Name};AccountKey=',{StorageAccount.AccountKey})]"
+            });
 
             if (Publish == "code")
             {
-                appSettings.Add(new Dictionary<string, string>
+                siteConfig.AppSettings.Add(new()
                 {
-                    {"name", "FUNCTIONS_WORKER_RUNTIME" },
-                    {"value", stacks[0] }
+                    Name = "FUNCTIONS_WORKER_RUNTIME",
+                    Value = stacks[0]
                 });
                 if (stacks[0].Equals("node", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    appSettings.Add(new Dictionary<string, string>
+                    siteConfig.AppSettings.Add(new()
                     {
-                        {"name", "WEBSITE_NODE_DEFAULT_VERSION" },
-                        {"value", stacks[1] }
+                        Name = "WEBSITE_NODE_DEFAULT_VERSION",
+                        Value = stacks[1]
                     });
                 }
             }
-            //if ((ServicePlanOS == "windows" && HostingPlan == "consumption") || HostingPlan == "premium")
-            //{
-            //    appSettings.Add(new Dictionary<string, string>
-            //    {
-            //        {"name", "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING" },
-            //        {"value", $"[concat('DefaultEndpointsProtocol=https;AccountName={StorageAccount.Name};AccountKey=', {StorageAccount.AccountKey})]" }
-            //    });
-            //}
-
-            siteConfig["appSettings"] = appSettings;
+            if ((ServicePlanOS == "windows" && HostingPlan == "consumption") || HostingPlan == "premium")
+            {
+                siteConfig.AppSettings.Add(new()
+                {
+                    Name = "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+                    Value = $"[concat('DefaultEndpointsProtocol=https;AccountName={StorageAccount.Name};AccountKey=', {StorageAccount.AccountKey})]"
+                });
+            }
         }
-        //protected override void CreateSiteConfigForLinuxCode(Dictionary<string, dynamic> siteConfig)
-        //{
-        //    if (Publish == "code")
-        //    {
-        //        var stacks = RuntimeStack.Split("|");
+        protected override void CreateSiteConfigForLinuxCode(ref SiteConfig siteConfig)
+        {
+            if (Publish == "code")
+            {
+                var stacks = RuntimeStack.Split("|");
 
-        //        siteConfig["linuxFxVersion"] = stacks[0] switch
-        //        {
-        //            "dotnet" => stacks[1] switch
-        //            {
-        //                "v6.0" => "DOTNET|6.0",
-        //                "v3.1" => "DOTNET|3.1",
-        //                _ => throw new NotImplementedException(),
-        //            },
-        //            "java" => stacks[1] switch
-        //            {
-        //                "11" => "JAVA|11",
-        //                "1.8" => "JAVA|8",
-        //                _ => throw new NotImplementedException(),
-        //            },
-        //            "node" => stacks[1] switch
-        //            {
-        //                "~14" => "NODE|14",
-        //                "~12" => "NODE|12",
-        //                _ => throw new NotImplementedException(),
-        //            },
-        //            _ => RuntimeStack,
-        //        };
-        //    }
-        //    else
-        //    {
-        //        siteConfig["linuxFxVersion"] = "DOCKER|mcr.microsoft.com/azure-functions/dotnet:3.0-appservice-quickstart";
-        //        var appSettings = (siteConfig["appSettings"] as List<IDictionary<string, string>>)!;
-        //        appSettings.Add(new Dictionary<string, string>
-        //            {
-        //                {"name", "DOCKER_REGISTRY_SERVER_URL" },
-        //                {"value", "https://mcr.microsoft.com" }
-        //            });
-        //        appSettings.Add(new Dictionary<string, string>
-        //            {
-        //                {"name", "DOCKER_REGISTRY_SERVER_USERNAME" },
-        //                {"value", string.Empty }
-        //            });
-        //        appSettings.Add(new Dictionary<string, string>
-        //            {
-        //                {"name", "DOCKER_REGISTRY_SERVER_PASSWORD" },
-        //                {"value", string.Empty }
-        //            });
-        //        appSettings.Add(new Dictionary<string, string>
-        //            {
-        //                {"name", "WEBSITES_ENABLE_APP_SERVICE_STORAGE" },
-        //                {"value", "false" }
-        //            });
-        //    }
-        //}
-        //protected override void CreateSiteConfigForWinCode(Dictionary<string, dynamic> siteConfig)
-        //{
-        //    var stacks = RuntimeStack.Split("|");
+                siteConfig.LinuxFxVersion = stacks[0] switch
+                {
+                    "dotnet" => stacks[1] switch
+                    {
+                        "v6.0" => "DOTNET|6.0",
+                        "v3.1" => "DOTNET|3.1",
+                        _ => throw new NotImplementedException(),
+                    },
+                    "java" => stacks[1] switch
+                    {
+                        "11" => "JAVA|11",
+                        "1.8" => "JAVA|8",
+                        _ => throw new NotImplementedException(),
+                    },
+                    "node" => stacks[1] switch
+                    {
+                        "~14" => "NODE|14",
+                        "~12" => "NODE|12",
+                        _ => throw new NotImplementedException(),
+                    },
+                    _ => RuntimeStack,
+                };
+            }
+            else
+            {
+                siteConfig.LinuxFxVersion = "DOCKER|mcr.microsoft.com/azure-functions/dotnet:3.0-appservice-quickstart";
+                if (siteConfig.AppSettings == null)
+                    siteConfig.AppSettings = new List<NameValuePair>();
 
-        //    switch (stacks[0])
-        //    {
-        //        case "dotnet":
-        //            siteConfig["netFrameworkVersion"] = stacks[1];
-        //            break;
-        //        case "java":
-        //            siteConfig["javaVersion"] = stacks[1];
-        //            break;
-        //        case "PowerShell":
-        //            siteConfig["powerShellVersion"] = "~7";
-        //            break;
-        //    }
-        //}
-        //protected override IDictionary<string, dynamic> CreateSiteConfig()
-        //{
-        //    var siteConfig = new Dictionary<string, dynamic>
-        //    {
-        //        {"cors", new Dictionary<string, IList<string>>
-        //            {
-        //                {"allowedOrigins", new List<string>{ "https://portal.azure.com" } }
-        //            }
-        //        }
-        //    };
+                siteConfig.AppSettings.Add(new()
+                    {
+                        Name = "DOCKER_REGISTRY_SERVER_URL",
+                        Value = "https://mcr.microsoft.com"
+                    });
+                siteConfig.AppSettings.Add(new()
+                    {
+                        Name = "DOCKER_REGISTRY_SERVER_USERNAME",
+                        Value = string.Empty
+                    });
+                siteConfig.AppSettings.Add(new()
+                    {
+                        Name = "DOCKER_REGISTRY_SERVER_PASSWORD",
+                        Value = string.Empty
+                    });
+                siteConfig.AppSettings.Add(new()
+                    {
+                        Name = "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                        Value = "false"
+                    });
+            }
+        }
+        protected override void CreateSiteConfigForWinCode(ref SiteConfig siteConfig)
+        {
+            var stacks = RuntimeStack.Split("|");
 
-        //    CreateFuncAppSettings(siteConfig);
+            switch (stacks[0])
+            {
+                case "dotnet":
+                    siteConfig.NetFrameworkVersion = stacks[1];
+                    break;
+                case "java":
+                    siteConfig.JavaVersion = stacks[1];
+                    break;
+                case "PowerShell":
+                    siteConfig.PowerShellVersion = "~7";
+                    break;
+            }
+        }
+        protected override SiteConfig CreateSiteConfig()
+        {
+            SiteConfig siteConfig = new()
+            {
+                Cors = new()
+                {
+                    AllowedOrigins = new List<string> { "https://portal.azure.com" },
+                }
+            };
 
-        //    if (ServicePlanOS == "linux")
-        //    {
-        //        CreateSiteConfigForLinuxCode(siteConfig);
-        //    }
-        //    else
-        //    {
-        //        CreateSiteConfigForWinCode(siteConfig);
-        //    }
+            CreateFuncAppSettings(ref siteConfig);
 
-        //    return siteConfig;
-        //}
+            if (ServicePlanOS == "linux")
+            {
+                CreateSiteConfigForLinuxCode(ref siteConfig);
+            }
+            else
+            {
+                CreateSiteConfigForWinCode(ref siteConfig);
+            }
+
+            return siteConfig;
+        }
 
         public override AppServicePlanModel CreateHostingPlan()
         {

@@ -47,7 +47,7 @@ namespace AzureDesignStudio.Core.AppService
                 TargetWorkerCount = 1,
             }
         };
-        public override ResourceBase ArmResource => _servicePlan;
+        protected override ResourceBase ArmResource => _servicePlan;
         [Required, DisplayName("OS")]
         public string Kind 
         { 

@@ -23,7 +23,7 @@ namespace AzureDesignStudio.Core.Bastions
         public override string ServiceName => "Azure Bastion";
         public override Type? DataFormType => typeof(BastionsForm);
         private readonly BastionHosts _bastionHost = new();
-        public override ResourceBase ArmResource => _bastionHost;
+        protected override ResourceBase ArmResource => _bastionHost;
         public override (bool result, string message) IsDrappable(GroupModel overlappedGroup)
         {
             if (overlappedGroup is not SubnetModel subnet || !subnet.Name.Equals("AzureBastionSubnet"))
