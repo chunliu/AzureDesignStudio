@@ -4,10 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <VersionPrefix>0.3.2</VersionPrefix>
+	<VersionPrefix>0.3.3</VersionPrefix>
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
-    <InvariantGlobalization>true</InvariantGlobalization>
+	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
@@ -46,5 +46,7 @@
 	<ItemGroup>
 		<!-- Don't trim this assembly. https://github.com/dotnet/aspnetcore/issues/33312 -->
 		<TrimmerRootAssembly Include="Microsoft.Authentication.WebAssembly.Msal" />
+		<!-- For Bicep decompiler to work when trimmed. -->
+		<TrimmerRootAssembly Include="System.Collections.Immutable" />
 	</ItemGroup>
 </Project>

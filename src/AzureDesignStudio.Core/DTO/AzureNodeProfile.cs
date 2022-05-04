@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 //using AzureDesignStudio.Core.APIM;
-//using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Bastions;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.Firewall;
@@ -45,9 +45,9 @@ namespace AzureDesignStudio.Core.DTO
             CreateMapForAzureNode<BastionsModel, BastionsDto>(AdsConstants.Bastions);
             CreateMapForAzureNode<AzureFirewallModel, AzureFirewallDto>(AdsConstants.AzureFirewall);
             CreateMapForAzureNode<SqlDatabaseModel, SqlDatabaseDto>(AdsConstants.SqlDatabase);
-            //CreateMapForAzureNode<AppServicePlanModel, AppServicePlanDto>(AdsConstants.AppServicePlan);
-            //CreateMapForAzureNode<WebAppModel, WebAppDto>(AdsConstants.WebApp);
-            //CreateMapForAzureNode<FunctionAppModel, FunctionAppDto>(AdsConstants.FunctionApp);
+            CreateMapForAzureNode<AppServicePlanModel, AppServicePlanDto>(AdsConstants.AppServicePlan);
+            CreateMapForAzureNode<WebAppModel, WebAppDto>(AdsConstants.WebApp);
+            CreateMapForAzureNode<FunctionAppModel, FunctionAppDto>(AdsConstants.FunctionApp);
             //CreateMapForAzureNode<APIMModel, APIMDto>(AdsConstants.APIM);
         }
     }
