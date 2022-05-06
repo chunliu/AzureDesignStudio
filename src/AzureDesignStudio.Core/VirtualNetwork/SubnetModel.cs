@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
-//using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
-//using AzureDesignStudio.Core.SQL;
+using AzureDesignStudio.Core.SQL;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -48,7 +48,7 @@ namespace AzureDesignStudio.Core.VirtualNetwork
             get => _subnet.Properties.AddressPrefix; 
             set => _subnet.Properties.AddressPrefix = value; 
         }
-        private static void PopulateServiceEndpoints(NodeModel node, List<IDictionary<string, dynamic>> serviceEndpoints)
+        private static void PopulateServiceEndpoints(NodeModel node, IList<ServiceEndpointPropertiesFormat> serviceEndpoints)
         {
             foreach (var port in node.Ports)
             {
@@ -57,24 +57,24 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                     if (link.TargetPort?.Parent == node)
                         continue;
 
-                    //if (link.TargetPort?.Parent is SqlDatabaseModel sqlDb
-                    //    && serviceEndpoints.FirstOrDefault(d => d["service"] == "Microsoft.Sql") is null)
-                    //{
-                    //    serviceEndpoints.Add(new Dictionary<string, dynamic>
-                    //        {
-                    //            {"service", "Microsoft.Sql" },
-                    //            {"locations", new List<string>{ sqlDb.Location } }
-                    //        });
-                    //}
-                    //if (link.TargetPort?.Parent is WebAppModel webapp
-                    //    && serviceEndpoints.FirstOrDefault(d => d["service"] == "Microsoft.Web") is null)
-                    //{
-                    //    serviceEndpoints.Add(new Dictionary<string, dynamic>
-                    //        {
-                    //            {"service", "Microsoft.Web" },
-                    //            {"locations", new List<string>{ "*" } }
-                    //        });
-                    //}
+                    if (link.TargetPort?.Parent is SqlDatabaseModel sqlDb
+                        && serviceEndpoints.FirstOrDefault(d => d.Service == "Microsoft.Sql") is null)
+                    {
+                        serviceEndpoints.Add(new()
+                            {
+                                Service = "Microsoft.Sql",
+                                Locations = new List<string>{ sqlDb.Location }
+                            });
+                    }
+                    if (link.TargetPort?.Parent is WebAppModel webapp
+                        && serviceEndpoints.FirstOrDefault(d => d.Service == "Microsoft.Web") is null)
+                    {
+                        serviceEndpoints.Add(new()
+                            {
+                                Service = "Microsoft.Web",
+                                Locations = new List<string>{ "*" }
+                            });
+                    }
                 }
             }
         }
@@ -87,47 +87,37 @@ namespace AzureDesignStudio.Core.VirtualNetwork
                 throw new Exception($"Subnet must be in a vnet.");
 
             ArmResource.Name = $"{vnet.Name}/{Name}";
-        }
 
-        public override IList<ResourceBase> GetArmResources()
-        {
-            if (Group is not VirtualNetworkModel vnet)
-                throw new Exception($"Subnet must be in a vnet.");
+            _subnet.Properties.ServiceEndpoints = new List<ServiceEndpointPropertiesFormat>();
+            _subnet.Properties.Delegations = new List<Delegation>();
 
-            var serviceEndpoints = new List<IDictionary<string, dynamic>>();
-            var delegations = new List<IDictionary<string, dynamic>>();
-            foreach (var child in Children)
+            foreach(var child in Children)
             {
-                //if (child is AppServicePlanModel
-                //    && delegations.FirstOrDefault(d => d["properties"]["serviceName"] == "Microsoft.Web/serverfarms") is null)
-                //{
-                //    delegations.Add(new Dictionary<string, dynamic>
-                //    {
-                //        {"name", "appsvc-delegation" },
-                //        {"properties", new Dictionary<string, string>
-                //            {
-                //                {"serviceName", "Microsoft.Web/serverfarms" }
-                //            }
-                //        }
-                //    });
-                //}
+                if (child is AppServicePlanModel
+                    && _subnet.Properties.Delegations.FirstOrDefault(d => d.Properties?.ServiceName == "Microsoft.Web/serverfarms") is null)
+                {
+                    _subnet.Properties.Delegations.Add(new()
+                    {
+                        Name = "appsvc-delegation",
+                        Properties = new()
+                        {
+                            ServiceName = "Microsoft.Web/serverfarms"
+                        }
+                    });
+                }
 
                 if (child is GroupModel group)
                 {
                     foreach (var node in group.Children)
                     {
-                        PopulateServiceEndpoints(node, serviceEndpoints);
+                        PopulateServiceEndpoints(node, _subnet.Properties.ServiceEndpoints);
                     }
                 }
                 else
                 {
-                    PopulateServiceEndpoints(child, serviceEndpoints);
+                    PopulateServiceEndpoints(child, _subnet.Properties.ServiceEndpoints);
                 }
             }
-            //Properties["serviceEndpoints"] = serviceEndpoints;
-            //Properties["delegations"] = delegations;
-
-            return base.GetArmResources();
         }
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
