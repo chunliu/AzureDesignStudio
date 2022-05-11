@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>a237ae84-fe59-44e2-8570-ed2f536ab4ed</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	  <VersionPrefix>0.3.3</VersionPrefix>
+	  <VersionPrefix>0.3.4</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,9 +16,9 @@
     <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.45.0" />
     <PackageReference Include="Grpc.AspNetCore.Web" Version="2.45.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0-preview.1.22076.6" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
     <PackageReference Include="Microsoft.Identity.Web" Version="1.24.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.15.1" />
   </ItemGroup>

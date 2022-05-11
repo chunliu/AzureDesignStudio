@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 //using AzureDesignStudio.Core.AKS;
-//using AzureDesignStudio.Core.APIM;
+using AzureDesignStudio.Core.APIM;
 //using AzureDesignStudio.Core.AppGateway;
 using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Bastions;
@@ -51,7 +51,7 @@ public static class DataModelFactory
             AdsConstants.FunctionApp => new FunctionAppModel(),
             AdsConstants.WebApp => new WebAppModel(),
             //AdsConstants.AKSCluster => new AKSModel(),
-            //AdsConstants.APIM => new APIMModel(),
+            AdsConstants.APIM => new APIMModel(),
             //AdsConstants.AppGateway => new AppGatewayModel(),
             _ => new NodeModel(),
         };
@@ -101,7 +101,7 @@ public static class DataModelFactory
             AdsConstants.AppServicePlan => typeof(AppServicePlanDto),
             AdsConstants.WebApp => typeof(WebAppDto),
             AdsConstants.FunctionApp => typeof(FunctionAppDto),
-            //AdsConstants.APIM => typeof(APIMDto),
+            AdsConstants.APIM => typeof(APIMDto),
             _ => throw new NotImplementedException(),
         };
     }
@@ -120,7 +120,7 @@ public static class DataModelFactory
             AdsConstants.AppServicePlan => mapper.Map<AppServicePlanModel>(dto),
             AdsConstants.WebApp => mapper.Map<WebAppModel>(dto),
             AdsConstants.FunctionApp => mapper.Map<FunctionAppModel>(dto),
-            //AdsConstants.APIM => mapper.Map<APIMModel>(dto),
+            AdsConstants.APIM => mapper.Map<APIMModel>(dto),
             _ => throw new NotImplementedException(),
         };
     }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-//using AzureDesignStudio.Core.APIM;
+using AzureDesignStudio.Core.APIM;
 using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Bastions;
 using AzureDesignStudio.Core.Common;
@@ -48,7 +48,7 @@ namespace AzureDesignStudio.Core.DTO
             CreateMapForAzureNode<AppServicePlanModel, AppServicePlanDto>(AdsConstants.AppServicePlan);
             CreateMapForAzureNode<WebAppModel, WebAppDto>(AdsConstants.WebApp);
             CreateMapForAzureNode<FunctionAppModel, FunctionAppDto>(AdsConstants.FunctionApp);
-            //CreateMapForAzureNode<APIMModel, APIMDto>(AdsConstants.APIM);
+            CreateMapForAzureNode<APIMModel, APIMDto>(AdsConstants.APIM);
         }
     }
 }

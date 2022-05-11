@@ -151,6 +151,12 @@ namespace AzureDesignStudio.Components
         }
         private async Task ExportBicep()
         {
+            var jsonString = await GetArmJson();
+            if (string.IsNullOrEmpty(jsonString))
+            {
+                return;
+            }
+
             var modalRef = await modalService.CreateModalAsync(new ModalOptions
             {
                 Centered = true,
@@ -171,18 +177,12 @@ namespace AzureDesignStudio.Components
             
             await Task.Delay(10);
 
-            var jsonString = await GetArmJson();
-            if (string.IsNullOrEmpty(jsonString))
-            {
-                return;
-            }
-
             var bicep = BicepDecompiler.Decompile(jsonString);
             await modalRef.CloseAsync();
 
             if (!string.IsNullOrEmpty(bicep.Error))
             {
-                logger.LogError($"Decompile Bicep failed: {bicep.Error}");
+                logger.LogError("Decompile Bicep failed: {BicepError}", bicep.Error);
                 await messageService.Error($"{bicep.Error}");
                 return;
             }
@@ -237,7 +237,7 @@ namespace AzureDesignStudio.Components
             }
             catch (JSException ex)
             {
-                logger.LogError($"Export failed: {ex.Message}");
+                logger.LogError("Export failed: {ExceptionMessage}", ex.Message);
             }
             finally
             {
