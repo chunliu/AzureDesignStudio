@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.10.5" />
+    <PackageReference Include="AntDesign" Version="0.10.6" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AzureDesignStudio.AzureResources.ApiManagement" Version="0.1.0" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Network" Version="0.3.1" />
