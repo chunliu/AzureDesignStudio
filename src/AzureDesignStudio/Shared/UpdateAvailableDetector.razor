@@ -1,0 +1,50 @@
+﻿@inject IJSRuntime _jsRuntime
+@inject NotificationService _notificaitonService
+
+@code {
+    // based on https://whuysentruit.medium.com/blazor-wasm-pwa-adding-a-new-update-available-notification-d9f65c4ad13
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RegisterForUpdateAvailableNotification();
+    }
+
+    private async Task RegisterForUpdateAvailableNotification()
+    {
+        await _jsRuntime.InvokeAsync<object>(
+            identifier: "registerForUpdateAvailableNotification",
+            DotNetObjectReference.Create(this),
+            nameof(OnUpdateAvailable));
+    }
+
+    [JSInvokable(nameof(OnUpdateAvailable))]
+    public async Task OnUpdateAvailable()
+    {
+        RenderFragment btn = @<Button Type="@ButtonType.Primary" OnClick="async () => { await OnAlertClose(); }">
+                        Reload
+        </Button>
+    ;
+        RenderFragment description =
+    @<div>
+        <p>A new version is available. Click the button to reload.</p>
+        <p>CAUTION: Save your work before reload!</p>
+     </div>;
+
+        var notiConfig = new NotificationConfig
+            {
+                NotificationType = NotificationType.Info,
+                Message = "New Version",
+                Description = description,
+                Duration = 0,
+                Placement = NotificationPlacement.TopRight,
+                Btn = btn,
+            };
+
+        await _notificaitonService.Open(notiConfig);
+    }
+
+    private async Task OnAlertClose()
+    {
+        await _jsRuntime.InvokeVoidAsync("location.reload");
+    }
+}
