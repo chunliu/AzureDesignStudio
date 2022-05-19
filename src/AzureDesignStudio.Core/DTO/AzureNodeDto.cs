@@ -1,4 +1,4 @@
-﻿using AzureDesignStudio.Core.VirtualNetwork;
+﻿using AzureDesignStudio.Core.Network;
 using Blazor.Diagrams.Core.Geometry;
 
 namespace AzureDesignStudio.Core.DTO

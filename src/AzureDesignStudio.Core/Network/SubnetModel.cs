@@ -9,7 +9,7 @@ using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace AzureDesignStudio.Core.VirtualNetwork
+namespace AzureDesignStudio.Core.Network
 {
     public class SubnetModel : AzureGroupBase
     {

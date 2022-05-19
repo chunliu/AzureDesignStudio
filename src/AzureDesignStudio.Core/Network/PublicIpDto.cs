@@ -1,6 +1,6 @@
 ﻿using AzureDesignStudio.Core.DTO;
 
-namespace AzureDesignStudio.Core.PublicIp
+namespace AzureDesignStudio.Core.Network
 {
     public class PublicIpDto : AzureNodeDto
     {

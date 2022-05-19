@@ -1,6 +1,6 @@
 ﻿using AzureDesignStudio.Core.DTO;
 
-namespace AzureDesignStudio.Core.Bastions
+namespace AzureDesignStudio.Core.Network
 {
     public class BastionsDto : AzureNodeDto
     {

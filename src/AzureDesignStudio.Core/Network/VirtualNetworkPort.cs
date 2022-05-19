@@ -1,11 +1,11 @@
 ﻿using Blazor.Diagrams.Core.Geometry;
 using Blazor.Diagrams.Core.Models;
 
-namespace AzureDesignStudio.Core.VirtualNetwork
+namespace AzureDesignStudio.Core.Network
 {
     public class VirtualNetworkPort : PortModel
     {
-        public VirtualNetworkPort(NodeModel parent, PortAlignment alignment, Point? position = null, Size? size = null) 
+        public VirtualNetworkPort(NodeModel parent, PortAlignment alignment, Point? position = null, Size? size = null)
             : base(parent, alignment, position, size)
         {
         }
@@ -15,10 +15,10 @@ namespace AzureDesignStudio.Core.VirtualNetwork
             if (!base.CanAttachTo(port) || port is not VirtualNetworkPort)
                 return false;
 
-            foreach(var sibling in Parent.Ports)
+            foreach (var sibling in Parent.Ports)
             {
                 // Only one vnet-peering can be established.
-                if (sibling.Links.Any(l => l.SourcePort?.Parent.Id == port.Parent.Id 
+                if (sibling.Links.Any(l => l.SourcePort?.Parent.Id == port.Parent.Id
                     || l.TargetPort?.Parent.Id == port.Parent.Id))
                     return false;
             }

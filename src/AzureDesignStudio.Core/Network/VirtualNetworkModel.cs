@@ -5,7 +5,7 @@ using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
 
-namespace AzureDesignStudio.Core.VirtualNetwork
+namespace AzureDesignStudio.Core.Network
 {
     public class AddressSpace
     {

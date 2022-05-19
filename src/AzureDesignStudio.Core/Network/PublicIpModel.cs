@@ -6,7 +6,7 @@ using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 
-namespace AzureDesignStudio.Core.PublicIp
+namespace AzureDesignStudio.Core.Network
 {
     public class PublicIpModel : AzureNodeBase
     {

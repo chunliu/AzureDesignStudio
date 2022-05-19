@@ -8,7 +8,7 @@ using System.Text.Json;
 using Blazor.Diagrams.Core.Models;
 using AzureDesignStudio.Components.MenuDrawer;
 using AzureDesignStudio.Models;
-using AzureDesignStudio.Core.VirtualNetwork;
+using AzureDesignStudio.Core.Network;
 using AzureDesignStudio.Services;
 
 namespace AzureDesignStudio.Components

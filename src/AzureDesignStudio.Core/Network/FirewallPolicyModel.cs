@@ -4,7 +4,7 @@ using AzureDesignStudio.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace AzureDesignStudio.Core.Firewall
+namespace AzureDesignStudio.Core.Network
 {
     public class FirewallPolicyModel : IAzureResource
     {

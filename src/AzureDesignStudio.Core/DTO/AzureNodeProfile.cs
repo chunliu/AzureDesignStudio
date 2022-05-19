@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.Core.APIM;
 using AzureDesignStudio.Core.AppService;
-using AzureDesignStudio.Core.Bastions;
 using AzureDesignStudio.Core.Common;
-using AzureDesignStudio.Core.Firewall;
-using AzureDesignStudio.Core.PublicIp;
 using AzureDesignStudio.Core.SQL;
-using AzureDesignStudio.Core.VirtualNetwork;
+using AzureDesignStudio.Core.Network;
 using Blazor.Diagrams.Core.Models;
 
 namespace AzureDesignStudio.Core.DTO

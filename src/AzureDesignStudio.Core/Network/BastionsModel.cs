@@ -3,13 +3,11 @@ using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
-using AzureDesignStudio.Core.PublicIp;
-using AzureDesignStudio.Core.VirtualNetwork;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace AzureDesignStudio.Core.Bastions
+namespace AzureDesignStudio.Core.Network
 {
     public class BastionsModel : AzureNodeBase
     {

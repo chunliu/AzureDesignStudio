@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Bastions\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

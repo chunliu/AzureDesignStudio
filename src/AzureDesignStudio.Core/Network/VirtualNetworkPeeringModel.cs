@@ -2,7 +2,7 @@
 using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.Models;
 
-namespace AzureDesignStudio.Core.VirtualNetwork
+namespace AzureDesignStudio.Core.Network
 {
     public class VirtualNetworkPeeringModel : IAzureResource
     {
@@ -19,18 +19,18 @@ namespace AzureDesignStudio.Core.VirtualNetwork
         };
         public ResourceBase ArmResource => _virtualNetworkPeerings;
         public string ResourceId => $"[resourceId('{_virtualNetworkPeerings.Type}', '{_virtualNetworkPeerings.Name}')]";
-        public string Name 
-        { 
-            get => _virtualNetworkPeerings.Name; 
-            set => _virtualNetworkPeerings.Name = value; 
+        public string Name
+        {
+            get => _virtualNetworkPeerings.Name;
+            set => _virtualNetworkPeerings.Name = value;
         }
         public string Location { get => _virtualNetworkPeerings.Location; set => _virtualNetworkPeerings.Location = value; }
 
-        public string RemoteVirtualNetworkId 
-        { 
-            get => _virtualNetworkPeerings.Properties.RemoteVirtualNetwork.Id; 
-            set => _virtualNetworkPeerings.Properties.RemoteVirtualNetwork = new SubResource { Id = value }; 
-        } 
+        public string RemoteVirtualNetworkId
+        {
+            get => _virtualNetworkPeerings.Properties.RemoteVirtualNetwork.Id;
+            set => _virtualNetworkPeerings.Properties.RemoteVirtualNetwork = new SubResource { Id = value };
+        }
         public IList<string> DependsOn => _virtualNetworkPeerings.DependsOn;
         public bool UseResourceGroupLocation { get; set; } = true;
 

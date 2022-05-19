@@ -3,7 +3,7 @@ using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Web;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
-using AzureDesignStudio.Core.VirtualNetwork;
+using AzureDesignStudio.Core.Network;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;

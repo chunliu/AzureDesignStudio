@@ -1,6 +1,6 @@
 ﻿using AzureDesignStudio.Core.DTO;
 
-namespace AzureDesignStudio.Core.Firewall
+namespace AzureDesignStudio.Core.Network
 {
     public class AzureFirewallDto : AzureNodeDto
     {

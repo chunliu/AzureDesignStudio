@@ -1,11 +1,8 @@
 using AzureDesignStudio.Core.AppService;
-using AzureDesignStudio.Core.Bastions;
-using AzureDesignStudio.Core.Firewall;
 using AzureDesignStudio.Core.Models;
-using AzureDesignStudio.Core.PublicIp;
 //using AzureDesignStudio.Core.ResourceGroup;
 using AzureDesignStudio.Core.SQL;
-using AzureDesignStudio.Core.VirtualNetwork;
+using AzureDesignStudio.Core.Network;
 using Blazor.Diagrams.Core.Models;
 using Microsoft.Azure.Management.Fluent;
 using Microsoft.Azure.Management.ResourceManager.Fluent;
