@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 //using AzureDesignStudio.Core.AKS;
 using AzureDesignStudio.Core.APIM;
-//using AzureDesignStudio.Core.AppGateway;
 using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.Components;
@@ -32,7 +31,7 @@ public static class DataModelFactory
     }
     public static NodeModel CreateNodeModelFromKey(string key, string name, string imagePath)
     {
-        var result = key switch
+        NodeModel result = key switch
         {
             //AdsConstants.ResourceGroup => new ResourceGroupModel(),
             AdsConstants.StorageAccount => new StorageAccountModel(),
@@ -50,7 +49,7 @@ public static class DataModelFactory
             //AdsConstants.AKSCluster => new AKSModel(),
             AdsConstants.APIM => new APIMModel(),
             //AdsConstants.AppGateway => new AppGatewayModel(),
-            _ => new NodeModel(),
+            _ => throw new NotImplementedException(),
         };
 
         if (result is IAzureNode n)

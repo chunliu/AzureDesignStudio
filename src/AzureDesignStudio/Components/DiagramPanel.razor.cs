@@ -85,30 +85,37 @@ namespace AzureDesignStudio.Components
 
         private async Task HandleDrop(DragEventArgs e)
         {
-            var position = diagram.GetRelativeMousePoint(e.ClientX, e.ClientY);
-            var stencil = adsContext.AllStencils.Single(s => s.Key == adsContext.DraggedStencilKey);
-            var node = DataModelFactory.CreateNodeModelFromKey(adsContext.DraggedStencilKey, stencil.Name, stencil.IconPath);
-            node.SetPosition(position.X, position.Y);
-            var overlappedGroup = GetOverlappedGroup(node);
+            try
+            {
+                var position = diagram.GetRelativeMousePoint(e.ClientX, e.ClientY);
+                var stencil = adsContext.AllStencils.Single(s => s.Key == adsContext.DraggedStencilKey);
+                var node = DataModelFactory.CreateNodeModelFromKey(adsContext.DraggedStencilKey, stencil.Name, stencil.IconPath);
+                node.SetPosition(position.X, position.Y);
+                var overlappedGroup = GetOverlappedGroup(node);
 
-            var (result, message) = ((IAzureNode)node).IsDrappable(overlappedGroup!);
-            if (!result)
-            {
-                await messageService.Error(message);
-                return;
+                var (result, message) = ((IAzureNode)node).IsDrappable(overlappedGroup!);
+                if (!result)
+                {
+                    await messageService.Error(message);
+                    return;
+                }
+                diagram.Batch(() =>
+                {
+                    if (node is GroupModel g)
+                    {
+                        diagram.AddGroup(g);
+                    }
+                    else
+                    {
+                        diagram.Nodes.Add(node);
+                    }
+                    AddNodeToGroup(node, overlappedGroup!);
+                });
             }
-            diagram.Batch(() =>
+            catch (NotImplementedException)
             {
-                if (node is GroupModel g)
-                {
-                    diagram.AddGroup(g);
-                }
-                else
-                {
-                    diagram.Nodes.Add(node);
-                }
-                AddNodeToGroup(node, overlappedGroup!);
-            });
+                await messageService.Info("The component is not implemented yet.");
+            }
         }
         #endregion
 
