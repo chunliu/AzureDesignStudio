@@ -1,5 +1,7 @@
 # Azure Design Studio
 
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 Azure Design Studio is a web app that can help you:
 
 - design solution architecture for Azure visually with consistent styling.
