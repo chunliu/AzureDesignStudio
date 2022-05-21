@@ -4,10 +4,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <VersionPrefix>0.3.6</VersionPrefix>
   </PropertyGroup>
 
-
+	<Import Project="$(SolutionDir)build.props"/>
+	
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>

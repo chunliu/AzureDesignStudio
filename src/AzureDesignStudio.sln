@@ -17,6 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Diagrams.Core", "Bla
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.Diagrams", "Blazor.Diagrams\src\Blazor.Diagrams\Blazor.Diagrams.csproj", "{E638F62E-55E1-4BA5-AE11-094295E6E270}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{16C419B8-49C5-4D52-9B37-9B9AC241F2BE}"
+	ProjectSection(SolutionItems) = preProject
+		build.props = build.props
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

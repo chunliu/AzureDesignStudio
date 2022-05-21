@@ -6,15 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>a237ae84-fe59-44e2-8570-ed2f536ab4ed</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	  <VersionPrefix>0.3.6</VersionPrefix>
   </PropertyGroup>
 
+	<Import Project="$(SolutionDir)build.props" />
+	
   <ItemGroup>
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
     <PackageReference Include="Azure.Identity" Version="1.6.0" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.45.0" />
-    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.45.0" />
-    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.45.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.46.0" />
+    <PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.46.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.46.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="7.0.0-preview.1.22076.6" />
