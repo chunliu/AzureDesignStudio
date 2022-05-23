@@ -1,6 +1,6 @@
 # Azure Design Studio
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![build](https://github.com/chunliu/AzureDesignStudio/actions/workflows/build.yml/badge.svg)](https://github.com/chunliu/AzureDesignStudio/actions/workflows/build.yml)
 
 Azure Design Studio is a web app that can help you:
 
