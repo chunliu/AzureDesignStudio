@@ -4,7 +4,6 @@ using AzureDesignStudio.Models;
 using AzureDesignStudio.Services;
 using AzureDesignStudio.SharedModels.Protos;
 using BlazorApplicationInsights;
-using Grpc.Net.Client;
 using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
@@ -24,7 +23,8 @@ builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
     options.ProviderOptions.Cache.CacheLocation = "localStorage";
-    options.ProviderOptions.DefaultAccessTokenScopes.Add("https://account.azuredesign.app/8af9ef93-105f-49a6-bea6-5fae083ce3c5/Server.Access");
+    options.ProviderOptions.DefaultAccessTokenScopes.Add(
+        builder.Configuration.GetValue<string>("B2CScope"));
 });
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
