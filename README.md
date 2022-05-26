@@ -13,7 +13,7 @@ With Azure Design Studio, I hope it can save you some time from learning ARM or 
 
 You can try Azure Design Studio here: https://www.azuredesign.app/.
 
-![screenshot](/assets/ads.png)
+![screenshot](/assets/AzureDesignStudio.gif)
 
 ## Contribution
 
