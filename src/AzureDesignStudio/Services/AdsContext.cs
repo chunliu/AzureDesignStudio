@@ -1,9 +1,10 @@
 ﻿using AzureDesignStudio.Core;
 using AzureDesignStudio.Core.Components;
+using AzureDesignStudio.Models;
 using Blazor.Diagrams.Core;
 using System.Net.Http.Json;
 
-namespace AzureDesignStudio.Models
+namespace AzureDesignStudio.Services
 {
     public class AdsContext
     {

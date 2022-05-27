@@ -1,6 +1,5 @@
 using AzureDesignStudio;
 using AzureDesignStudio.Core.DTO;
-using AzureDesignStudio.Models;
 using AzureDesignStudio.Services;
 using AzureDesignStudio.SharedModels.Protos;
 using BlazorApplicationInsights;
@@ -22,7 +21,6 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
-    options.ProviderOptions.Cache.CacheLocation = "localStorage";
     options.ProviderOptions.DefaultAccessTokenScopes.Add(
         builder.Configuration.GetValue<string>("B2CScope"));
 });
