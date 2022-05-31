@@ -175,13 +175,13 @@ namespace AzureDesignStudio.Core.AppService
             if (DisableWindowsOption && webApp.ServicePlanOS == "windows")
             {
                 webApp.ServicePlanOS = "linux";
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             }
 
             if (DisableLinuxOption && webApp.ServicePlanOS == "linux")
             {
                 webApp.ServicePlanOS = "windows";
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             }
         }
     }

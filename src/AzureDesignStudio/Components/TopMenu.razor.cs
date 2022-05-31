@@ -253,7 +253,7 @@ namespace AzureDesignStudio.Components
             if (!string.IsNullOrEmpty(imgUrl))
             {
                 showImgPreview = true;
-                StateHasChanged();
+                await InvokeAsync(StateHasChanged);
             }
         }
 

@@ -197,7 +197,7 @@ namespace AzureDesignStudio.Components
             }
 
             if (stateChanged)
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
         }
     }
 }

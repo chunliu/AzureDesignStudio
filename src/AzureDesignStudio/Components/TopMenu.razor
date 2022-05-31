@@ -71,8 +71,11 @@
     {
         imgUrl = null!;
         showImgPreview = false;
-        StateHasChanged();
-        await Task.Delay(200);
+        await InvokeAsync(async () =>
+        {
+            StateHasChanged();
+            await Task.Delay(200);
+        });
     }
 
     private async Task HandleImgDownload()
