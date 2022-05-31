@@ -241,13 +241,7 @@ namespace AzureDesignStudio.Components
             }
             finally
             {
-                await Task.Run(async () =>
-                {
-                    // Need to wait a while for BeforePrint to take effect. 
-                    // 500ms might not be enough for large design. Need more tests.
-                    await Task.Delay(500);
-                    adsContext.Diagram.AfterPrint();
-                });
+                adsContext.Diagram.AfterPrint();
             }
 
             if (!string.IsNullOrEmpty(imgUrl))

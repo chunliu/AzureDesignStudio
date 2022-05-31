@@ -29,7 +29,12 @@ window.registerServiceWorker = () => {
                 }, 1000 * 60 * 60); // Check every 1 hour.
 
                 registration.onupdatefound = () => {
-                    window.dotnetCallHelper.callerInstance.invokeMethodAsync(window.dotnetCallHelper.methodName).then();
+                    const installingServiceWorker = registration.installing;
+                    installingServiceWorker.onstatechange = () => {
+                        if (installingServiceWorker.state === 'installed') {
+                            window.dotnetCallHelper.callerInstance.invokeMethodAsync(window.dotnetCallHelper.methodName).then();
+                        }
+                    }
                 };
             })
             .catch(error => {
