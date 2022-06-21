@@ -4,10 +4,10 @@ using AzureDesignStudio.Core.APIM;
 using AzureDesignStudio.Core.AppService;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.Components;
+using AzureDesignStudio.Core.Compute;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.Network;
-//using AzureDesignStudio.Core.VirtualMachine;
 //using AzureDesignStudio.Core.ResourceGroup;
 using AzureDesignStudio.Core.SQL;
 using AzureDesignStudio.Core.Storage;
@@ -36,7 +36,7 @@ public static class DataModelFactory
             //AdsConstants.ResourceGroup => new ResourceGroupModel(),
             AdsConstants.StorageAccount => new StorageAccountModel(),
             AdsConstants.VirtualNetwork => new VirtualNetworkModel(),
-            //AdsConstants.VirtualMachine => new VirtualMachineModel(),
+            AdsConstants.VirtualMachine => new VirtualMachineModel(),
             AdsConstants.Subnet => new SubnetModel(),
             AdsConstants.AzureFirewall => new AzureFirewallModel(),
             AdsConstants.Bastions => new BastionsModel(),
@@ -48,7 +48,7 @@ public static class DataModelFactory
             AdsConstants.WebApp => new WebAppModel(),
             //AdsConstants.AKSCluster => new AKSModel(),
             AdsConstants.APIM => new APIMModel(),
-            //AdsConstants.AppGateway => new AppGatewayModel(),
+            AdsConstants.AppGateway => new AppGatewayModel(),
             _ => throw new NotImplementedException(),
         };
 

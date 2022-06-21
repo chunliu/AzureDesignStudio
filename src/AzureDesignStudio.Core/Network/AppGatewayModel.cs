@@ -2,6 +2,7 @@
 using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
+using Blazor.Diagrams.Core.Models.Base;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -11,10 +12,21 @@ public class AppGatewayModel : AzureNodeBase
 {
     public AppGatewayModel() : base()
     {
-        AddPort(PortAlignment.Left);
-        AddPort(PortAlignment.Top);
-        AddPort(PortAlignment.Right);
-        AddPort(PortAlignment.Bottom);
+        var leftPort = AddPort(PortAlignment.Left);
+        leftPort.OnLinkAdded += PortLinkAdded;
+        leftPort.OnLinkRemoved += PortLinkRemoved;
+
+        var topPort = AddPort(PortAlignment.Top);
+        topPort.OnLinkAdded += PortLinkAdded;
+        topPort.OnLinkRemoved += PortLinkRemoved;
+
+        var rightPort = AddPort(PortAlignment.Right);
+        rightPort.OnLinkAdded += PortLinkAdded;
+        rightPort.OnLinkRemoved += PortLinkRemoved;
+
+        var bottomPort = AddPort(PortAlignment.Bottom);
+        bottomPort.OnLinkAdded += PortLinkAdded;
+        bottomPort.OnLinkRemoved += PortLinkRemoved;
     }
 
     public override string ServiceName => "Application Gateway";
@@ -26,36 +38,60 @@ public class AppGatewayModel : AzureNodeBase
 
         return base.IsDrappable(overlappedGroup);
     }
-    private PublicIpModel? GetPip()
+    private List<PublicIpModel>? _pips = null;
+    private void PortLinkAdded(PortModel port, BaseLinkModel link)
     {
-        foreach (var port in Ports)
+        if (link.SourcePort?.Parent is PublicIpModel pip)
         {
-            foreach (var link in port.Links)
-            {
-                if (link.SourcePort?.Parent == this)
-                    continue;
+            if (_pips == null)
+                _pips = new List<PublicIpModel>();
 
-                if (link.SourcePort?.Parent is PublicIpModel pip)
-                    return pip;
+            if (!_pips.Exists(p => p.ResourceId == pip.ResourceId))
+            {
+                _pips.Add(pip);
+                Refresh();
             }
         }
-
-        return null;
+    }
+    private void PortLinkRemoved(PortModel port, BaseLinkModel link)
+    {
+        if (link.SourcePort?.Parent is PublicIpModel pip
+            && (_pips?.Exists(p => p.ResourceId == pip.ResourceId) ?? false))
+        {
+            _pips.Remove(pip);
+            Refresh();
+        }
     }
     public override bool IsValid
     {
         get
         {
-            if (GetPip() is null)
-                return false;
-
-            return true;
+            return _pips?.Count > 0;
         }
     }
-    private readonly ApplicationGateways _appGateway = new();
+    private readonly ApplicationGateways _appGateway = new()
+    {
+        Properties = new()
+        {
+            Sku = new()
+            {
+                Name = "Standard_v2",
+                Tier = "Standard_v2",
+                Capacity = 2
+            }
+        },
+    };
     protected override ResourceBase ArmResource => _appGateway;
     [Required, DisplayName("Tier")]
-    public string Tier { get; set; } = "Standard_v2";
+    public string Tier 
+    { 
+        get => _appGateway.Properties.Sku.Tier; 
+        set
+        {
+            _appGateway.Properties.Sku.Tier = value;
+            _appGateway.Properties.Sku.Name = value;
+        }
+    }
     public string BackendPoolName { get; set; } = null!;
     public string BackendAddressType { get; set; } = "fqdn";
     public string BackendAddress { get; set; } = null!;

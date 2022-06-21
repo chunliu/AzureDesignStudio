@@ -1,5 +1,31 @@
-﻿<h3>AppGatewayForm</h3>
+﻿@using AzureDesignStudio.Core.Components
+@using Blazor.Diagrams.Core
+@using Blazor.Diagrams.Core.Models
+
+<Form Model="@_appGateway" LabelColSpan="6" WrapperColSpan="18" Size="@AntSizeLDSType.Small">
+    <NameAndLocation Node="@context" />
+    <FormItem>
+        <SimpleSelect DefaultValue="Standard_v2" @bind-Value="@context.Tier">
+            <SelectOptions>
+                <SimpleSelectOption Value="Standard_v2" Label="Standard v2"></SimpleSelectOption>
+                <SimpleSelectOption Value="WAF_v2" Label="WAF v2"></SimpleSelectOption>
+            </SelectOptions>
+        </SimpleSelect>
+    </FormItem>
+</Form>
 
 @code {
+    [CascadingParameter]
+    public NodeModel Node { get; set; } = null!;
+    [CascadingParameter]
+    public Diagram Diagram { get; set; } = null!;
 
+    private AppGatewayModel _appGateway = null!;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _appGateway = (AppGatewayModel)Node;
+    }
 }
