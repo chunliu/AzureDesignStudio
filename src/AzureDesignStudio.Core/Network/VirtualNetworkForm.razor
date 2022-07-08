@@ -13,13 +13,14 @@
     <AntList DataSource="@context.IpSpace" Size="small" Split=false>
         <ChildContent Context="item">
             <ListItem style="padding: 5px 0px;">
-                <FormItem WrapperColSpan="24" Style="flex:auto;"
-                    ValidateStatus="@(string.IsNullOrEmpty(item.AddressPrefix) ? FormValidateStatus.Error : FormValidateStatus.Success)">
-                    <Input @bind-Value="@(item.AddressPrefix)" Size="small" Style="width:85%;"/>
-                    <Tooltip Title=@("Remove the address space") Style="display:inline-flex;">
-                        <Button Shape="circle" Icon="delete" Size="small" Disabled="@(context.IpSpace.Count <= 1)" Style="float: right;"
-                                OnClick="() => {context.IpSpace.Remove(item);}" />
-                    </Tooltip>
+                <FormItem WrapperColSpan="24" Style="flex:auto;">
+                    <InputGroup Compact>
+                        <Input @bind-Value="@(item.AddressPrefix)" Size="small" />
+                        <Tooltip Title=@("Remove the address space") Style="display:inline-flex;">
+                            <Button Icon="delete" Size="small" Disabled="@(context.IpSpace.Count <= 1)"
+                                    OnClick="() => {context.IpSpace.Remove(item);}" />
+                        </Tooltip>
+                    </InputGroup>
                 </FormItem>
             </ListItem>
         </ChildContent>
@@ -33,12 +34,14 @@
         <ChildContent Context="item">
             <ListItem style="padding: 5px 0px;">
                 <FormItem WrapperColSpan="24" Style="flex:auto;">
-                    <Input @bind-Value="@(item.Name)" Size="small" Style="width:42%;" />
-                    <Input @bind-Value="@(item.AddressPrefix)" Size="small" Style="width:42%;" />
-                    <Tooltip Title=@("Remove the subnet") Style="display:inline-flex;">
-                        <Button Shape="circle" Icon="delete" Size="small" Disabled="@(context.Subnets.Count <= 1)" Style="float: right;"
-                                OnClick="() => {HandleRemoveSubnet(item);}" />
-                    </Tooltip>
+                    <InputGroup Compact>
+                        <Input @bind-Value="@(item.Name)" Size="small" />
+                        <Input @bind-Value="@(item.AddressPrefix)" Size="small" />
+                        <Tooltip Title=@("Remove the subnet") Style="display:inline-flex;">
+                            <Button Icon="delete" Size="small" Disabled="@(context.Subnets.Count <= 1)"
+                                    OnClick="() => {HandleRemoveSubnet(item);}" />
+                        </Tooltip>
+                    </InputGroup>
                 </FormItem>
             </ListItem>
         </ChildContent>
@@ -50,14 +53,7 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private VirtualNetworkModel vnet = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        vnet = (VirtualNetworkModel)Node;
-    }
+    private VirtualNetworkModel vnet => (VirtualNetworkModel)Node;
 
     private void HandleAddSubnet()
     {

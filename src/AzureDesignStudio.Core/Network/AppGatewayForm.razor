@@ -20,12 +20,5 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private AppGatewayModel _appGateway = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        _appGateway = (AppGatewayModel)Node;
-    }
+    private AppGatewayModel _appGateway => (AppGatewayModel)Node;
 }

@@ -38,10 +38,9 @@
     protected List<CascaderNode> RuntimStackOptions = null!;
     protected RenderFragment ChildContent = null!;
 
-    private WebAppModel webApp = null!;
+    private WebAppModel webApp => (Node as WebAppModel)!;
     protected override void OnInitialized()
     {
-        webApp = (Node as WebAppModel)!;
         PopulateRuntimeStackOptions();
 
         base.OnInitialized();

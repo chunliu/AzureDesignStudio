@@ -12,14 +12,7 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private AppServicePlanModel appsvcPlan = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        appsvcPlan = (Node as AppServicePlanModel)!;
-    }
+    private AppServicePlanModel appsvcPlan => (Node as AppServicePlanModel)!;
 
     private void HandleOSChange(string value)
     {

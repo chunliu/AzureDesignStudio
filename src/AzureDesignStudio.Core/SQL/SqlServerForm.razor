@@ -12,12 +12,5 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private SqlServerModel sqlServer = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        sqlServer = (Node as SqlServerModel)!;
-    }
+    private SqlServerModel sqlServer => (Node as SqlServerModel)!;
 }

@@ -22,12 +22,5 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private BastionsModel bastion = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        bastion = (BastionsModel)Node;
-    }
+    private BastionsModel bastion => (BastionsModel)Node;
 }

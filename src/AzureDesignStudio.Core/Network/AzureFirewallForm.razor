@@ -29,12 +29,5 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private AzureFirewallModel firewall = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        firewall = (AzureFirewallModel)Node;
-    }
+    private AzureFirewallModel firewall => (AzureFirewallModel)Node;
 }

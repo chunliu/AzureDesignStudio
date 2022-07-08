@@ -18,12 +18,5 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private SqlDatabaseModel sqlDatabase = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        sqlDatabase = (Node as SqlDatabaseModel)!;
-    }
+    private SqlDatabaseModel sqlDatabase => (Node as SqlDatabaseModel)!;
 }

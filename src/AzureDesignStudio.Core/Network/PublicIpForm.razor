@@ -36,12 +36,5 @@
     [CascadingParameter]
     public Diagram Diagram { get; set; } = null!;
 
-    private PublicIpModel pip = null!;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-
-        pip = (PublicIpModel)Node;
-    }
+    private PublicIpModel pip => (PublicIpModel)Node;
 }
