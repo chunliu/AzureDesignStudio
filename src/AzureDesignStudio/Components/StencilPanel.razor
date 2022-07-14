@@ -1,12 +1,17 @@
 ﻿@using AzureDesignStudio.Core.Common
 @using AzureDesignStudio.Models
 @using AzureDesignStudio.Services
+@using System.Reflection
 @inject ILogger<Index> logger
 @inject AdsContext adsContext
+@inject ConfirmService confirmService
 
 <div>
     <div class="ads-icon-panel-container">
         <Tabs DefaultActiveKey="1" TabPosition="TabPosition.Left" >
+            <TabBarExtraContent>
+		        <Button Shape="circle" Icon="question" Size="@ButtonSize.Small" OnClick="OpenAbout"></Button>
+	        </TabBarExtraContent>
             <ChildContent>
                 <TabPane Key="1">
                     <TabTemplate>
@@ -47,5 +52,23 @@
 </div>
 
 @code {
+    private static string version = $"v{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}-α";
 
+    async Task OpenAbout()
+    {
+        RenderFragment content =
+    @<div>
+        <p><b>Azure Design Studio</b> <small>@version</small></p>
+        <p><b>Created by: </b><a href="https://github.com/chunliu">Chun Liu</a></p>
+        <p>
+            <b>Disclaimer: </b>
+            <span>The app is a personal project without any warranty. It is neither an official product from Microsoft nor supported by Microsoft. Use it at your own risk.</span>
+        </p>
+        <p>Please feel free to share if you have any <a href="mailto:chunliu@microsoft.com">feedback</a>.</p>
+    </div>
+    ;
+        var title = "About";
+
+        await confirmService.Show(content, title, ConfirmButtons.OK);
+    }
 }

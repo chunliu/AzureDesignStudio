@@ -31,5 +31,5 @@
 
         ::deep .ads-icon-panel-container .ant-tabs-left .ant-tabs-content-holder .ant-tabs-content .ant-tabs-tabpane {
             padding-left: 0px;
-            height: calc(100vh - 126px);
+            height: calc(100vh - 94px);
         }

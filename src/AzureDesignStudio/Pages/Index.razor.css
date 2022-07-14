@@ -13,17 +13,3 @@
         .ads-toggle-sider-button > div:hover {
             color: #1c92fe;
         }
-.ads-about {
-    border-top: 0.5px solid #f2f2f2;
-    height: 32px;
-    width: 40px;
-    float: left;
-    padding: 4px 8px;
-    margin-top: -1px;
-}
-
-.ads-version {
-    padding: 6px 0px;
-    text-align: center;
-    font-size: 12px;
-}
