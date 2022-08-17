@@ -19,6 +19,7 @@ namespace AzureDesignStudio.Core.Models
         public virtual Type? DataFormType => throw new NotImplementedException();
         public string CssClassName => throw new NotImplementedException();
         public virtual bool IsValid => true;
+        public virtual bool DataFormNoPadding => false;
         public virtual AzureNodeDto GetNodeDto(IMapper mapper)
         {
             throw new NotImplementedException();
@@ -39,6 +40,7 @@ namespace AzureDesignStudio.Core.Models
             set => ArmResource.Location = value;
         }
         public virtual bool UseResourceGroupLocation { get; set; } = true;
+
         protected virtual void PopulateArmAttributes()
         {
             ArmResource.Name = Name;

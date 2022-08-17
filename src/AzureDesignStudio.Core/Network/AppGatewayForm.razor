@@ -2,16 +2,41 @@
 @using Blazor.Diagrams.Core
 @using Blazor.Diagrams.Core.Models
 
-<Form Model="@_appGateway" LabelColSpan="6" WrapperColSpan="18" Size="@AntSizeLDSType.Small">
-    <NameAndLocation Node="@context" />
-    <FormItem>
-        <SimpleSelect DefaultValue="Standard_v2" @bind-Value="@context.Tier">
-            <SelectOptions>
-                <SimpleSelectOption Value="Standard_v2" Label="Standard v2"></SimpleSelectOption>
-                <SimpleSelectOption Value="WAF_v2" Label="WAF v2"></SimpleSelectOption>
-            </SelectOptions>
-        </SimpleSelect>
-    </FormItem>
+<Form Model="@_appGateway" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
+    <Collapse DefaultActiveKey="@(new[]{"1"})" Accordion>
+        <Panel Header="Basics" Key="1">
+            <NameAndLocation Node="@context" />
+            <FormItem>
+                <SimpleSelect DefaultValue="Standard_v2" @bind-Value="@context.Tier">
+                    <SelectOptions>
+                        <SimpleSelectOption Value="Standard_v2" Label="Standard v2"></SimpleSelectOption>
+                        <SimpleSelectOption Value="WAF_v2" Label="WAF v2"></SimpleSelectOption>
+                    </SelectOptions>
+                </SimpleSelect>
+            </FormItem>
+            <FormItem>
+                <RadioGroup @bind-Value="@context.Autoscaling">
+                    <Radio Value="true">Yes</Radio>
+                    <Radio Value="false">No</Radio>
+                </RadioGroup>
+            </FormItem>
+            @if(@context.Autoscaling)
+            {
+                <FormItem>
+                    <InputNumber @bind-Value="@context.MinCapacity" Min="0" Max="125" />
+                </FormItem>
+                <FormItem>
+                    <InputNumber @bind-Value="@context.MaxCapacity" Min="0" Max="125" />
+                </FormItem>
+            }
+            else
+            {
+                <FormItem>
+                    <InputNumber @bind-Value="@context.InstanceCount" />
+                </FormItem>
+            }
+        </Panel>
+    </Collapse>
 </Form>
 
 @code {

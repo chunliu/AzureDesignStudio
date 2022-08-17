@@ -146,6 +146,9 @@ namespace AzureDesignStudio.Components
                     Visible = true,
                     ChildContent = child,
                 };
+                if (n.DataFormNoPadding)
+                    options.BodyStyle = "padding:0px;";
+
                 var drawerRef = await drawerService.CreateAsync(options);
                 drawerRef.OnClose = () =>
                 {

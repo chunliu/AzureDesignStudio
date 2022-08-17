@@ -10,6 +10,7 @@ namespace AzureDesignStudio.Core.Models
         Type? DataFormType { get; }
         string CssClassName { get; }
         bool IsValid { get; }
+        bool DataFormNoPadding { get; }
         string ImagePath { get; set; }
         AzureNodeDto GetNodeDto(IMapper mapper);
         (bool result, string message) IsDrappable(GroupModel overlappedGroup);

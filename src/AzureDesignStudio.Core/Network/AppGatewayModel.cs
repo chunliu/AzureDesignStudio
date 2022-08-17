@@ -64,11 +64,10 @@ public class AppGatewayModel : AzureNodeBase
     }
     public override bool IsValid
     {
-        get
-        {
-            return _pips?.Count > 0;
-        }
+        get => _pips?.Count > 0;
     }
+    public override bool DataFormNoPadding => true;
+
     private readonly ApplicationGateways _appGateway = new()
     {
         Properties = new()
@@ -78,6 +77,11 @@ public class AppGatewayModel : AzureNodeBase
                 Name = "Standard_v2",
                 Tier = "Standard_v2",
                 Capacity = 2
+            },
+            AutoscaleConfiguration = new()
+            {
+                MinCapacity = 0,
+                MaxCapacity = 10
             }
         },
     };
@@ -91,6 +95,26 @@ public class AppGatewayModel : AzureNodeBase
             _appGateway.Properties.Sku.Tier = value;
             _appGateway.Properties.Sku.Name = value;
         }
+    }
+    [DisplayName("Autoscaling")]
+    public bool Autoscaling { get; set; } = false;
+    [DisplayName("Instance")]
+    public int InstanceCount 
+    { 
+        get => _appGateway.Properties.Sku.Capacity; 
+        set => _appGateway.Properties.Sku.Capacity = value; 
+    }
+    [DisplayName("Min Instance")]
+    public int MinCapacity 
+    { 
+        get => _appGateway.Properties.AutoscaleConfiguration.MinCapacity; 
+        set => _appGateway.Properties.AutoscaleConfiguration.MinCapacity = value; 
+    }
+    [DisplayName("Max Instance")]
+    public int MaxCapacity
+    {
+        get => _appGateway.Properties.AutoscaleConfiguration.MaxCapacity;
+        set => _appGateway.Properties.AutoscaleConfiguration.MaxCapacity = value;
     }
     public string BackendPoolName { get; set; } = null!;
     public string BackendAddressType { get; set; } = "fqdn";

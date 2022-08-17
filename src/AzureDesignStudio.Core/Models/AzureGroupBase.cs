@@ -51,6 +51,7 @@ namespace AzureDesignStudio.Core.Models
             CssStyle = styleBuilder.Build();
         }
         public virtual bool IsValid => true;
+        public virtual bool DataFormNoPadding => false;
         public virtual AzureNodeDto GetNodeDto(IMapper mapper)
         {
             throw new NotImplementedException();
