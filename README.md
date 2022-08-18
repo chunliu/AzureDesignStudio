@@ -5,11 +5,12 @@
 Azure Design Studio is a web app that can help you:
 
 - design solution architecture for Azure visually with consistent styling.
+- validate your design with rules and constraints of Azure resources as much as possible.
 - export and use the design as pictures in your documents.
 - save the design in the cloud to keep it alive and be accessible from anywhere.
-- and most importantly, generate IaC _(Infrastructure as Code)_ code _(currently limited to ARM templates and Bicep)_ from the design automatically.
+- and most importantly, generate IaC _(Infrastructure as Code, currently limited to ARM templates and Bicep)_ from the design automatically.
 
-With Azure Design Studio, I hope it can save you some time from learning ARM or Bicep, and therefore improve the user experience of designing and deploying solutions on Azure. 
+With Azure Design Studio, I hope it can help you create high quiality solution architecture for Azure, and save you some time from learning ARM or Bicep, and therefore improve the user experience of designing and deploying solutions on Azure. 
 
 You can try Azure Design Studio here: https://www.azuredesign.app/.
 
