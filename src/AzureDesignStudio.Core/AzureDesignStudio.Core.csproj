@@ -21,13 +21,9 @@
 	<PackageReference Include="AzureDesignStudio.AzureResources.Sql" Version="0.2.1" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Storage" Version="0.1.1" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Web" Version="0.1.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
