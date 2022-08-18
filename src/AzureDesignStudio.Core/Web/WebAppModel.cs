@@ -8,7 +8,7 @@ using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace AzureDesignStudio.Core.AppService
+namespace AzureDesignStudio.Core.Web
 {
     public class WebAppModel : AzureNodeBase
     {

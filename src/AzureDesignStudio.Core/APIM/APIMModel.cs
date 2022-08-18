@@ -97,46 +97,4 @@ public class APIMModel : AzureNodeBase
             _apimService.DependsOn = new List<string> { subnet.ResourceId };
         }
     }
-    //public override IList<IDictionary<string, dynamic>> GetArmResources()
-    //{
-    //    if (!IsValid)
-    //    {
-    //        throw new Exception($"{ServiceName} is invalid for ARM exporting.");
-    //    }
-
-    //    var sku = new Dictionary<string, dynamic>
-    //    {
-    //        {"name", SkuName},
-    //        {"capacity", SkuName == "Consumption" ? 0 : SkuCapacity },
-    //    };
-
-    //    Properties.Clear();
-    //    Properties["publisherEmail"] = PublisherEmail;
-    //    Properties["publisherName"] = PublisherName;
-
-    //    var result = new Dictionary<string, dynamic>
-    //    {
-    //        {"type", ResourceType },
-    //        {"apiVersion", ApiVersion },
-    //        {"name", Name},
-    //        {"location", Location},
-    //        {"sku", sku},
-    //        {"properties", Properties },
-    //    };
-
-    //    if (Group is SubnetModel subnet)
-    //    {
-    //        Properties["virtualNetworkType"] = VnetType;
-    //        Properties["virtualNetworkConfiguration"] = new Dictionary<string, string>
-    //        {
-    //            {"subnetResourceId", subnet.ResourceId},
-    //        };
-    //        result["dependsOn"] = new List<string> { subnet.ResourceId };
-    //    }
-
-    //    return new List<IDictionary<string, dynamic>>
-    //    {
-    //        result,
-    //    };
-    //}
 }

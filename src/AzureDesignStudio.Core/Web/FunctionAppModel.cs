@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
+using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Web;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Storage;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace AzureDesignStudio.Core.AppService
+namespace AzureDesignStudio.Core.Web
 {
     public class FunctionAppModel : WebAppModel
     {
@@ -119,8 +120,7 @@ namespace AzureDesignStudio.Core.AppService
             else
             {
                 siteConfig.LinuxFxVersion = "DOCKER|mcr.microsoft.com/azure-functions/dotnet:3.0-appservice-quickstart";
-                if (siteConfig.AppSettings == null)
-                    siteConfig.AppSettings = new List<NameValuePair>();
+                siteConfig.AppSettings ??= new List<NameValuePair>();
 
                 siteConfig.AppSettings.Add(new()
                     {
@@ -226,21 +226,15 @@ namespace AzureDesignStudio.Core.AppService
             return servicePlan;
         }
 
-        //public override IList<IDictionary<string, dynamic>> GetArmResources()
-        //{
-        //    var result = (base.GetArmResources() as List<IDictionary<string, dynamic>>)!;
+        public override IList<ResourceBase> GetArmResources()
+        {
+            var result = base.GetArmResources().ToList();
 
-        //    var funcApp = result.FirstOrDefault(d => d["type"] == ResourceType);
-        //    if (funcApp is null || funcApp["dependsOn"] is not List<string> dependsOn)
-        //    {
-        //        throw new Exception($"{ServiceName} is null or has no dependsOn");
-        //    }
+            ArmResource.DependsOn.Add(StorageAccount.ResourceId);
 
-        //    dependsOn.Add(StorageAccount.ResourceId);
+            result.AddRange(StorageAccount.GetArmResources());
 
-        //    result.AddRange(StorageAccount.GetArmResources());
-
-        //    return result;
-        //}
+            return result;
+        }
     }
 }

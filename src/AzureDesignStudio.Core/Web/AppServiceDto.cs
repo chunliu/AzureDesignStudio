@@ -1,6 +1,6 @@
 ﻿using AzureDesignStudio.Core.DTO;
 
-namespace AzureDesignStudio.Core.AppService
+namespace AzureDesignStudio.Core.Web
 {
     public class AppServicePlanDto : AzureNodeDto
     {

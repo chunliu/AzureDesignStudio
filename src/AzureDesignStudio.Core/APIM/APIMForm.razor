@@ -6,7 +6,7 @@
 <Form Model="@apim" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
     <NameAndLocation Node="@context" />
     <FormItem>
-        <SimpleSelect @bind-Value="@context.SkuName">
+        <SimpleSelect @bind-Value="@context.SkuName" OnSelectedItemChanged="OnSelectedSkuNameChanged">
             <SelectOptions>
                 <SimpleSelectOption Label="Developer" Value="@("Developer")" />
                 <SimpleSelectOption Label="Consumption" Value="@("Consumption")" Disabled="@(context.Group is SubnetModel)" />
@@ -20,7 +20,8 @@
     @if (context.SkuName != "Consumption")
     {
         <FormItem>
-            <InputNumber @bind-Value="@context.SkuCapacity"></InputNumber>
+            <InputNumber @bind-Value="@context.SkuCapacity" Disabled="@(context.SkuName is "Developer")"
+                     Min="1" Max="@(MaxSkuCapacity(context.SkuName))"></InputNumber>
         </FormItem>
     }
     <FormItem LabelColSpan="@null" WrapperColSpan="@null">
@@ -47,4 +48,25 @@
     public Diagram Diagram { get; set; } = null!;
 
     private APIMModel apim => (Node as APIMModel)!;
+
+    private int MaxSkuCapacity(string skuName) =>
+        skuName switch
+        {
+            "Basic" => 2,
+            "Standard" => 4,
+            _ => 12
+        };
+
+    private void OnSelectedSkuNameChanged(string skuName)
+    {
+        switch(skuName)
+        {
+            case "Consumption":
+                apim.SkuCapacity = 0;
+                break;
+            default:
+                apim.SkuCapacity = 1;
+                break;
+        }
+    }
 }

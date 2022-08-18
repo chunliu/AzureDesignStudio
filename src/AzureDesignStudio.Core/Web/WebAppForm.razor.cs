@@ -1,6 +1,6 @@
 ﻿using AntDesign;
 
-namespace AzureDesignStudio.Core.AppService
+namespace AzureDesignStudio.Core.Web
 {
     public partial class WebAppForm
     {

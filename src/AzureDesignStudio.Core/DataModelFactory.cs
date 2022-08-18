@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 //using AzureDesignStudio.Core.AKS;
 using AzureDesignStudio.Core.APIM;
-using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.Web;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.Components;
 using AzureDesignStudio.Core.Compute;

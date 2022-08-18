@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
-using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.Web;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.SQL;
@@ -118,6 +118,12 @@ namespace AzureDesignStudio.Core.Network
                     PopulateServiceEndpoints(child, _subnet.Properties.ServiceEndpoints);
                 }
             }
+
+            // Don't include them in the serialization if they are empty. 
+            if (_subnet.Properties.ServiceEndpoints.Count == 0)
+                _subnet.Properties.ServiceEndpoints = null;
+            if (_subnet.Properties.Delegations.Count == 0)
+                _subnet.Properties.Delegations = null;
         }
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)

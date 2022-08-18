@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.Core.APIM;
-using AzureDesignStudio.Core.AppService;
+using AzureDesignStudio.Core.Web;
 using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.SQL;
 using AzureDesignStudio.Core.Network;
