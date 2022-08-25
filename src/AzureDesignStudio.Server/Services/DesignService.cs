@@ -1,5 +1,6 @@
 ﻿using AzureDesignStudio.Server.Models;
 using AzureDesignStudio.SharedModels.Protos;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -106,7 +107,7 @@ namespace AzureDesignStudio.Server.Services
             return response;
         }
 
-        public override Task<GetSavedDesignResponse> GetSaved(GetSavedDesignRequest request, ServerCallContext context)
+        public override Task<GetSavedDesignResponse> GetSaved(Empty request, ServerCallContext context)
         {
             var response = new GetSavedDesignResponse();
             // Get user id

@@ -29,7 +29,7 @@ namespace AzureDesignStudio.Services
 
         public async Task<(int, IList<string>?)> GetAllSavedDesign()
         {
-            var response = await _designClient.GetSavedAsync(new GetSavedDesignRequest());
+            var response = await _designClient.GetSavedAsync(new Google.Protobuf.WellKnownTypes.Empty());
 
             return (response.StatusCode, response.Names?.ToList());
         }

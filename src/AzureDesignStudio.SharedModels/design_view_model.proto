@@ -2,9 +2,11 @@
 
 option csharp_namespace = "AzureDesignStudio.SharedModels.Protos";
 
+import "google/protobuf/empty.proto";
+
 service Design {
 	rpc Save(SaveDesignRequest) returns(SaveDesignResponse);
-	rpc GetSaved(GetSavedDesignRequest) returns(GetSavedDesignResponse);
+	rpc GetSaved(google.protobuf.Empty) returns(GetSavedDesignResponse);
 	rpc Load(LoadDesignRequest) returns(LoadDesignResponse);
 	rpc Delete(DeleteDesignRequest) returns(DeleteDesignResponse);
 }
@@ -16,9 +18,6 @@ message SaveDesignRequest {
 
 message SaveDesignResponse {
 	int32 status_code = 1;
-}
-
-message GetSavedDesignRequest {
 }
 
 message GetSavedDesignResponse {
