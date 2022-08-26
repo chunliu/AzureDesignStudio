@@ -1,0 +1,27 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AzureDesignStudio.SharedModels.Protos";
+
+import "google/protobuf/empty.proto";
+
+service Deploy {
+	rpc SaveSubscriptionInfo(SubscriptionInfo) returns(SaveSubInfoResponse);
+	rpc LoadSubscriptionInfo(google.protobuf.Empty) returns(LoadSubInfoResponse);
+}
+
+message SubscriptionInfo {
+	string subscription_id = 1;
+	string tenant_id = 2;
+	string client_id = 3;
+	string client_secret = 4;
+	string subscription_name = 5;
+}
+
+message SaveSubInfoResponse {
+	int32 status_code = 1;
+}
+
+message LoadSubInfoResponse {
+	int32 status_code = 1;
+	repeated SubscriptionInfo subscription_info = 2;
+}

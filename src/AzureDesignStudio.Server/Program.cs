@@ -75,16 +75,6 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-//var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
-//app.UseStaticFiles(new StaticFileOptions
-//{
-//    OnPrepareResponse = ctx =>
-//    {
-//        ctx.Context.Response.Headers.Append(
-//            "Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
-//    }
-//});
-
 app.UseRouting();
 
 app.UseAuthentication();
@@ -92,6 +82,7 @@ app.UseAuthorization();
 
 app.UseGrpcWeb();
 app.MapGrpcService<DesignService>().EnableGrpcWeb();
+app.MapGrpcService<DeployService>().EnableGrpcWeb();
 
 #if DEBUG
     if (app.Environment.IsDevelopment())

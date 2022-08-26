@@ -1,0 +1,97 @@
+﻿@using AzureDesignStudio.Services
+@using AzureDesignStudio.SharedModels.Protos
+@inherits FeedbackComponent<string, string>
+@inject DeployGrpcService _deployService
+
+<Form Model="@_subscriptionInfo" @ref="@_form" OnFinish="@OnFormFinish" OnFinishFailed="@OnFinishFailed" 
+    ValidateMode="@FormValidateMode.Rules" Loading="@_formLoading" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
+    <FormItem Label="Subscription Id" Required Rules="GuidRules">
+        <Input @bind-Value="@context.SubscriptionId" Placeholder="00000000-0000-0000-0000-000000000000"></Input>
+    </FormItem>
+    <FormItem Label="Subscription Name" Required Rules="subscriptionNameRules">
+        <Input @bind-Value="@context.SubscriptionName" Placeholder="Subscription name"></Input>
+    </FormItem>
+    <FormItem Label="Tenant Id" Required Rules="GuidRules">
+        <Input @bind-Value="@context.TenantId" Placeholder="00000000-0000-0000-0000-000000000000"></Input>
+    </FormItem>
+    <FormItem Label="Client Id" Required Rules="GuidRules">
+        <Input @bind-Value="@context.ClientId" Placeholder="00000000-0000-0000-0000-000000000000"></Input>
+    </FormItem>
+    <FormItem Label="Client Secret" Required Rules="ClientSecretRules">
+        <InputPassword @bind-Value="@context.ClientSecret"></InputPassword>
+    </FormItem>
+    <Divider />
+    <FormItem WrapperColOffset="19" WrapperColSpan="5">
+        <Button Type="@ButtonType.Primary" OnClick="HandleSumit">Submit</Button>
+    </FormItem>
+</Form>
+
+@code {
+    private readonly FormValidationRule[] GuidRules = new FormValidationRule[]
+    {
+        new FormValidationRule() 
+        { 
+            Pattern = "^[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}$",
+            Message = "not a valid GUID"
+        },
+        new FormValidationRule()
+        {
+            Type = FormFieldType.String,
+            Required = true,
+        }
+    };
+    private readonly FormValidationRule[] subscriptionNameRules = new FormValidationRule[]
+    {
+            new FormValidationRule
+            { 
+                Pattern = "^[^<>;|]+$",
+                Message = "'subscription name' cannot have < > ; |" 
+            } ,
+            new FormValidationRule
+            { 
+                Min = 1, 
+                Max = 64
+            }
+    };
+    private readonly FormValidationRule[] ClientSecretRules = new FormValidationRule[]
+    {
+        new FormValidationRule()
+        {
+            Required = true,
+            Type = FormFieldType.String,
+            Min = 5
+        }
+    };
+    private SubscriptionInfo _subscriptionInfo = new();
+    private Form<SubscriptionInfo> _form = null!;
+    private bool _formLoading = false;
+
+    private void HandleSumit()
+    {
+        _form.Submit();
+    }
+
+    private async Task OnFormFinish(EditContext editContext)
+    {
+        _formLoading = true;
+
+        var response = await _deployService.LinkAzureSubscription(_subscriptionInfo);
+        if (response == 200)
+        {
+            _formLoading = false;
+
+            DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
+            await dr!.CloseAsync("completed");
+        }
+        else
+        {
+            _formLoading = false;
+            // Show error message
+        }
+    }
+
+    private void OnFinishFailed(EditContext editContext)
+    {
+        _formLoading = false;
+    }
+}

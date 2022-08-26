@@ -9,6 +9,7 @@
 	<Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.props))\build.props" />
 	
   <ItemGroup>
+    <None Remove="deploy_model.proto" />
     <None Remove="design_view_model.proto" />
   </ItemGroup>
 
@@ -23,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="deploy_model.proto" />
     <Protobuf Include="design_view_model.proto" />
   </ItemGroup>
 
