@@ -31,7 +31,7 @@ namespace AzureDesignStudio.Server.Services
                     new AzureCliCredential());
             var keyClient = new KeyClient(new Uri($"https://{configuration["KeyVaultName"]}.vault.azure.net/"),
                 chainedTokenCred);
-            var key = keyClient.GetKey("adskey1").Value;
+            var key = keyClient.GetKey(configuration["KeyVaultKeyName"]).Value;
             _cryptoClient = new CryptographyClient(key.Id, chainedTokenCred);
         }
         private async Task<string> Encrypt(string plainText)
