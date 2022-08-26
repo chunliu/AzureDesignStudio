@@ -4,7 +4,7 @@
 @inject DeployGrpcService _deployService
 
 <Form Model="@_subscriptionInfo" @ref="@_form" OnFinish="@OnFormFinish" OnFinishFailed="@OnFinishFailed" 
-    ValidateMode="@FormValidateMode.Rules" Loading="@_formLoading" LabelColSpan="8" WrapperColSpan="16" Size="@AntSizeLDSType.Small">
+    ValidateMode="@FormValidateMode.Rules" Loading="@_formLoading" LabelColSpan="10" WrapperColSpan="14" Size="@AntSizeLDSType.Small">
     <FormItem Label="Subscription Id" Required Rules="GuidRules">
         <Input @bind-Value="@context.SubscriptionId" Placeholder="00000000-0000-0000-0000-000000000000"></Input>
     </FormItem>

@@ -15,13 +15,21 @@
                 <Col Span="6"><Button OnClick="BeginLogout">Log out</Button></Col>
             </Row>
             <Divider />
+            <Spin Spinning="@_spinning">
         @if(_showLinkSubscription)
         {
+            <AntList Bordered DataSource="@_subscriptionNames" Size="small">
+                <Header><b>Your linked subscriptions</b></Header>
+                <ChildContent Context="item">
+                    <ListItem>@item</ListItem>
+                </ChildContent>
+            </AntList>
         }
         else
         {
             <Button OnClick="LinkAzureSubscription">Link Azure Subscription</Button>
         }
+            </Spin>
         </div>
     </Authorized>
     <NotAuthorized>
@@ -35,7 +43,9 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
 
+    private bool _spinning = true;
     private bool _showLinkSubscription = false;
+    private List<string>? _subscriptionNames = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,8 +53,23 @@
         var user = authState.User;
         if (user.Identity?.IsAuthenticated ?? false)
         {
-            var subscriptions = await _deployService.GetLinkedSubscriptions();
+            await GetSubscriptionNames();
         }
+        _spinning = false;
+    }
+
+    private async Task<bool> GetSubscriptionNames()
+    {
+        var subscriptions = await _deployService.GetLinkedSubscriptions();
+        _subscriptionNames = subscriptions?.Select(s => s.SubscriptionName).ToList();
+        var hasLinked = _subscriptionNames?.Count > 0;
+        if (_showLinkSubscription != hasLinked)
+        {
+            _showLinkSubscription = hasLinked;
+            return true; // State has changed.
+        }
+
+        return false;
     }
 
     private async Task BeginLogin()
@@ -66,7 +91,7 @@
 
     private async Task LinkAzureSubscription()
     {
-        int azSubDrawerWidth = 400;
+        int azSubDrawerWidth = 450;
 
         DrawerRef<string> userDrawer = (FeedbackRef as DrawerRef<string>)!;
         userDrawer.Config.Width += azSubDrawerWidth;
@@ -93,7 +118,11 @@
             if (result != "completed")
                 return;
 
-            var subscriptions = await _deployService.GetLinkedSubscriptions();
+            _spinning = true;
+            await InvokeAsync(StateHasChanged);
+            await GetSubscriptionNames();
+            _spinning = false;
+            await InvokeAsync(StateHasChanged);
         };
     }
 }

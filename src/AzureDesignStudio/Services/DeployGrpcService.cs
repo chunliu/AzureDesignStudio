@@ -17,7 +17,7 @@ namespace AzureDesignStudio.Services
 
         public async Task<IList<SubscriptionInfo>?> GetLinkedSubscriptions()
         {
-            if (_linkedSubscriptions == null)
+            if ((_linkedSubscriptions?.Count ?? 0) == 0)
             {
                 var response = await _deployClient.LoadSubscriptionInfoAsync(new Empty());
                 if (response.StatusCode == 200)
