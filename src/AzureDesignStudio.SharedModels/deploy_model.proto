@@ -23,5 +23,5 @@ message SaveSubInfoResponse {
 
 message LoadSubInfoResponse {
 	int32 status_code = 1;
-	repeated SubscriptionInfo subscription_info = 2;
+	repeated string subscription_names = 2;
 }

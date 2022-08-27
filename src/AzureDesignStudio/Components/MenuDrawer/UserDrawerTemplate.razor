@@ -45,7 +45,7 @@
 
     private bool _spinning = true;
     private bool _showLinkSubscription = false;
-    private List<string>? _subscriptionNames = null;
+    private IList<string>? _subscriptionNames = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,12 +56,14 @@
             await GetSubscriptionNames();
         }
         _spinning = false;
+
+        await base.OnInitializedAsync();
     }
 
     private async Task<bool> GetSubscriptionNames()
     {
-        var subscriptions = await _deployService.GetLinkedSubscriptions();
-        _subscriptionNames = subscriptions?.Select(s => s.SubscriptionName).ToList();
+        _subscriptionNames = await _deployService.GetLinkedSubscriptions();
+        //_subscriptionNames = subscriptions?.Select(s => s.SubscriptionName).ToList();
         var hasLinked = _subscriptionNames?.Count > 0;
         if (_showLinkSubscription != hasLinked)
         {

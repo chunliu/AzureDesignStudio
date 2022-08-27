@@ -8,25 +8,23 @@ namespace AzureDesignStudio.Services
     {
         private readonly Deploy.DeployClient _deployClient = null!;
         private readonly GrpcClientFactory _clientFactory = null!;
-        private List<SubscriptionInfo>? _linkedSubscriptions = null;
         public DeployGrpcService(GrpcClientFactory grpcClientFactory)
         {
             _clientFactory = grpcClientFactory;
             _deployClient = _clientFactory.CreateClient<Deploy.DeployClient>("DeployClientWithAuth");
         }
 
-        public async Task<IList<SubscriptionInfo>?> GetLinkedSubscriptions()
+        public async Task<IList<string>?> GetLinkedSubscriptions()
         {
-            if ((_linkedSubscriptions?.Count ?? 0) == 0)
+            IList<string>? linkedSubscriptions = null;
+
+            var response = await _deployClient.LoadSubscriptionInfoAsync(new Empty());
+            if (response.StatusCode == 200)
             {
-                var response = await _deployClient.LoadSubscriptionInfoAsync(new Empty());
-                if (response.StatusCode == 200)
-                {
-                    _linkedSubscriptions = response.SubscriptionInfo.ToList();
-                }
+                linkedSubscriptions = response.SubscriptionNames?.ToList();
             }
 
-            return _linkedSubscriptions;
+            return linkedSubscriptions;
         }
 
         public async Task<int> LinkAzureSubscription(SubscriptionInfo subscriptionInfo)

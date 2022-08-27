@@ -104,7 +104,7 @@ namespace AzureDesignStudio.Server.Services
 
             return response;
         }
-        public override async Task<LoadSubInfoResponse> LoadSubscriptionInfo(Empty request, ServerCallContext context)
+        public override Task<LoadSubInfoResponse> LoadSubscriptionInfo(Empty request, ServerCallContext context)
         {
             var response = new LoadSubInfoResponse();
 
@@ -113,26 +113,17 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning("Access denied. userIdClaim is empty.");
                 response.StatusCode = StatusCodes.Status401Unauthorized;
-                return response;
+                return Task.FromResult(response);
             }
             var userId = new Guid(userIdClaim);
 
-            var subscriptions = _designContext.AzureSubscriptions.Where(s => s.UserId == userId);
+            var subNames = _designContext.AzureSubscriptions
+                .Where(s => s.UserId == userId)?.Select(s => s.SubscriptionName);
 
-            foreach(var subscription in subscriptions)
-            {
-                response.SubscriptionInfo.Add(new SubscriptionInfo
-                {
-                    SubscriptionId = subscription.SubscriptionId.ToString("D"),
-                    SubscriptionName = subscription.SubscriptionName,
-                    TenantId = subscription.TenantId.ToString("D"),
-                    ClientId = subscription.ClientId.ToString("D"),
-                    ClientSecret = await Decrypt(subscription.ClientSecret)
-                });
-            }
+            response.SubscriptionNames.AddRange(subNames);
             response.StatusCode = StatusCodes.Status200OK;
 
-            return response;
+            return Task.FromResult(response);
         }
     }
 }
