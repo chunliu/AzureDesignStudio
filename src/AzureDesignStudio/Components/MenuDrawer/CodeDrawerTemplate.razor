@@ -25,7 +25,7 @@
     <Form Model="_deployParams" @ref="@_paramsForm" LabelColSpan="8" WrapperColSpan="16"
         OnFinish="ParamsFormFinish">
         <FormItem Label="Resource Group">
-            <Input @bind-Value="@context.ResourceGroup" />
+            <SimpleSelect DataSource="@_resourceGroupNames" @bind-Value="@context.ResourceGroup" SortByLabel="@SortDirection.Ascending" />
         </FormItem>
     </Form>
 </Modal>

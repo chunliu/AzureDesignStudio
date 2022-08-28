@@ -18,7 +18,8 @@ namespace AzureDesignStudio.Components.MenuDrawer
         private bool _showDeployParams = false;
         private DeploymentParameters _deployParams = null!;
         private Form<DeploymentParameters> _paramsForm = null!;
-        private string? _subName = null;
+        private SubscriptionRes? _linkedSubscription = null;
+        private IList<string> _resourceGroupNames = null!;
 
         #region Button style and download
         protected override async Task OnInitializedAsync()
@@ -31,15 +32,18 @@ namespace AzureDesignStudio.Components.MenuDrawer
                 _ => "line-numbers language-json"
             };
 
-            var authState = await authenticationStateTask;
-            var user = authState.User;
-            if (user.Identity?.IsAuthenticated ?? false)
+            if (_drawerContent.Type == CodeDrawerContentType.Json)
             {
-                var subscriptions = await _deployService.GetLinkedSubscriptions();
-                if (subscriptions?.Count > 0)
+                var authState = await authenticationStateTask;
+                var user = authState.User;
+                if (user.Identity?.IsAuthenticated ?? false)
                 {
-                    _showDeployButton = true;
-                    _subName = subscriptions[0];
+                    var subscriptions = await _deployService.GetLinkedSubscriptions();
+                    if (subscriptions?.Count > 0)
+                    {
+                        _showDeployButton = true;
+                        _linkedSubscription = subscriptions[0];
+                    }
                 }
             }
 
@@ -86,10 +90,12 @@ namespace AzureDesignStudio.Components.MenuDrawer
         }
         #endregion
 
-        void HandleDeploy()
+        async Task HandleDeploy()
         {
-            if (string.IsNullOrEmpty(_subName))
+            if (_linkedSubscription == null)
                 return;
+
+            _resourceGroupNames = await _deployService.GetResourceGroups();
 
             _deployParams = new DeploymentParameters();
             _showDeployParams = true;

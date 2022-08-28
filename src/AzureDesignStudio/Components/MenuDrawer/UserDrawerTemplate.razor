@@ -18,10 +18,10 @@
             <Spin Spinning="@_spinning">
         @if(_showLinkSubscription)
         {
-            <AntList Bordered DataSource="@_subscriptionNames" Size="small">
+            <AntList Bordered DataSource="@_linkedSubscriptions" Size="small">
                 <Header><b>Your linked subscriptions</b></Header>
                 <ChildContent Context="item">
-                    <ListItem>@item</ListItem>
+                    <ListItem>@item.SubscriptionName</ListItem>
                 </ChildContent>
             </AntList>
         }
@@ -45,7 +45,7 @@
 
     private bool _spinning = true;
     private bool _showLinkSubscription = false;
-    private IList<string>? _subscriptionNames = null;
+    private IList<SubscriptionRes>? _linkedSubscriptions = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,9 +62,8 @@
 
     private async Task<bool> GetSubscriptionNames()
     {
-        _subscriptionNames = await _deployService.GetLinkedSubscriptions();
-        //_subscriptionNames = subscriptions?.Select(s => s.SubscriptionName).ToList();
-        var hasLinked = _subscriptionNames?.Count > 0;
+        _linkedSubscriptions = await _deployService.GetLinkedSubscriptions();
+        var hasLinked = _linkedSubscriptions?.Count > 0;
         if (_showLinkSubscription != hasLinked)
         {
             _showLinkSubscription = hasLinked;

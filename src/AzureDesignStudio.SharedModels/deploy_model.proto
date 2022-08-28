@@ -7,6 +7,8 @@ import "google/protobuf/empty.proto";
 service Deploy {
 	rpc SaveSubscriptionInfo(SubscriptionInfo) returns(SaveSubInfoResponse);
 	rpc LoadSubscriptionInfo(google.protobuf.Empty) returns(LoadSubInfoResponse);
+	rpc GetResourceGroups(google.protobuf.Empty) returns(GetRgsResponse);
+	rpc CreateDeployment(DeploymentRequest) returns(DeploymentResponse);
 }
 
 message SubscriptionInfo {
@@ -21,7 +23,27 @@ message SaveSubInfoResponse {
 	int32 status_code = 1;
 }
 
+message SubscriptionRes {
+	string subscription_name = 1;
+	string subscription_id = 2;
+}
+
 message LoadSubInfoResponse {
 	int32 status_code = 1;
-	repeated string subscription_names = 2;
+	repeated SubscriptionRes subscription_data = 2;
+}
+
+message GetRgsResponse {
+	int32 status_code = 1;
+	repeated string resource_group_name = 2;
+}
+
+message DeploymentRequest {
+	string resource_group_name = 1;
+	string arm_template = 2;
+	string parameters = 3;
+}
+
+message DeploymentResponse {
+	int32 status_code = 1;
 }

@@ -38,6 +38,8 @@ builder.Services.Configure<JwtBearerOptions>(
     builder.Services.AddDbContext<DesignDbContext>(options => options.UseSqlServer(builder.Configuration["ads-main"]));
 #endif
 
+builder.Services.AddSingleton<ICryptoService, CryptoService>();
+
 builder.Services.AddSingleton<ITelemetryInitializer, AdsTelemetryInitializer>();
 builder.Services.AddApplicationInsightsTelemetry();
 

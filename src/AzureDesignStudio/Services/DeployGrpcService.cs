@@ -14,14 +14,14 @@ namespace AzureDesignStudio.Services
             _deployClient = _clientFactory.CreateClient<Deploy.DeployClient>("DeployClientWithAuth");
         }
 
-        public async Task<IList<string>?> GetLinkedSubscriptions()
+        public async Task<IList<SubscriptionRes>?> GetLinkedSubscriptions()
         {
-            IList<string>? linkedSubscriptions = null;
+            IList<SubscriptionRes>? linkedSubscriptions = null;
 
             var response = await _deployClient.LoadSubscriptionInfoAsync(new Empty());
             if (response.StatusCode == 200)
             {
-                linkedSubscriptions = response.SubscriptionNames?.ToList();
+                linkedSubscriptions = response.SubscriptionData?.ToList();
             }
 
             return linkedSubscriptions;
@@ -32,6 +32,13 @@ namespace AzureDesignStudio.Services
             var response = await _deployClient.SaveSubscriptionInfoAsync(subscriptionInfo);
 
             return response.StatusCode;
+        }
+
+        public async Task<IList<string>> GetResourceGroups()
+        {
+            var response = await _deployClient.GetResourceGroupsAsync(new Empty());
+
+            return response.ResourceGroupName.ToList();
         }
     }
 }
