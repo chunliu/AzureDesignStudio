@@ -86,7 +86,15 @@ namespace AzureDesignStudio.Core.Network
                             RemoteVirtualNetworkId = n.ResourceId,
                         };
                         peering.DependsOn.Add(ResourceId);
+                        foreach(var subnet in Subnets)
+                        {
+                            peering.DependsOn.Add(subnet.ResourceId);
+                        }
                         peering.DependsOn.Add(n.ResourceId);
+                        foreach(var subnet in n.Subnets)
+                        {
+                            peering.DependsOn.Add(subnet.ResourceId);
+                        }
                         result.Add(peering.ArmResource);
                     }
                 }

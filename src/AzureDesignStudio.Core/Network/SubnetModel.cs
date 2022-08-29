@@ -87,7 +87,11 @@ namespace AzureDesignStudio.Core.Network
                 throw new Exception($"Subnet must be in a vnet.");
 
             ArmResource.Name = $"{vnet.Name}/{Name}";
-
+            _subnet.Location = null;
+            _subnet.DependsOn = new List<string>()
+            {
+                vnet.ResourceId,
+            };
             _subnet.Properties.ServiceEndpoints = new List<ServiceEndpointPropertiesFormat>();
             _subnet.Properties.Delegations = new List<Delegation>();
 
