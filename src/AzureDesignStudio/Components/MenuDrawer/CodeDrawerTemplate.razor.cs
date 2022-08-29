@@ -20,8 +20,11 @@ namespace AzureDesignStudio.Components.MenuDrawer
         private Form<DeploymentParameters> _paramsForm = null!;
         private SubscriptionRes? _linkedSubscription = null;
         private IList<string> _resourceGroupNames = null!;
+        private bool _paramFormLoading = true;
+        private bool _showDeployStatus = false;
+        private int _currentDeploymentStep = 0;
 
-        #region Button style and download
+ #region Button style and download
         protected override async Task OnInitializedAsync()
         {
             _drawerContent = Options;
@@ -88,17 +91,20 @@ namespace AzureDesignStudio.Components.MenuDrawer
             using var streamRef = new DotNetStreamReference(stream);
             await JS.InvokeVoidAsync("downloadFileFromStream", filename, contentType, streamRef);
         }
-        #endregion
+#endregion
 
         async Task HandleDeploy()
         {
             if (_linkedSubscription == null)
                 return;
 
-            _resourceGroupNames = await _deployService.GetResourceGroups();
-
+            _paramFormLoading = true;
             _deployParams = new DeploymentParameters();
             _showDeployParams = true;
+
+            _resourceGroupNames = await _deployService.GetResourceGroups(_linkedSubscription.SubscriptionId);
+
+            _paramFormLoading = false;
         }
         private void ParamsFormCancel(MouseEventArgs e)
         {
@@ -108,9 +114,26 @@ namespace AzureDesignStudio.Components.MenuDrawer
         {
             _paramsForm.Submit();
         }
-        private void ParamsFormFinish(EditContext editContext)
+        private async Task ParamsFormFinish(EditContext editContext)
         {
             _showDeployParams = false;
+
+            _showDeployStatus = true;
+
+            await _deployService.CreateDeployment(_linkedSubscription!.SubscriptionId,
+                _deployParams.ResourceGroup, _drawerContent.Content, "{}",
+                (status) => 
+                {
+                    _currentDeploymentStep = status switch
+                    {
+                        "started" => 0,
+                        "running" => 1,
+                        "completed" => 2,
+                        _ => 0
+                    };
+                    if (_currentDeploymentStep == 2)
+                        _showDeployStatus = false;
+                });
         }
     }
 }

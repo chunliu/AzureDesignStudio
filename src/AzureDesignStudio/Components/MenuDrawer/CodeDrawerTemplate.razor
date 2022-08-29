@@ -23,11 +23,19 @@
 
 <Modal Title="Deployment Parameters" Visible="@_showDeployParams" MaskClosable="@false" OnOk="@ParamsFormOk" OnCancel="@ParamsFormCancel">
     <Form Model="_deployParams" @ref="@_paramsForm" LabelColSpan="8" WrapperColSpan="16"
-        OnFinish="ParamsFormFinish">
+          Loading="@_paramFormLoading" OnFinish="ParamsFormFinish">
         <FormItem Label="Resource Group">
             <SimpleSelect DataSource="@_resourceGroupNames" @bind-Value="@context.ResourceGroup" SortByLabel="@SortDirection.Ascending" />
         </FormItem>
     </Form>
+</Modal>
+
+<Modal Title="Deployment Status" Visible="@_showDeployStatus" MaskClosable="@false" Closable="@false" Footer="@null">
+    <Steps Direction="vertical" Size="small" Current="@_currentDeploymentStep">
+        <Step Title="Started" Description="The deployment has started."></Step>
+        <Step Title="In Progress" Description="The deployment is in progress."></Step>
+        <Step Title="Completed" Description="The deployment has completed."></Step>
+    </Steps>
 </Modal>
 
 @code {

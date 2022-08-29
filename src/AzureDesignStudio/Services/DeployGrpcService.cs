@@ -34,11 +34,41 @@ namespace AzureDesignStudio.Services
             return response.StatusCode;
         }
 
-        public async Task<IList<string>> GetResourceGroups()
+        public async Task<IList<string>> GetResourceGroups(string subscriptionId)
         {
-            var response = await _deployClient.GetResourceGroupsAsync(new Empty());
+            var response = await _deployClient.GetResourceGroupsAsync(
+                new GetRgsRequest 
+                { 
+                    SubscriptionId = subscriptionId
+                });
 
             return response.ResourceGroupName.ToList();
+        }
+
+        public async Task CreateDeployment(string subscriptionId, string rgName, string armTemplate, string parameters, Action<string> updateStatus)
+        {
+            var request = new DeploymentRequest
+            {
+                SubscriptionId = subscriptionId,
+                ResourceGroupName = rgName,
+                ArmTemplate = armTemplate,
+                Parameters = parameters,
+            };
+
+            using var deploymentResponse = _deployClient.CreateDeployment(request);
+            var responseStream = deploymentResponse.ResponseStream;
+            while (await responseStream.MoveNext(default))
+            {
+                var response = responseStream.Current;
+                if (response.StatusCode != 200)
+                {
+                    // Something bad happening
+                    updateStatus("error");
+                    return;
+                }
+
+                updateStatus(response.DeploymentStatus);
+            }
         }
     }
 }

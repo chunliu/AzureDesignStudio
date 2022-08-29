@@ -1,4 +1,6 @@
-﻿namespace AzureDesignStudio.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace AzureDesignStudio.Models
 {
     public record ArmParameter
     {
@@ -6,6 +8,7 @@
     }
     public record DeploymentParameters
     {
+        [Required]
         public string ResourceGroup { get; set; } = default!;
         public IDictionary<string, string> Parameters { get; set; } = null!;
     }

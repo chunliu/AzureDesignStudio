@@ -9,6 +9,7 @@ using Google.Protobuf.WellKnownTypes;
 using Azure.ResourceManager;
 using Azure.ResourceManager.Resources;
 using Azure;
+using Azure.ResourceManager.Resources.Models;
 
 namespace AzureDesignStudio.Server.Services
 {
@@ -111,18 +112,19 @@ namespace AzureDesignStudio.Server.Services
 
             return Task.FromResult(response);
         }
-        private async Task<AzureSubscriptionModel?> GetSubscriptionInfo(Guid userId)
+        private async Task<AzureSubscriptionModel?> GetSubscriptionInfo(Guid userId, Guid subscriptionId)
         {
-            var subModel = _designContext.AzureSubscriptions.Where(s => s.UserId == userId).FirstOrDefault();
+            var subModel = _designContext.AzureSubscriptions.Where(s => s.UserId == userId && s.SubscriptionId == subscriptionId)
+                .FirstOrDefault();
             if (subModel == null)
                 return null;
 
             subModel.ClientSecret = await _cryptoService.Decrypt(subModel.ClientSecret);
             return subModel;
         }
-        private async Task<SubscriptionResource?> GetSubscriptionResource(Guid userId)
+        private async Task<SubscriptionResource?> GetSubscriptionResource(Guid userId, Guid subscriptionId)
         {
-            var subModel = await GetSubscriptionInfo(userId);
+            var subModel = await GetSubscriptionInfo(userId, subscriptionId);
             if (subModel == null)
                 return null;
 
@@ -133,7 +135,7 @@ namespace AzureDesignStudio.Server.Services
 
             return subResource;
         }
-        public override async Task<DeploymentResponse> CreateDeployment(DeploymentRequest request, ServerCallContext context)
+        public override async Task CreateDeployment(DeploymentRequest request, IServerStreamWriter<DeploymentResponse> responseStream, ServerCallContext context)
         {
             var response = new DeploymentResponse();
 
@@ -142,21 +144,72 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning("Access denied. userIdClaim is empty.");
                 response.StatusCode = StatusCodes.Status401Unauthorized;
-                return response;
+                await responseStream.WriteAsync(response);
+                return;
             }
             var userId = new Guid(userIdClaim);
-            var subResource = await GetSubscriptionResource(userId);
+            Guid subscriptionId;
+            try
+            {
+                subscriptionId = new Guid(request.SubscriptionId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Exception occurred.");
+                response.StatusCode = StatusCodes.Status400BadRequest;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+
+            var subResource = await GetSubscriptionResource(userId, subscriptionId);
             if (subResource == null)
             {
                 _logger.LogWarning("No subscription is found.");
                 response.StatusCode = StatusCodes.Status404NotFound;
-                return response;
+                await responseStream.WriteAsync(response);
+                return;
             }
 
-            return response;
+            var rg = (await subResource.GetResourceGroupAsync(request.ResourceGroupName))?.Value;
+            if (rg == null)
+            {
+                _logger.LogWarning("{ResourceGroup} cannot be found.", request.ResourceGroupName);
+                response.StatusCode = StatusCodes.Status404NotFound;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+            // Deploy the template
+            ArmDeploymentCollection armDeployments = rg.GetArmDeployments();
+            string deploymentName = "ads-deployment";
+            var input = new ArmDeploymentContent(new ArmDeploymentProperties(ArmDeploymentMode.Incremental)
+            {
+                Template = BinaryData.FromString(request.ArmTemplate),
+                Parameters = BinaryData.FromString(request.Parameters),
+            });
+            ArmOperation<ArmDeploymentResource> lro = await armDeployments.CreateOrUpdateAsync(WaitUntil.Started, deploymentName, input);
+            response.StatusCode = StatusCodes.Status200OK;
+            response.DeploymentStatus = "started";
+            await responseStream.WriteAsync(response);
+
+            while (!lro.HasCompleted)
+            {
+                response.StatusCode = StatusCodes.Status200OK;
+                response.DeploymentStatus = "running";
+                await responseStream.WriteAsync(response);
+                await Task.Delay(1000);
+                await lro.UpdateStatusAsync();
+            }
+
+            response.StatusCode = StatusCodes.Status200OK;
+            if (lro.HasValue && lro.Value.Data.Properties.ProvisioningState != ResourcesProvisioningState.Failed)
+                response.DeploymentStatus = "completed";
+            else
+                response.DeploymentStatus = "failed";
+
+            await responseStream.WriteAsync(response);
         }
 
-        public override async Task<GetRgsResponse> GetResourceGroups(Empty request, ServerCallContext context)
+        public override async Task<GetRgsResponse> GetResourceGroups(GetRgsRequest request, ServerCallContext context)
         {
             var response = new GetRgsResponse();
 
@@ -168,7 +221,19 @@ namespace AzureDesignStudio.Server.Services
                 return response;
             }
             var userId = new Guid(userIdClaim);
-            var subResource = await GetSubscriptionResource(userId);
+            Guid subscriptionId;
+            try
+            {
+                subscriptionId = new Guid(request.SubscriptionId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Exception occurred.");
+                response.StatusCode = StatusCodes.Status400BadRequest;
+                return response;
+            }
+
+            var subResource = await GetSubscriptionResource(userId, subscriptionId);
             if (subResource == null)
             {
                 _logger.LogWarning("No subscription is found.");
