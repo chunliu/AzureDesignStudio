@@ -8,6 +8,11 @@ using System.Text;
 
 namespace AzureDesignStudio.Components.MenuDrawer
 {
+    internal record StepsStatus
+    {
+        public int CurrentStep { get; set; }
+        public string Status { get; set; } = "process";
+    }
     public partial class CodeDrawerTemplate
     {
         private CodeDrawerContent _drawerContent = null!;
@@ -22,9 +27,9 @@ namespace AzureDesignStudio.Components.MenuDrawer
         private IList<string> _resourceGroupNames = null!;
         private bool _paramFormLoading = true;
         private bool _showDeployStatus = false;
-        private int _currentDeploymentStep = 0;
+        private StepsStatus _stepsStatus = new();
 
- #region Button style and download
+        #region Button style and download
         protected override async Task OnInitializedAsync()
         {
             _drawerContent = Options;
@@ -91,7 +96,7 @@ namespace AzureDesignStudio.Components.MenuDrawer
             using var streamRef = new DotNetStreamReference(stream);
             await JS.InvokeVoidAsync("downloadFileFromStream", filename, contentType, streamRef);
         }
-#endregion
+        #endregion
 
         async Task HandleDeploy()
         {
@@ -120,20 +125,48 @@ namespace AzureDesignStudio.Components.MenuDrawer
 
             _showDeployStatus = true;
 
+            // TODO: work on the parameters.
             await _deployService.CreateDeployment(_linkedSubscription!.SubscriptionId,
                 _deployParams.ResourceGroup, _drawerContent.Content, "{}",
-                (status) => 
+                async (deploymentStatus, provisionState) => 
                 {
-                    _currentDeploymentStep = status switch
+                    var stateHasChanged = false;
+
+                    var step = deploymentStatus switch
                     {
                         "started" => 0,
-                        "running" => 1,
+                        "processing" => 1,
                         "completed" => 2,
-                        _ => 0
+                        _ => _stepsStatus.CurrentStep
                     };
-                    if (_currentDeploymentStep == 2)
-                        _showDeployStatus = false;
+                    if (step != _stepsStatus.CurrentStep)
+                    {
+                        _stepsStatus.CurrentStep = step;
+                        stateHasChanged = true;
+                    }
+                    if (deploymentStatus == "error" && deploymentStatus != _stepsStatus.Status)
+                    {
+                        _stepsStatus.Status = "error";
+                        stateHasChanged = true;
+                    }
+                    else if (deploymentStatus == "completed")
+                    {
+                        if (provisionState == "succeeded")
+                            _stepsStatus.Status = "finish";
+                        else if (provisionState == "failed")
+                            _stepsStatus.Status = "error";
+
+                        stateHasChanged = true;
+                    }
+
+                    if (stateHasChanged)
+                        await InvokeAsync(StateHasChanged);
                 });
+        }
+        private void CloseDeployStatus(MouseEventArgs e)
+        {
+            _showDeployStatus = false;
+            _stepsStatus = new();
         }
     }
 }

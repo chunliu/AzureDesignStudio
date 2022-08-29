@@ -30,11 +30,16 @@
     </Form>
 </Modal>
 
-<Modal Title="Deployment Status" Visible="@_showDeployStatus" MaskClosable="@false" Closable="@false" Footer="@null">
-    <Steps Direction="vertical" Size="small" Current="@_currentDeploymentStep">
-        <Step Title="Started" Description="The deployment has started."></Step>
-        <Step Title="In Progress" Description="The deployment is in progress."></Step>
-        <Step Title="Completed" Description="The deployment has completed."></Step>
+<Modal Title="Deployment Status" Visible="@_showDeployStatus" MaskClosable="@false" Closable="false" 
+    Footer="@_modalFooter" OnOk="CloseDeployStatus">
+    <Steps Direction="vertical" Current="@_stepsStatus.CurrentStep" Status="@_stepsStatus.Status">
+        <Step Title="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "Starting" : "Started")" 
+              Description="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "The deployment is starting..." : "The deployment has started.")"
+              Icon="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "loading" : "")" />
+        <Step Title="In Progress" Description="The deployment is running."
+              Icon="@((_stepsStatus.CurrentStep == 1 && _stepsStatus.Status == "process") ? "loading" : "")" />
+        <Step Title="@((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "finish") ? "Completed" : ((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "error") ? "Failed" : "Waiting"))"
+              Description="@((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "finish") ? "The deployment has completed successfully." : ((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "error") ? "The deployment has failed." : "Waiting for the result."))" />
     </Steps>
 </Modal>
 
@@ -48,4 +53,5 @@
         <path d="M6.2678.7255v0h5.4894a1.249,1.249,0,0,1,1.1834.85l4.7422,14.0511a1.2489,1.2489,0,0,1-1.1834,1.6483H11.1467V17.27c-.0367.0032-.0739.0047-.1116.0047h-.0205a1.2489,1.2489,0,0,1-.7448-.2463L6.7813,14.4367,6.11,16.425a1.249,1.249,0,0,1-1.1834.85H1.5006A1.249,1.249,0,0,1,.3172,15.6262L5.0594,1.5751a1.249,1.249,0,0,1,1.1834-.85ZM5.7869,12.5311l5.0415,3.745a.3122.3122,0,0,0,.1862.0617h.0205a.3122.3122,0,0,0,.2958-.4122L8.7768,8.3577,7.755,11.0024l-.1158.3H4.1515Zm10.7125,3.8067H12.2453a1.2381,1.2381,0,0,0-.0268-.7117L7.5057,1.6621h4.2515a.3124.3124,0,0,1,.2958.2124l4.7423,14.0511A.3123.3123,0,0,1,16.4994,16.3378Z" fill-rule="evenodd" />
         </svg>
     ;
+    private RenderFragment _modalFooter =@<OneButtonModalFooter />;
 }

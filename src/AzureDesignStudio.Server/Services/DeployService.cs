@@ -139,6 +139,14 @@ namespace AzureDesignStudio.Server.Services
         {
             var response = new DeploymentResponse();
 
+            if (string.IsNullOrWhiteSpace(request.ArmTemplate))
+            {
+                _logger.LogWarning("ArmTemplate is empty");
+                response.StatusCode = StatusCodes.Status400BadRequest;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+
             var userIdClaim = ServiceTools.GetUserId(context);
             if (string.IsNullOrWhiteSpace(userIdClaim))
             {
@@ -148,6 +156,7 @@ namespace AzureDesignStudio.Server.Services
                 return;
             }
             var userId = new Guid(userIdClaim);
+
             Guid subscriptionId;
             try
             {
@@ -188,25 +197,41 @@ namespace AzureDesignStudio.Server.Services
             });
             ArmOperation<ArmDeploymentResource> lro = await armDeployments.CreateOrUpdateAsync(WaitUntil.Started, deploymentName, input);
             response.StatusCode = StatusCodes.Status200OK;
-            response.DeploymentStatus = "started";
+            response.DeploymentStatus = "processing";
             await responseStream.WriteAsync(response);
 
-            while (!lro.HasCompleted)
+            // lro.UpdateStatusAsync or lro.WaitForCompletionAsync will never return when deployment fails. 
+            // so check the deployment status manually to workaround it. 
+            while (true)
             {
-                response.StatusCode = StatusCodes.Status200OK;
-                response.DeploymentStatus = "running";
-                await responseStream.WriteAsync(response);
-                await Task.Delay(1000);
-                await lro.UpdateStatusAsync();
+                var adr = (await armDeployments.GetAsync(deploymentName)).Value;
+                if (adr.HasData)
+                {
+                    if (adr.Data.Properties.ProvisioningState == ResourcesProvisioningState.Running)
+                    {
+                        response.StatusCode = StatusCodes.Status200OK;
+                        response.DeploymentStatus = "processing";
+                        await responseStream.WriteAsync(response);
+                    }
+                    else if (adr.Data.Properties.ProvisioningState == ResourcesProvisioningState.Succeeded)
+                    {
+                        response.StatusCode = StatusCodes.Status200OK;
+                        response.DeploymentStatus = "completed";
+                        response.ProvisionState = "succeeded";
+                        await responseStream.WriteAsync(response);
+                        return;
+                    }
+                    else if (adr.Data.Properties.ProvisioningState == ResourcesProvisioningState.Failed)
+                    {
+                        response.StatusCode = StatusCodes.Status200OK;
+                        response.DeploymentStatus = "completed";
+                        response.ProvisionState = "failed";
+                        await responseStream.WriteAsync(response);
+                        return;
+                    }
+                }
+                await Task.Delay(2000); // Check every 2 seconds.
             }
-
-            response.StatusCode = StatusCodes.Status200OK;
-            if (lro.HasValue && lro.Value.Data.Properties.ProvisioningState != ResourcesProvisioningState.Failed)
-                response.DeploymentStatus = "completed";
-            else
-                response.DeploymentStatus = "failed";
-
-            await responseStream.WriteAsync(response);
         }
 
         public override async Task<GetRgsResponse> GetResourceGroups(GetRgsRequest request, ServerCallContext context)
