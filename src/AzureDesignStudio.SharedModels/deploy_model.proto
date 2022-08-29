@@ -52,4 +52,5 @@ message DeploymentRequest {
 message DeploymentResponse {
 	int32 status_code = 1;
 	string deployment_status = 2;
+	string provision_state = 3;
 }
