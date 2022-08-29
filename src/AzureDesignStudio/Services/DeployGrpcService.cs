@@ -8,25 +8,23 @@ namespace AzureDesignStudio.Services
     {
         private readonly Deploy.DeployClient _deployClient = null!;
         private readonly GrpcClientFactory _clientFactory = null!;
-        private List<SubscriptionInfo>? _linkedSubscriptions = null;
         public DeployGrpcService(GrpcClientFactory grpcClientFactory)
         {
             _clientFactory = grpcClientFactory;
             _deployClient = _clientFactory.CreateClient<Deploy.DeployClient>("DeployClientWithAuth");
         }
 
-        public async Task<IList<SubscriptionInfo>?> GetLinkedSubscriptions()
+        public async Task<IList<SubscriptionRes>?> GetLinkedSubscriptions()
         {
-            if ((_linkedSubscriptions?.Count ?? 0) == 0)
+            IList<SubscriptionRes>? linkedSubscriptions = null;
+
+            var response = await _deployClient.LoadSubscriptionInfoAsync(new Empty());
+            if (response.StatusCode == 200)
             {
-                var response = await _deployClient.LoadSubscriptionInfoAsync(new Empty());
-                if (response.StatusCode == 200)
-                {
-                    _linkedSubscriptions = response.SubscriptionInfo.ToList();
-                }
+                linkedSubscriptions = response.SubscriptionData?.ToList();
             }
 
-            return _linkedSubscriptions;
+            return linkedSubscriptions;
         }
 
         public async Task<int> LinkAzureSubscription(SubscriptionInfo subscriptionInfo)
@@ -34,6 +32,43 @@ namespace AzureDesignStudio.Services
             var response = await _deployClient.SaveSubscriptionInfoAsync(subscriptionInfo);
 
             return response.StatusCode;
+        }
+
+        public async Task<IList<string>> GetResourceGroups(string subscriptionId)
+        {
+            var response = await _deployClient.GetResourceGroupsAsync(
+                new GetRgsRequest 
+                { 
+                    SubscriptionId = subscriptionId
+                });
+
+            return response.ResourceGroupName.ToList();
+        }
+
+        public async Task CreateDeployment(string subscriptionId, string rgName, string armTemplate, string parameters, Action<string> updateStatus)
+        {
+            var request = new DeploymentRequest
+            {
+                SubscriptionId = subscriptionId,
+                ResourceGroupName = rgName,
+                ArmTemplate = armTemplate,
+                Parameters = parameters,
+            };
+
+            using var deploymentResponse = _deployClient.CreateDeployment(request);
+            var responseStream = deploymentResponse.ResponseStream;
+            while (await responseStream.MoveNext(default))
+            {
+                var response = responseStream.Current;
+                if (response.StatusCode != 200)
+                {
+                    // Something bad happening
+                    updateStatus("error");
+                    return;
+                }
+
+                updateStatus(response.DeploymentStatus);
+            }
         }
     }
 }

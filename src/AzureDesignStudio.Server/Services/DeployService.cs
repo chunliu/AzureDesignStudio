@@ -4,11 +4,12 @@ using AzureDesignStudio.SharedModels.Protos;
 using AzureDesignStudio.Server.Models;
 using Grpc.Core;
 using Microsoft.EntityFrameworkCore;
-using Azure.Security.KeyVault.Keys.Cryptography;
-using Azure.Security.KeyVault.Keys;
 using Azure.Identity;
-using System.Text;
 using Google.Protobuf.WellKnownTypes;
+using Azure.ResourceManager;
+using Azure.ResourceManager.Resources;
+using Azure;
+using Azure.ResourceManager.Resources.Models;
 
 namespace AzureDesignStudio.Server.Services
 {
@@ -17,34 +18,15 @@ namespace AzureDesignStudio.Server.Services
     public class DeployService : Deploy.DeployBase
     {
         private readonly DesignDbContext _designContext;
-        private readonly ILogger<DesignService> _logger;
-        private readonly CryptographyClient _cryptoClient;
-        public DeployService(DesignDbContext context, ILogger<DesignService> logger, IConfiguration configuration)
+        private readonly ILogger<DeployService> _logger;
+        private readonly ICryptoService _cryptoService;
+        public DeployService(DesignDbContext context, ILogger<DeployService> logger, ICryptoService cryptoService)
         {
             _designContext = context;
             _designContext.Database.EnsureCreated();
 
             _logger = logger;
-
-            var chainedTokenCred = new ChainedTokenCredential(
-                    new ManagedIdentityCredential(configuration["MIClientId"]),
-                    new AzureCliCredential());
-            var keyClient = new KeyClient(new Uri($"https://{configuration["KeyVaultName"]}.vault.azure.net/"),
-                chainedTokenCred);
-            var key = keyClient.GetKey(configuration["KeyVaultKeyName"]).Value;
-            _cryptoClient = new CryptographyClient(key.Id, chainedTokenCred);
-        }
-        private async Task<string> Encrypt(string plainText)
-        {
-            byte[] inputAsByteArray = Encoding.UTF8.GetBytes(plainText);
-            EncryptResult encryptResult = await _cryptoClient.EncryptAsync(EncryptionAlgorithm.RsaOaep, inputAsByteArray);
-            return Convert.ToBase64String(encryptResult.Ciphertext);
-        }
-        private async Task<string> Decrypt(string encryptedString)
-        {
-            byte[] inputAsByteArray = Convert.FromBase64String(encryptedString);
-            DecryptResult decryptResult = await _cryptoClient.DecryptAsync(EncryptionAlgorithm.RsaOaep, inputAsByteArray);
-            return Encoding.Default.GetString(decryptResult.Plaintext);
+            _cryptoService = cryptoService;
         }
         public override async Task<SaveSubInfoResponse> SaveSubscriptionInfo(SubscriptionInfo request, ServerCallContext context)
         {
@@ -75,13 +57,13 @@ namespace AzureDesignStudio.Server.Services
                     SubscriptionName = request.SubscriptionName,
                     TenantId = new Guid(request.TenantId),
                     ClientId = new Guid(request.ClientId),
-                    ClientSecret = await Encrypt(request.ClientSecret)
+                    ClientSecret = await _cryptoService.Encrypt(request.ClientSecret)
                 };
                 _designContext.AzureSubscriptions.Add(subscription);
             }
             catch(Exception ex)
             {
-                _logger.LogWarning("{Exception} occurred.", ex.Message);
+                _logger.LogWarning(ex, "Exception occurred.");
                 response.StatusCode = StatusCodes.Status400BadRequest;
                 return response;
             }
@@ -104,9 +86,132 @@ namespace AzureDesignStudio.Server.Services
 
             return response;
         }
-        public override async Task<LoadSubInfoResponse> LoadSubscriptionInfo(Empty request, ServerCallContext context)
+        public override Task<LoadSubInfoResponse> LoadSubscriptionInfo(Empty request, ServerCallContext context)
         {
             var response = new LoadSubInfoResponse();
+
+            var userIdClaim = ServiceTools.GetUserId(context);
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+            {
+                _logger.LogWarning("Access denied. userIdClaim is empty.");
+                response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.FromResult(response);
+            }
+            var userId = new Guid(userIdClaim);
+
+            var subResources = _designContext.AzureSubscriptions.Where(s => s.UserId == userId);
+            foreach(var subResource in subResources)
+            {
+                response.SubscriptionData.Add(new SubscriptionRes
+                {
+                    SubscriptionId = subResource.SubscriptionId.ToString(),
+                    SubscriptionName = subResource.SubscriptionName,
+                });
+            }
+            response.StatusCode = StatusCodes.Status200OK;
+
+            return Task.FromResult(response);
+        }
+        private async Task<AzureSubscriptionModel?> GetSubscriptionInfo(Guid userId, Guid subscriptionId)
+        {
+            var subModel = _designContext.AzureSubscriptions.Where(s => s.UserId == userId && s.SubscriptionId == subscriptionId)
+                .FirstOrDefault();
+            if (subModel == null)
+                return null;
+
+            subModel.ClientSecret = await _cryptoService.Decrypt(subModel.ClientSecret);
+            return subModel;
+        }
+        private async Task<SubscriptionResource?> GetSubscriptionResource(Guid userId, Guid subscriptionId)
+        {
+            var subModel = await GetSubscriptionInfo(userId, subscriptionId);
+            if (subModel == null)
+                return null;
+
+            var azCred = new ClientSecretCredential(subModel.TenantId.ToString(), 
+                subModel.ClientId.ToString(), subModel.ClientSecret);
+            var armClient = new ArmClient(azCred, subModel.SubscriptionId.ToString());
+            var subResource = await armClient.GetDefaultSubscriptionAsync();
+
+            return subResource;
+        }
+        public override async Task CreateDeployment(DeploymentRequest request, IServerStreamWriter<DeploymentResponse> responseStream, ServerCallContext context)
+        {
+            var response = new DeploymentResponse();
+
+            var userIdClaim = ServiceTools.GetUserId(context);
+            if (string.IsNullOrWhiteSpace(userIdClaim))
+            {
+                _logger.LogWarning("Access denied. userIdClaim is empty.");
+                response.StatusCode = StatusCodes.Status401Unauthorized;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+            var userId = new Guid(userIdClaim);
+            Guid subscriptionId;
+            try
+            {
+                subscriptionId = new Guid(request.SubscriptionId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Exception occurred.");
+                response.StatusCode = StatusCodes.Status400BadRequest;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+
+            var subResource = await GetSubscriptionResource(userId, subscriptionId);
+            if (subResource == null)
+            {
+                _logger.LogWarning("No subscription is found.");
+                response.StatusCode = StatusCodes.Status404NotFound;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+
+            var rg = (await subResource.GetResourceGroupAsync(request.ResourceGroupName))?.Value;
+            if (rg == null)
+            {
+                _logger.LogWarning("{ResourceGroup} cannot be found.", request.ResourceGroupName);
+                response.StatusCode = StatusCodes.Status404NotFound;
+                await responseStream.WriteAsync(response);
+                return;
+            }
+            // Deploy the template
+            ArmDeploymentCollection armDeployments = rg.GetArmDeployments();
+            string deploymentName = "ads-deployment";
+            var input = new ArmDeploymentContent(new ArmDeploymentProperties(ArmDeploymentMode.Incremental)
+            {
+                Template = BinaryData.FromString(request.ArmTemplate),
+                Parameters = BinaryData.FromString(request.Parameters),
+            });
+            ArmOperation<ArmDeploymentResource> lro = await armDeployments.CreateOrUpdateAsync(WaitUntil.Started, deploymentName, input);
+            response.StatusCode = StatusCodes.Status200OK;
+            response.DeploymentStatus = "started";
+            await responseStream.WriteAsync(response);
+
+            while (!lro.HasCompleted)
+            {
+                response.StatusCode = StatusCodes.Status200OK;
+                response.DeploymentStatus = "running";
+                await responseStream.WriteAsync(response);
+                await Task.Delay(1000);
+                await lro.UpdateStatusAsync();
+            }
+
+            response.StatusCode = StatusCodes.Status200OK;
+            if (lro.HasValue && lro.Value.Data.Properties.ProvisioningState != ResourcesProvisioningState.Failed)
+                response.DeploymentStatus = "completed";
+            else
+                response.DeploymentStatus = "failed";
+
+            await responseStream.WriteAsync(response);
+        }
+
+        public override async Task<GetRgsResponse> GetResourceGroups(GetRgsRequest request, ServerCallContext context)
+        {
+            var response = new GetRgsResponse();
 
             var userIdClaim = ServiceTools.GetUserId(context);
             if (string.IsNullOrWhiteSpace(userIdClaim))
@@ -116,20 +221,28 @@ namespace AzureDesignStudio.Server.Services
                 return response;
             }
             var userId = new Guid(userIdClaim);
-
-            var subscriptions = _designContext.AzureSubscriptions.Where(s => s.UserId == userId);
-
-            foreach(var subscription in subscriptions)
+            Guid subscriptionId;
+            try
             {
-                response.SubscriptionInfo.Add(new SubscriptionInfo
-                {
-                    SubscriptionId = subscription.SubscriptionId.ToString("D"),
-                    SubscriptionName = subscription.SubscriptionName,
-                    TenantId = subscription.TenantId.ToString("D"),
-                    ClientId = subscription.ClientId.ToString("D"),
-                    ClientSecret = await Decrypt(subscription.ClientSecret)
-                });
+                subscriptionId = new Guid(request.SubscriptionId);
             }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Exception occurred.");
+                response.StatusCode = StatusCodes.Status400BadRequest;
+                return response;
+            }
+
+            var subResource = await GetSubscriptionResource(userId, subscriptionId);
+            if (subResource == null)
+            {
+                _logger.LogWarning("No subscription is found.");
+                response.StatusCode = StatusCodes.Status404NotFound;
+                return response;
+            }
+
+            var rgNames = subResource.GetResourceGroups()?.Select(rg => rg.Data.Name);
+            response.ResourceGroupName.AddRange(rgNames);
             response.StatusCode = StatusCodes.Status200OK;
 
             return response;

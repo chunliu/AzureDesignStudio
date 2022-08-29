@@ -20,9 +20,9 @@ builder.Services.Configure<JwtBearerOptions>(
         options.TokenValidationParameters.NameClaimType = "name";
     });
 
-#if DEBUG
-    builder.Services.AddDbContext<DesignDbContext>(options => options.UseInMemoryDatabase("adsdb-inmem"));
-#else
+//#if DEBUG
+//    builder.Services.AddDbContext<DesignDbContext>(options => options.UseInMemoryDatabase("adsdb-inmem"));
+//#else
     // Use Azure Key Vault as configurations
     builder.Host.ConfigureAppConfiguration(config =>
     {
@@ -36,7 +36,9 @@ builder.Services.Configure<JwtBearerOptions>(
         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
     });
     builder.Services.AddDbContext<DesignDbContext>(options => options.UseSqlServer(builder.Configuration["ads-main"]));
-#endif
+//#endif
+
+builder.Services.AddSingleton<ICryptoService, CryptoService>();
 
 builder.Services.AddSingleton<ITelemetryInitializer, AdsTelemetryInitializer>();
 builder.Services.AddApplicationInsightsTelemetry();

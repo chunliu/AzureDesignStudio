@@ -1,70 +1,51 @@
 ﻿@using System.Text
 @using AzureDesignStudio.Models
+@using AzureDesignStudio.Services
 @inherits FeedbackComponent<CodeDrawerContent, string>
 @inject IJSRuntime JS
+@inject DeployGrpcService _deployService
 
 <Affix TargetSelector=".ant-drawer-body" OnChange="HandleAffixChange">
-    <Button Icon="download" Style="@buttonStyle" OnClick="HandleButtonClick">Download</Button>
+    <div style="@_buttonStyle">
+        @if (_showDeployButton)
+        {
+            <Button OnClick="HandleDeploy" NoSpanWrap>
+                <Icon Component="@_azureIcon" />
+                <span>Deploy</span>
+            </Button>
+        }
+        <Button Icon="download" OnClick="HandleDownload">Download</Button>
+    </div>
 </Affix>
-<pre><code class="@codeClass">
-    @drawerContent.Content
+<pre><code class="@_codeClass">
+    @_drawerContent.Content
 </code></pre>
 
+<Modal Title="Deployment Parameters" Visible="@_showDeployParams" MaskClosable="@false" OnOk="@ParamsFormOk" OnCancel="@ParamsFormCancel">
+    <Form Model="_deployParams" @ref="@_paramsForm" LabelColSpan="8" WrapperColSpan="16"
+          Loading="@_paramFormLoading" OnFinish="ParamsFormFinish">
+        <FormItem Label="Resource Group">
+            <SimpleSelect DataSource="@_resourceGroupNames" @bind-Value="@context.ResourceGroup" SortByLabel="@SortDirection.Ascending" />
+        </FormItem>
+    </Form>
+</Modal>
+
+<Modal Title="Deployment Status" Visible="@_showDeployStatus" MaskClosable="@false" Closable="@false" Footer="@null">
+    <Steps Direction="vertical" Size="small" Current="@_currentDeploymentStep">
+        <Step Title="Started" Description="The deployment has started."></Step>
+        <Step Title="In Progress" Description="The deployment is in progress."></Step>
+        <Step Title="Completed" Description="The deployment has completed."></Step>
+    </Steps>
+</Modal>
+
 @code {
-    private CodeDrawerContent drawerContent = null!;
-    private string codeClass = "line-numbers language-json";
-    private const string upperRight = "position:absolute;top:86px;right:41px;z-index:10";
-    private string buttonStyle = upperRight;
-
-    protected override Task OnInitializedAsync()
-    {
-        drawerContent = Options;
-        codeClass = drawerContent.Type switch
-        {
-            CodeDrawerContentType.Bicep => "line-numbers language-bicep",
-            CodeDrawerContentType.Json => "line-numbers language-json",
-            _ => "line-numbers language-json"
-        };
-
-        return base.OnInitializedAsync();
-    }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        await base.OnAfterRenderAsync(firstRender);
-
-        await JS.InvokeVoidAsync("Prism.highlightAll");
-    }
-
-    void HandleAffixChange(bool status)
-    {
-        if (status)
-        {
-            buttonStyle = "float:right;";
-        }
-        else
-        {
-            buttonStyle = upperRight;
-        }
-    }
-
-    async Task HandleButtonClick()
-    {
-        var filename = drawerContent.Type switch
-        {
-            CodeDrawerContentType.Json => "azure-design-studio.json",
-            CodeDrawerContentType.Bicep => "azure-design-studio.bicep",
-            _ => "azure-design-studio.json"
-        };
-
-        await DownloadFile(drawerContent.Content, filename, "application/json");
-    }
-
-    // According to: https://docs.microsoft.com/en-us/aspnet/core/blazor/file-downloads?view=aspnetcore-6.0
-    private async Task DownloadFile(string content, string filename, string contentType)
-    {
-        var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-        using var streamRef = new DotNetStreamReference(stream);
-        await JS.InvokeVoidAsync("downloadFileFromStream", filename, contentType, streamRef);
-    }
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+    // Azure icon
+    private RenderFragment _azureIcon =
+    @<svg id="bf656193-e6ca-4f9a-a1e3-1cf0316f5b36" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" 
+        fill="currentColor" class="icon" viewBox="0 0 18 18">
+        <path d="M6.2678.7255v0h5.4894a1.249,1.249,0,0,1,1.1834.85l4.7422,14.0511a1.2489,1.2489,0,0,1-1.1834,1.6483H11.1467V17.27c-.0367.0032-.0739.0047-.1116.0047h-.0205a1.2489,1.2489,0,0,1-.7448-.2463L6.7813,14.4367,6.11,16.425a1.249,1.249,0,0,1-1.1834.85H1.5006A1.249,1.249,0,0,1,.3172,15.6262L5.0594,1.5751a1.249,1.249,0,0,1,1.1834-.85ZM5.7869,12.5311l5.0415,3.745a.3122.3122,0,0,0,.1862.0617h.0205a.3122.3122,0,0,0,.2958-.4122L8.7768,8.3577,7.755,11.0024l-.1158.3H4.1515Zm10.7125,3.8067H12.2453a1.2381,1.2381,0,0,0-.0268-.7117L7.5057,1.6621h4.2515a.3124.3124,0,0,1,.2958.2124l4.7423,14.0511A.3123.3123,0,0,1,16.4994,16.3378Z" fill-rule="evenodd" />
+        </svg>
+    ;
 }
