@@ -238,7 +238,7 @@ namespace AzureDesignStudio.Core.Web
         {
             return new SitesNetworkConfig
             {
-                Name = "virtualNetwork",
+                Name = $"{Name}/virtualNetwork",
                 Kind = Kind,
                 Properties = new()
                 {

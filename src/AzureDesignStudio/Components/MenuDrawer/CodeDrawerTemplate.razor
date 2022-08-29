@@ -30,7 +30,7 @@
     </Form>
 </Modal>
 
-<Modal Title="Deployment Status" Visible="@_showDeployStatus" MaskClosable="@false" Closable="false" 
+<Modal Title="Deploy to Azure" Visible="@_showDeployStatus" MaskClosable="@false" Closable="false" 
     Footer="@_modalFooter" OnOk="CloseDeployStatus">
     <Steps Direction="vertical" Current="@_stepsStatus.CurrentStep" Status="@_stepsStatus.Status">
         <Step Title="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "Starting" : "Started")" 

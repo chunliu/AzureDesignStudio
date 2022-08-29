@@ -10,6 +10,7 @@ using Azure.ResourceManager;
 using Azure.ResourceManager.Resources;
 using Azure;
 using Azure.ResourceManager.Resources.Models;
+using Azure.Deployments.Core.Definitions;
 
 namespace AzureDesignStudio.Server.Services
 {
@@ -195,42 +196,30 @@ namespace AzureDesignStudio.Server.Services
                 Template = BinaryData.FromString(request.ArmTemplate),
                 Parameters = BinaryData.FromString(request.Parameters),
             });
-            ArmOperation<ArmDeploymentResource> lro = await armDeployments.CreateOrUpdateAsync(WaitUntil.Started, deploymentName, input);
-            response.StatusCode = StatusCodes.Status200OK;
-            response.DeploymentStatus = "processing";
-            await responseStream.WriteAsync(response);
-
-            // lro.UpdateStatusAsync or lro.WaitForCompletionAsync will never return when deployment fails. 
-            // so check the deployment status manually to workaround it. 
-            while (true)
+            try
             {
-                var adr = (await armDeployments.GetAsync(deploymentName)).Value;
-                if (adr.HasData)
+                ArmOperation<ArmDeploymentResource> lro = await armDeployments.CreateOrUpdateAsync(WaitUntil.Started, deploymentName, input);
+
+                while(!lro.HasCompleted)
                 {
-                    if (adr.Data.Properties.ProvisioningState == ResourcesProvisioningState.Running)
-                    {
-                        response.StatusCode = StatusCodes.Status200OK;
-                        response.DeploymentStatus = "processing";
-                        await responseStream.WriteAsync(response);
-                    }
-                    else if (adr.Data.Properties.ProvisioningState == ResourcesProvisioningState.Succeeded)
-                    {
-                        response.StatusCode = StatusCodes.Status200OK;
-                        response.DeploymentStatus = "completed";
-                        response.ProvisionState = "succeeded";
-                        await responseStream.WriteAsync(response);
-                        return;
-                    }
-                    else if (adr.Data.Properties.ProvisioningState == ResourcesProvisioningState.Failed)
-                    {
-                        response.StatusCode = StatusCodes.Status200OK;
-                        response.DeploymentStatus = "completed";
-                        response.ProvisionState = "failed";
-                        await responseStream.WriteAsync(response);
-                        return;
-                    }
+                    response.StatusCode = StatusCodes.Status200OK;
+                    response.DeploymentStatus = "processing";
+                    await responseStream.WriteAsync(response);
+                    await lro.UpdateStatusAsync();
+                    await Task.Delay(2000);
                 }
-                await Task.Delay(2000); // Check every 2 seconds.
+
+                response.StatusCode = StatusCodes.Status200OK;
+                response.DeploymentStatus = "completed";
+                response.ProvisionState = "succeeded";
+                await responseStream.WriteAsync(response);
+            }
+            catch (RequestFailedException ex)
+            {
+                _logger.LogWarning(ex, "Request Failed Exception");
+                response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+                response.DeploymentStatus = "failed";
+                await responseStream.WriteAsync(response);
             }
         }
 
