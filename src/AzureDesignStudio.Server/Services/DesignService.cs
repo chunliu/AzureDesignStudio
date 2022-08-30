@@ -5,7 +5,6 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web.Resource;
-using System.Text.RegularExpressions;
 
 namespace AzureDesignStudio.Server.Services
 {
@@ -22,26 +21,12 @@ namespace AzureDesignStudio.Server.Services
 
             this.logger = logger;
         }
-        private static string? GetUserId(ServerCallContext context)
-        {
-            var user = context.GetHttpContext().User;
-            return user.Claims.FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
-        }
-
-        private static bool IsValidName(string name)
-        {
-            Regex regex = new(@"^[a-zA-Z0-9\s]+$"); // Alphanumeric characters and whitespace
-            if (string.IsNullOrWhiteSpace(name) || name.Length > 200 || !regex.IsMatch(name))
-                return false;
-
-            return true;
-        }
 
         public override async Task<SaveDesignResponse> Save(SaveDesignRequest request, ServerCallContext context)
         {
             var response = new SaveDesignResponse();
             // Get user id
-            var userIdClaim = GetUserId(context);
+            var userIdClaim = ServiceTools.GetUserId(context);
             if (string.IsNullOrWhiteSpace(userIdClaim))
             {
                 logger.LogWarning("Access denied. userIdClaim is empty.");
@@ -51,7 +36,7 @@ namespace AzureDesignStudio.Server.Services
             var userId = new Guid(userIdClaim);
 
             // Validate input
-            if (!IsValidName(request.Name))
+            if (!ServiceTools.IsValidName(request.Name))
             {
                 logger.LogWarning("{RequestName} is invalid, from user: {UserIdClaim}", request.Name, userIdClaim);
                 response.StatusCode = StatusCodes.Status400BadRequest;
@@ -111,7 +96,7 @@ namespace AzureDesignStudio.Server.Services
         {
             var response = new GetSavedDesignResponse();
             // Get user id
-            var userIdClaim = GetUserId(context);
+            var userIdClaim = ServiceTools.GetUserId(context);
             if (string.IsNullOrEmpty(userIdClaim))
             {
                 logger.LogWarning("Access denied. userIdClaim is empty.");
@@ -131,7 +116,7 @@ namespace AzureDesignStudio.Server.Services
         {
             var response = new LoadDesignResponse();
             // Get user id
-            var userIdClaim = GetUserId(context);
+            var userIdClaim = ServiceTools.GetUserId(context);
             if (string.IsNullOrEmpty(userIdClaim))
             {
                 logger.LogWarning("Access denied. userIdClaim is empty.");
@@ -139,7 +124,7 @@ namespace AzureDesignStudio.Server.Services
                 return response;
             }
 
-            if (!IsValidName(request.Name))
+            if (!ServiceTools.IsValidName(request.Name))
             {
                 logger.LogWarning("{RequestName} is invalid, from user: {UserIdClaim}", request.Name, userIdClaim);
                 response.StatusCode = StatusCodes.Status400BadRequest;
@@ -165,7 +150,7 @@ namespace AzureDesignStudio.Server.Services
         public override async Task<DeleteDesignResponse> Delete(DeleteDesignRequest request, ServerCallContext context)
         {
             var response = new DeleteDesignResponse();
-            var userIdClaim = GetUserId(context);
+            var userIdClaim = ServiceTools.GetUserId(context);
             if (string.IsNullOrEmpty(userIdClaim))
             {
                 logger.LogWarning("Access denied. userIdClaim is empty.");
@@ -173,7 +158,7 @@ namespace AzureDesignStudio.Server.Services
                 return response;
             }
 
-            if (!IsValidName(request.Name))
+            if (!ServiceTools.IsValidName(request.Name))
             {
                 logger.LogWarning("{RequestName} is invalid, from user: {UserIdClaim}", request.Name, userIdClaim);
                 response.StatusCode = StatusCodes.Status400BadRequest;

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 
 namespace AzureDesignStudio.Core.Models
 {
-    public class ArmTemplate
+    public class ArmTemplate : IArmTemplate
     {
         public DeploymentTemplate Template { get; } = new()
         {

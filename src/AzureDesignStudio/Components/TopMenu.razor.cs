@@ -119,7 +119,7 @@ namespace AzureDesignStudio.Components
                 };
             };
         }
-        private async Task<string> GetArmJson()
+        private async Task<(string?, IArmTemplate?)> GetArmJson()
         {
             var armTemplate = new ArmTemplate();
             try
@@ -144,14 +144,14 @@ namespace AzureDesignStudio.Components
             catch (Exception ex)
             {
                 await messageService.Error($"{ex.Message}");
-                return string.Empty;
+                return (null, null);
             }
 
-            return armTemplate.GenerateArmTemplate();
+            return (armTemplate.GenerateArmTemplate(), armTemplate);
         }
         private async Task ExportBicep()
         {
-            var jsonString = await GetArmJson();
+            var (jsonString, armTemplate) = await GetArmJson();
             if (string.IsNullOrEmpty(jsonString))
             {
                 return;
@@ -191,11 +191,12 @@ namespace AzureDesignStudio.Components
             {
                 Type = CodeDrawerContentType.Bicep,
                 Content = bicep.BicepFile!,
+                ArmTemplate = armTemplate
             });
         }
         private async Task ExportArmTemplate()
         {
-            var jsonString = await GetArmJson();
+            var (jsonString, armTemplate) = await GetArmJson();
             if (string.IsNullOrEmpty(jsonString))
             {
                 return;
@@ -204,7 +205,8 @@ namespace AzureDesignStudio.Components
             await OpenCodeDrawer(new CodeDrawerContent 
             { 
                 Type = CodeDrawerContentType.Json,
-                Content = jsonString
+                Content = jsonString,
+                ArmTemplate = armTemplate
             });
         }
         private async Task OpenCodeDrawer(CodeDrawerContent content)

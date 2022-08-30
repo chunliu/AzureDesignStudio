@@ -1,4 +1,6 @@
-﻿namespace AzureDesignStudio.Models
+﻿using AzureDesignStudio.Core.Models;
+
+namespace AzureDesignStudio.Models
 {
     public enum CodeDrawerContentType
     {
@@ -9,5 +11,6 @@
     {
         public CodeDrawerContentType Type { get; set; }
         public string Content { get; set; } = string.Empty;
+        public IArmTemplate? ArmTemplate { get; set; } = default!;
     }
 }

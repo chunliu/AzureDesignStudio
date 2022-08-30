@@ -1,13 +1,36 @@
-﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+﻿@using AzureDesignStudio.Services
+@using AzureDesignStudio.SharedModels.Protos
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inherits FeedbackComponent<string, string>
-@inject NavigationManager navManager
-@inject SignOutSessionStateManager signOutManager
+@inject NavigationManager _navManager
+@inject SignOutSessionStateManager _signOutManager
+@inject DrawerService _drawerService
+@inject DeployGrpcService _deployService
 
 <AuthorizeView>
     <Authorized>
-        <p>You logged in as @context.User.Identity?.Name</p>
-        <br />
-        <Button Type="primary" OnClick="BeginLogout">Log out</Button>
+        <div style="width: 300px">
+            <Row>
+                <Col Span="18">You logged in as @context.User.Identity?.Name</Col>
+                <Col Span="6"><Button OnClick="BeginLogout">Log out</Button></Col>
+            </Row>
+            <Divider />
+            <Spin Spinning="@_spinning">
+        @if(_showLinkSubscription)
+        {
+            <AntList Bordered DataSource="@_linkedSubscriptions" Size="small">
+                <Header><b>Your linked subscriptions</b></Header>
+                <ChildContent Context="item">
+                    <ListItem>@item.SubscriptionName</ListItem>
+                </ChildContent>
+            </AntList>
+        }
+        else
+        {
+            <Button OnClick="LinkAzureSubscription">Link Azure Subscription</Button>
+        }
+            </Spin>
+        </div>
     </Authorized>
     <NotAuthorized>
         <p>Please log in with your user account.</p>
@@ -17,12 +40,45 @@
 </AuthorizeView>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+
+    private bool _spinning = true;
+    private bool _showLinkSubscription = false;
+    private IList<SubscriptionRes>? _linkedSubscriptions = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated ?? false)
+        {
+            await GetSubscriptionNames();
+        }
+        _spinning = false;
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<bool> GetSubscriptionNames()
+    {
+        _linkedSubscriptions = await _deployService.GetLinkedSubscriptions();
+        var hasLinked = _linkedSubscriptions?.Count > 0;
+        if (_showLinkSubscription != hasLinked)
+        {
+            _showLinkSubscription = hasLinked;
+            return true; // State has changed.
+        }
+
+        return false;
+    }
+
     private async Task BeginLogin()
     {
         DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
         await dr!.CloseAsync(string.Empty);
 
-        navManager.NavigateTo("authentication/login");
+        _navManager.NavigateTo("authentication/login");
     }
 
     private async Task BeginLogout(MouseEventArgs args)
@@ -30,7 +86,44 @@
         DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
         await dr!.CloseAsync(string.Empty);
 
-        await signOutManager.SetSignOutState();
-        navManager.NavigateTo("authentication/logout");
+        await _signOutManager.SetSignOutState();
+        _navManager.NavigateTo("authentication/logout");
+    }
+
+    private async Task LinkAzureSubscription()
+    {
+        int azSubDrawerWidth = 450;
+
+        DrawerRef<string> userDrawer = (FeedbackRef as DrawerRef<string>)!;
+        userDrawer.Config.Width += azSubDrawerWidth;
+        await userDrawer.UpdateConfigAsync();
+
+        var drawerOptions = new DrawerOptions()
+            {
+                Title = "Link your Azure subscription",
+                Width = azSubDrawerWidth,
+            };
+
+        var azSubDrawer = await _drawerService.CreateAsync<AzSubscriptionDrawerTemplate, string, string>(drawerOptions, "");
+        azSubDrawer.OnClose = async () =>
+        {
+            userDrawer.Config.Width -= azSubDrawerWidth;
+            await userDrawer.UpdateConfigAsync();
+        };
+
+        azSubDrawer.OnClosed = async result =>
+        {
+            userDrawer.Config.Width -= azSubDrawerWidth;
+            await userDrawer.UpdateConfigAsync();
+
+            if (result != "completed")
+                return;
+
+            _spinning = true;
+            await InvokeAsync(StateHasChanged);
+            await GetSubscriptionNames();
+            _spinning = false;
+            await InvokeAsync(StateHasChanged);
+        };
     }
 }

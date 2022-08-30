@@ -1,0 +1,56 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "AzureDesignStudio.SharedModels.Protos";
+
+import "google/protobuf/empty.proto";
+
+service Deploy {
+	rpc SaveSubscriptionInfo(SubscriptionInfo) returns(SaveSubInfoResponse);
+	rpc LoadSubscriptionInfo(google.protobuf.Empty) returns(LoadSubInfoResponse);
+	rpc GetResourceGroups(GetRgsRequest) returns(GetRgsResponse);
+	rpc CreateDeployment(DeploymentRequest) returns(stream DeploymentResponse);
+}
+
+message SubscriptionInfo {
+	string subscription_id = 1;
+	string tenant_id = 2;
+	string client_id = 3;
+	string client_secret = 4;
+	string subscription_name = 5;
+}
+
+message SaveSubInfoResponse {
+	int32 status_code = 1;
+}
+
+message SubscriptionRes {
+	string subscription_name = 1;
+	string subscription_id = 2;
+}
+
+message LoadSubInfoResponse {
+	int32 status_code = 1;
+	repeated SubscriptionRes subscription_data = 2;
+}
+
+message GetRgsRequest {
+	string subscription_id = 1;
+}
+
+message GetRgsResponse {
+	int32 status_code = 1;
+	repeated string resource_group_name = 2;
+}
+
+message DeploymentRequest {
+	string subscription_id = 1;
+	string resource_group_name = 2;
+	string arm_template = 3;
+	string parameters = 4;
+}
+
+message DeploymentResponse {
+	int32 status_code = 1;
+	string deployment_status = 2;
+	string error_message = 3;
+}
