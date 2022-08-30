@@ -45,7 +45,8 @@ namespace AzureDesignStudio.Services
             return response.ResourceGroupName.ToList();
         }
 
-        public async Task CreateDeployment(string subscriptionId, string rgName, string armTemplate, string parameters, Action<string, string> updateStatus)
+        public async Task CreateDeployment(string subscriptionId, string rgName, string armTemplate, string parameters, 
+            Action<string, string> updateStatus)
         {
             var request = new DeploymentRequest
             {
@@ -63,11 +64,11 @@ namespace AzureDesignStudio.Services
                 if (response.StatusCode != 200)
                 {
                     // Something bad happening
-                    updateStatus("error", string.Empty);
+                    updateStatus("error", response.ErrorMessage);
                     return;
                 }
 
-                updateStatus(response.DeploymentStatus, response.ProvisionState);
+                updateStatus(response.DeploymentStatus, response.ErrorMessage);
             }
         }
     }

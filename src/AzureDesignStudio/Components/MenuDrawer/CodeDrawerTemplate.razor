@@ -33,13 +33,14 @@
 <Modal Title="Deploy to Azure" Visible="@_showDeployStatus" MaskClosable="@false" Closable="false" 
     Footer="@_modalFooter" OnOk="CloseDeployStatus">
     <Steps Direction="vertical" Current="@_stepsStatus.CurrentStep" Status="@_stepsStatus.Status">
-        <Step Title="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "Starting" : "Started")" 
-              Description="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "The deployment is starting..." : "The deployment has started.")"
-              Icon="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "process") ? "loading" : "")" />
-        <Step Title="In Progress" Description="The deployment is running."
+        <Step Title="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "started") ? "Starting" : ((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "error") ? "Failed" : "Started"))"
+              Description="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "started") ? "The deployment is starting..." : ((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "error") ? _stepsStatus.ErrorMessage : "The deployment has started."))"
+              Icon="@((_stepsStatus.CurrentStep == 0 && _stepsStatus.Status == "started") ? "loading" : "")" />
+        <Step Title="@((_stepsStatus.CurrentStep == 1 && _stepsStatus.Status == "error") ? "Failed" : "In Progress")"
+              Description="@((_stepsStatus.CurrentStep == 1 && _stepsStatus.Status == "error") ? _stepsStatus.ErrorMessage : "The deployment is running.")"
               Icon="@((_stepsStatus.CurrentStep == 1 && _stepsStatus.Status == "process") ? "loading" : "")" />
         <Step Title="@((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "finish") ? "Completed" : ((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "error") ? "Failed" : "Waiting"))"
-              Description="@((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "finish") ? "The deployment has completed successfully." : ((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "error") ? "The deployment has failed." : "Waiting for the result."))" />
+              Description="@((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "finish") ? "The deployment has completed successfully." : ((_stepsStatus.CurrentStep == 2 && _stepsStatus.Status == "error") ? _stepsStatus.ErrorMessage : "Waiting for the result."))" />
     </Steps>
 </Modal>
 

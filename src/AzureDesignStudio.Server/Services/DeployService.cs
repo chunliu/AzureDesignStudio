@@ -144,6 +144,7 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning("ArmTemplate is empty");
                 response.StatusCode = StatusCodes.Status400BadRequest;
+                response.ErrorMessage = "Template is empty.";
                 await responseStream.WriteAsync(response);
                 return;
             }
@@ -153,6 +154,7 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning("Access denied. userIdClaim is empty.");
                 response.StatusCode = StatusCodes.Status401Unauthorized;
+                response.ErrorMessage = "Access denied.";
                 await responseStream.WriteAsync(response);
                 return;
             }
@@ -167,6 +169,7 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning(ex, "Exception occurred.");
                 response.StatusCode = StatusCodes.Status400BadRequest;
+                response.ErrorMessage = "Bad request.";
                 await responseStream.WriteAsync(response);
                 return;
             }
@@ -176,6 +179,7 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning("No subscription is found.");
                 response.StatusCode = StatusCodes.Status404NotFound;
+                response.ErrorMessage = "No subscription is found.";
                 await responseStream.WriteAsync(response);
                 return;
             }
@@ -185,6 +189,7 @@ namespace AzureDesignStudio.Server.Services
             {
                 _logger.LogWarning("{ResourceGroup} cannot be found.", request.ResourceGroupName);
                 response.StatusCode = StatusCodes.Status404NotFound;
+                response.ErrorMessage = "Cannot find the resource group.";
                 await responseStream.WriteAsync(response);
                 return;
             }
@@ -205,20 +210,20 @@ namespace AzureDesignStudio.Server.Services
                     response.StatusCode = StatusCodes.Status200OK;
                     response.DeploymentStatus = "processing";
                     await responseStream.WriteAsync(response);
-                    await lro.UpdateStatusAsync();
                     await Task.Delay(2000);
+                    await lro.UpdateStatusAsync();
                 }
 
                 response.StatusCode = StatusCodes.Status200OK;
                 response.DeploymentStatus = "completed";
-                response.ProvisionState = "succeeded";
                 await responseStream.WriteAsync(response);
             }
             catch (RequestFailedException ex)
             {
                 _logger.LogWarning(ex, "Request Failed Exception");
-                response.StatusCode = StatusCodes.Status422UnprocessableEntity;
+                response.StatusCode = StatusCodes.Status400BadRequest;
                 response.DeploymentStatus = "failed";
+                response.ErrorMessage = $"HTTP {ex.Status}: {ex.ErrorCode}";
                 await responseStream.WriteAsync(response);
             }
         }

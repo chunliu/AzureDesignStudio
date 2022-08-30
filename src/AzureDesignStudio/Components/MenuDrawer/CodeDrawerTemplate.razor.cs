@@ -11,7 +11,8 @@ namespace AzureDesignStudio.Components.MenuDrawer
     internal record StepsStatus
     {
         public int CurrentStep { get; set; }
-        public string Status { get; set; } = "process";
+        public string Status { get; set; } = "starting";
+        public string ErrorMessage { get; set; } = default!;
     }
     public partial class CodeDrawerTemplate
     {
@@ -103,13 +104,20 @@ namespace AzureDesignStudio.Components.MenuDrawer
             if (_linkedSubscription == null)
                 return;
 
-            _paramFormLoading = true;
-            _deployParams = new DeploymentParameters();
-            _showDeployParams = true;
+            if (_stepsStatus.Status == "starting")
+            {
+                _paramFormLoading = true;
+                _deployParams = new DeploymentParameters();
+                _showDeployParams = true;
 
-            _resourceGroupNames = await _deployService.GetResourceGroups(_linkedSubscription.SubscriptionId);
+                _resourceGroupNames = await _deployService.GetResourceGroups(_linkedSubscription.SubscriptionId);
 
-            _paramFormLoading = false;
+                _paramFormLoading = false;
+            }
+            else
+            {
+                _showDeployStatus = true;
+            }
         }
         private void ParamsFormCancel(MouseEventArgs e)
         {
@@ -123,12 +131,13 @@ namespace AzureDesignStudio.Components.MenuDrawer
         {
             _showDeployParams = false;
 
+            _stepsStatus.Status = "started";
             _showDeployStatus = true;
 
             // TODO: work on the parameters.
             await _deployService.CreateDeployment(_linkedSubscription!.SubscriptionId,
                 _deployParams.ResourceGroup, _drawerContent.Content, "{}",
-                async (deploymentStatus, provisionState) => 
+                async (deploymentStatus, errorMessage) => 
                 {
                     var stateHasChanged = false;
 
@@ -147,15 +156,17 @@ namespace AzureDesignStudio.Components.MenuDrawer
                     if (deploymentStatus == "error" && deploymentStatus != _stepsStatus.Status)
                     {
                         _stepsStatus.Status = "error";
+                        _stepsStatus.ErrorMessage = errorMessage;
+                        stateHasChanged = true;
+                    }
+                    else if (deploymentStatus == "processing" && _stepsStatus.Status != "process")
+                    {
+                        _stepsStatus.Status = "process";
                         stateHasChanged = true;
                     }
                     else if (deploymentStatus == "completed")
                     {
-                        if (provisionState == "succeeded")
-                            _stepsStatus.Status = "finish";
-                        else if (provisionState == "failed")
-                            _stepsStatus.Status = "error";
-
+                        _stepsStatus.Status = "finish";
                         stateHasChanged = true;
                     }
 
@@ -166,7 +177,10 @@ namespace AzureDesignStudio.Components.MenuDrawer
         private void CloseDeployStatus(MouseEventArgs e)
         {
             _showDeployStatus = false;
-            _stepsStatus = new();
+            if (_stepsStatus.Status == "error" || _stepsStatus.Status == "finish")
+            {
+                _stepsStatus = new();
+            }
         }
     }
 }
