@@ -4,16 +4,12 @@ namespace AzureDesignStudio.Components.MenuDrawer
 {
     public partial class LoadDrawerTemplate
     {
-        internal record TreeData(string Key, string Name, string Value, bool Deletable)
-        {
-            public List<TreeData> ChildNodes = new();
-        }
+        internal record DesignRecord(string Key, string DesignName);
 
-        Tree<TreeData?> _allDesignTree = null!;
-        List<TreeData> _allDesignsData = new();
+        List<DesignRecord> _allDesignRecords = default!;
         bool _loadingDesigns = false;
 
-        private async Task LoadTreeData()
+        private async Task LoadSavedDesign()
         {
             _loadingDesigns = true;
             var authState = await authenticationStateTask;
@@ -21,21 +17,13 @@ namespace AzureDesignStudio.Components.MenuDrawer
             if (user.Identity?.IsAuthenticated ?? false)
             {
                 var (status, savedDesigns) = await _designService.GetAllSavedDesign();
-                if (status == 200)
+                if (status == 200 && savedDesigns != null)
                 {
-                    var savedData = new TreeData("saved-designs", "Your saved designs", string.Empty, false);
-                    if (savedDesigns?.Count == 0)
+                    _allDesignRecords = new List<DesignRecord>();
+                    for(int i = 0; i < savedDesigns.Count; i++)
                     {
-                        savedData.ChildNodes.Add(new TreeData($"no-saved-design", "You don't have saved design", string.Empty, false));
+                        _allDesignRecords.Add(new DesignRecord(i.ToString(), savedDesigns[i]));
                     }
-                    else
-                    {
-                        foreach (var name in savedDesigns!)
-                        {
-                            savedData.ChildNodes.Add(new TreeData($"db:{name}", name, $"usedb://{name}", true));
-                        }
-                    }
-                    _allDesignsData.Add(savedData);
                 }
             }
 
@@ -44,37 +32,35 @@ namespace AzureDesignStudio.Components.MenuDrawer
 
         protected override async Task OnInitializedAsync()
         {
-            await LoadTreeData();
+            await LoadSavedDesign();
 
             await base.OnInitializedAsync();
         }
 
         async Task HandleButtonClick()
         {
+            var designName = _selectedRows?.FirstOrDefault()?.DesignName;
+            if (string.IsNullOrEmpty(designName))
+                return;
+
             DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
-            await dr!.CloseAsync(_allDesignTree.SelectedData?.Value!);
+            await dr!.CloseAsync(designName!);
         }
 
         async Task HandleDelete()
         {
-            var name = selectedData?.Value;
-            if (string.IsNullOrEmpty(name))
+            var designName = _selectedRows?.FirstOrDefault()?.DesignName;
+            if (string.IsNullOrEmpty(designName))
                 return;
 
-            var parts = name.Split("://");
-            if (parts.Length <= 1)
-                return;
-
-            var status = await _designService.DeleteDesign(parts[1]);
+            var status = await _designService.DeleteDesign(designName);
             if (status != 200)
             {
-                await _messageService.Error($"Failed to delete {parts[1]}");
+                await _messageService.Error($"Failed to delete {designName}");
                 return;
             }
 
-            // Reload tree data
-            _allDesignsData = new();
-            await LoadTreeData();
+            await LoadSavedDesign();
         }
 
         private async Task BeginLogin()
