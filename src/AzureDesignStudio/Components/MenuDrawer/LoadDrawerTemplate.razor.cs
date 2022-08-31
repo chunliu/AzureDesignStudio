@@ -20,7 +20,7 @@ namespace AzureDesignStudio.Components.MenuDrawer
             var user = authState.User;
             if (user.Identity?.IsAuthenticated ?? false)
             {
-                var (status, savedDesigns) = await designService.GetAllSavedDesign();
+                var (status, savedDesigns) = await _designService.GetAllSavedDesign();
                 if (status == 200)
                 {
                     var savedData = new TreeData("saved-designs", "Your saved designs", string.Empty, false);
@@ -65,10 +65,10 @@ namespace AzureDesignStudio.Components.MenuDrawer
             if (parts.Length <= 1)
                 return;
 
-            var status = await designService.DeleteDesign(parts[1]);
+            var status = await _designService.DeleteDesign(parts[1]);
             if (status != 200)
             {
-                await messageService.Error($"Failed to delete {parts[1]}");
+                await _messageService.Error($"Failed to delete {parts[1]}");
                 return;
             }
 

@@ -1,5 +1,4 @@
 ﻿using AntDesign;
-using AutoMapper;
 using AzureDesignStudio.Core;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
@@ -8,7 +7,6 @@ using Blazor.Diagrams.Core.Models;
 using Blazor.Diagrams.Core.Models.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace AzureDesignStudio.Components
