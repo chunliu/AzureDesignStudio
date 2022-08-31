@@ -1,20 +1,32 @@
 ﻿@using AzureDesignStudio.Services
-@inject DesignGrpcService designService
-@inject MessageService messageService
-
+@inject DesignGrpcService _designService
+@inject MessageService _messageService
+@inject NavigationManager _navManager
 @inherits FeedbackComponent<string, string>
 
-<Spin Spinning="@loadingDesigns" Tip="loading...">
-    <Tree @ref="@allDesignTree" DataSource="@allDesignsData" ShowIcon="true" ShowLeafIcon="true" ShowLine="true" DefaultExpandedKeys="@(new[]{"saved-designs"})"
-        TitleExpression="d => d.DataItem?.Name" ChildrenExpression="d => d.DataItem?.ChildNodes!" KeyExpression="d => d.DataItem?.Key" @bind-SelectedData="@selectedData" />
-</Spin>
-<br />
-<br />
-<Button Type="primary" OnClick="HandleButtonClick" >Load</Button>
-<Button Disabled="@(!(selectedData?.Deletable) ?? true)" OnClick="HandleDelete">Delete</Button>
+<AuthorizeView>
+    <Authorized>
+        <Table DataSource="@_allDesignRecords" @bind-SelectedRows="@_selectedRows" 
+            Context="tableCtx" Loading="@_loadingDesigns" HidePagination>
+            <Selection Key="@tableCtx.Key" Type="radio" />
+            <PropertyColumn Property="c => c.DesignName" Title="Your saved designs" />
+        </Table>
+        <div style="padding-left: 48px;padding-top: 12px;">
+            <Button Type="primary" Disabled="@((_selectedRows?.Count() ?? 0) == 0)" OnClick="HandleButtonClick">Load</Button>
+            <Button Disabled="@((_selectedRows?.Count() ?? 0) == 0)" OnClick="HandleDelete">Delete</Button>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div style="padding: 24px;">
+            <div>Please log in with your user account first.</div>
+            <br />
+            <Button Type="primary" OnClick="BeginLogin">Log in</Button>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
-    private TreeData? selectedData = null!;
+    private IEnumerable<DesignRecord> _selectedRows = default!;
 }

@@ -3,7 +3,6 @@ using AzureDesignStudio.Core;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Microsoft.JSInterop;
-using System.Net.Http.Json;
 using System.Text.Json;
 using Blazor.Diagrams.Core.Models;
 using AzureDesignStudio.Components.MenuDrawer;
@@ -52,7 +51,8 @@ namespace AzureDesignStudio.Components
             openedDrawer = string.Empty;
             return Task.CompletedTask;
         }
-        private async Task<DrawerRef<string>> OpenDrawer<TDrawerTemplate>(string title, string options, int width = 350) 
+        private async Task<DrawerRef<string>> OpenDrawer<TDrawerTemplate>(string title, string options, 
+            bool bodyNoPadding = false, int width = 350) 
             where TDrawerTemplate : FeedbackComponent<string, string>
         {
             var drawerOptions = new DrawerOptions()
@@ -60,6 +60,8 @@ namespace AzureDesignStudio.Components
                 Title = title,
                 Width = width,
             };
+            if (bodyNoPadding)
+                drawerOptions.BodyStyle = "padding:0px;";
 
             var dr = await drawerService.CreateAsync<TDrawerTemplate, string, string>(drawerOptions, options);
             dr.OnClose = CloseDrawer;
@@ -297,7 +299,7 @@ namespace AzureDesignStudio.Components
             if (!await ResetDrawerRef("load"))
                 return;
 
-            drawerRef = await OpenDrawer<LoadDrawerTemplate>("Load your design", "load");
+            drawerRef = await OpenDrawer<LoadDrawerTemplate>("Load your design", "load", true);
             drawerRef.OnClosed = async result =>
             {
                 await CloseDrawer();
@@ -305,9 +307,9 @@ namespace AzureDesignStudio.Components
             };
         }
 
-        private async Task LoadDiagram(string filePath)
+        private async Task LoadDiagram(string designName)
         {
-            if (string.IsNullOrEmpty(filePath))
+            if (string.IsNullOrEmpty(designName))
             {
                 logger.LogInformation($"The file path is null or empty.");
                 return;
@@ -321,33 +323,20 @@ namespace AzureDesignStudio.Components
             var loadingTask = messageService.Loading("Loading the design ...", 0);
 
             DiagramGraph? diagramGraph = null;
-            var parts = filePath.Split("://");
-            if (parts[0] == "usedb")
+            var (status, designData) = await designService.LoadDesign(designName);
+            if (status == 200 && !string.IsNullOrEmpty(designData))
             {
-                var (status, designData) = await designService.LoadDesign(parts[1]);
-                if (status == 200 && !string.IsNullOrEmpty(designData))
-                {
-                    diagramGraph = JsonSerializer.Deserialize<DiagramGraph>(designData);
-                }
-            }
-            else
-            {
-                var httpClient = clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
-
-                diagramGraph = await httpClient.GetFromJsonAsync<DiagramGraph>(filePath);
+                diagramGraph = JsonSerializer.Deserialize<DiagramGraph>(designData);
             }
 
             if (diagramGraph == null)
             {
-                await messageService.Error("Cannot load the graph from the uri.");
+                await messageService.Error("Cannot load the diagram.");
             }
             else
             {
                 DataModelFactory.LoadDiagramFromDto(adsContext.Diagram, diagramGraph, mapper);
-                if (parts.Length > 1)
-                {
-                    adsContext.CurrentDesignName = parts[1];
-                }
+                adsContext.CurrentDesignName = designName;
             }
 
             loadingTask.Start();

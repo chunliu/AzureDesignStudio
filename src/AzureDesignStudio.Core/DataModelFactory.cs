@@ -221,19 +221,13 @@ public static class DataModelFactory
         foreach (var linkDto in diagramGraph.Links)
         {
             // Search all groups first.
-            NodeModel sourceNode = diagram.Groups.FirstOrDefault(g => g.Id == linkDto.SourcePortParentId)!;
-            if (sourceNode is null)
-            {
-                sourceNode = diagram.Nodes.FirstOrDefault(n => n.Id == linkDto.SourcePortParentId)
+            NodeModel? sourceNode = diagram.Groups.FirstOrDefault(g => g.Id == linkDto.SourcePortParentId);
+            sourceNode ??= diagram.Nodes.FirstOrDefault(n => n.Id == linkDto.SourcePortParentId)
                     ?? throw new Exception($"Cannot find the link's source node. SourceParentId = {linkDto.SourcePortParentId}");
-            }
 
-            NodeModel targetNode = diagram.Groups.FirstOrDefault(g => g.Id == linkDto.TargetPortParentId)!;
-            if (targetNode is null)
-            {
-                targetNode = diagram.Nodes.FirstOrDefault(n => n.Id == linkDto.TargetPortParentId)
+            NodeModel? targetNode = diagram.Groups.FirstOrDefault(g => g.Id == linkDto.TargetPortParentId);
+            targetNode ??= diagram.Nodes.FirstOrDefault(n => n.Id == linkDto.TargetPortParentId)
                     ?? throw new Exception($"Cannot find the target node. TargetParentId = {linkDto.TargetPortParentId}");
-            }
 
             var sourcePort = sourceNode.Ports.Single(p => p.Alignment == linkDto.SourcePortAlignment);
             var targetPort = targetNode.Ports.Single(p => p.Alignment == linkDto.TargetPortAlignment);

@@ -2,56 +2,64 @@
 @using AzureDesignStudio.Models
 @using AzureDesignStudio.Services
 @using System.Reflection
-@inject ILogger<Index> logger
 @inject AdsContext adsContext
 @inject ConfirmService confirmService
 
 <div>
     <div class="ads-icon-panel-container">
-        <Tabs DefaultActiveKey="1" TabPosition="TabPosition.Left" >
+        <Tabs DefaultActiveKey="2" TabPosition="TabPosition.Left" >
             <TabBarExtraContent>
 		        <Button Shape="circle" Icon="question" Size="@ButtonSize.Small" OnClick="OpenAbout"></Button>
 	        </TabBarExtraContent>
             <ChildContent>
-                <TabPane Key="1">
-                    <TabTemplate>
-                        <IconComponent IconPath="assets/icons/networking.svg" />
-                    </TabTemplate>
-                    <ChildContent>
-                        @foreach(var stencil in adsContext.AllStencils.Where(s => s.Category == StencilCategory.Networking))
-                        {
-                            <Stencil Model=@stencil/>
-                        }
-                    </ChildContent>
-                </TabPane>
-                <TabPane Key="2">
-                    <TabTemplate>
-                        <IconComponent IconPath="assets/icons/compute.svg" />
-                    </TabTemplate>
-                    <ChildContent>
-                        @foreach(var stencil in adsContext.AllStencils.Where(s => s.Category == StencilCategory.Compute))
-                        {
-                            <Stencil Model=@stencil/>
-                        }
-                    </ChildContent>
-                </TabPane>
-                <TabPane Key="3">
-                    <TabTemplate>
-                        <IconComponent IconPath="assets/icons/database.svg" />
-                    </TabTemplate>
-                    <ChildContent>
-                        @foreach(var stencil in adsContext.AllStencils.Where(s => s.Category == StencilCategory.Database))
-                        {
-                            <Stencil Model=@stencil/>
-                        }
-                    </ChildContent>
-                </TabPane>
+                @foreach(var panel in _panels)
+                {
+                    <TabPane Key="@panel.Key">
+                        <TabTemplate>
+                            <IconComponent IconPath="@panel.IconPath" />
+                        </TabTemplate>
+                        <ChildContent>
+                            @foreach (var stencil in adsContext.AllStencils.Where(s => s.Category == panel.Category))
+                            {
+                                <Stencil Model=@stencil />
+                            }
+                        </ChildContent>
+                    </TabPane>
+                }
             </ChildContent>
         </Tabs>
     </div>
 </div>
 
 @code {
+    private List<StencilPanelModel> _panels = new List<StencilPanelModel>()
+    {
+        new StencilPanelModel()
+        {
+            Key = "1",
+            IconPath = "assets/icons/gallery.svg",
+            Category = StencilCategory.Gallery,
+        },
+        new StencilPanelModel()
+        {
+            Key = "2",
+            IconPath = "assets/icons/networking.svg",
+            Category = StencilCategory.Networking,
+        },
+        new StencilPanelModel()
+        {
+            Key = "3",
+            IconPath = "assets/icons/compute.svg",
+            Category = StencilCategory.Compute,
+        },
+        new StencilPanelModel()
+        {
+            Key = "4",
+            IconPath = "assets/icons/database.svg",
+            Category = StencilCategory.Database,
+        }
+    };
+
     private static string version = $"v{Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion}-α";
 
     async Task OpenAbout()
