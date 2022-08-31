@@ -1,9 +1,12 @@
-﻿@using AzureDesignStudio.Services
+﻿@using AutoMapper
+@using AzureDesignStudio.Services
 @inject ILogger<DiagramPanel> logger
 @inject AdsContext adsContext
 @inject MessageService messageService
 @inject DrawerService drawerService
 @inject ModalService modalService
+@inject IHttpClientFactory _clientFactory
+@inject IMapper _mapper
 
 <div class="ads-diagram-wrapper" ondragover="event.preventDefault();" @ondragover:preventDefault @ondrop="HandleDrop">
     <CascadingValue Value="@diagram">

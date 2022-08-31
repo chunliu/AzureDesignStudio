@@ -1,11 +1,15 @@
 ﻿using AntDesign;
+using AutoMapper;
 using AzureDesignStudio.Core;
+using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core;
 using Blazor.Diagrams.Core.Models;
 using Blazor.Diagrams.Core.Models.Base;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace AzureDesignStudio.Components
 {
@@ -89,33 +93,63 @@ namespace AzureDesignStudio.Components
             {
                 var position = diagram.GetRelativeMousePoint(e.ClientX, e.ClientY);
                 var stencil = adsContext.AllStencils.Single(s => s.Key == adsContext.DraggedStencilKey);
-                var node = DataModelFactory.CreateNodeModelFromKey(adsContext.DraggedStencilKey, stencil.Name, stencil.IconPath);
-                node.SetPosition(position.X, position.Y);
-                var overlappedGroup = GetOverlappedGroup(node);
+                if (stencil.Category != Models.StencilCategory.Gallery)
+                {
+                    var node = DataModelFactory.CreateNodeModelFromKey(adsContext.DraggedStencilKey, stencil.Name, stencil.IconPath);
+                    node.SetPosition(position.X, position.Y);
+                    var overlappedGroup = GetOverlappedGroup(node);
 
-                var (result, message) = ((IAzureNode)node).IsDrappable(overlappedGroup!);
-                if (!result)
-                {
-                    await messageService.Error(message);
-                    return;
+                    var (result, message) = ((IAzureNode)node).IsDrappable(overlappedGroup!);
+                    if (!result)
+                    {
+                        await messageService.Error(message);
+                        return;
+                    }
+                    diagram.Batch(() =>
+                    {
+                        if (node is GroupModel g)
+                        {
+                            diagram.AddGroup(g);
+                        }
+                        else
+                        {
+                            diagram.Nodes.Add(node);
+                        }
+                        AddNodeToGroup(node, overlappedGroup!);
+                    });
                 }
-                diagram.Batch(() =>
+                else
                 {
-                    if (node is GroupModel g)
-                    {
-                        diagram.AddGroup(g);
-                    }
-                    else
-                    {
-                        diagram.Nodes.Add(node);
-                    }
-                    AddNodeToGroup(node, overlappedGroup!);
-                });
+                    await LoadReferenceArch(stencil.ReferenceArchPath!);
+                }
             }
             catch (NotImplementedException)
             {
                 await messageService.Info("The component is not implemented yet.");
             }
+        }
+
+        private async Task LoadReferenceArch(string refArchPath)
+        {
+            // Clear the diagram before loading a new one.
+            adsContext.Diagram.Nodes.Clear();
+            adsContext.Diagram.Links.Clear();
+            adsContext.Diagram.RemoveAllGroups();
+
+            var loadingTask = messageService.Loading("Loading the design ...", 0);
+
+            var httpClient = _clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
+            var diagramGraph = await httpClient.GetFromJsonAsync<DiagramGraph>(refArchPath);
+            if (diagramGraph == null)
+            {
+                await messageService.Error("Cannot load the reference architecture.");
+            }
+            else
+            {
+                DataModelFactory.LoadDiagramFromDto(adsContext.Diagram, diagramGraph, _mapper);
+            }
+
+            loadingTask.Start();
         }
         #endregion
 

@@ -3,7 +3,6 @@ using AzureDesignStudio.Core;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Microsoft.JSInterop;
-using System.Net.Http.Json;
 using System.Text.Json;
 using Blazor.Diagrams.Core.Models;
 using AzureDesignStudio.Components.MenuDrawer;
@@ -330,16 +329,10 @@ namespace AzureDesignStudio.Components
                     diagramGraph = JsonSerializer.Deserialize<DiagramGraph>(designData);
                 }
             }
-            else
-            {
-                var httpClient = clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
-
-                diagramGraph = await httpClient.GetFromJsonAsync<DiagramGraph>(filePath);
-            }
 
             if (diagramGraph == null)
             {
-                await messageService.Error("Cannot load the graph from the uri.");
+                await messageService.Error("Cannot load the diagram.");
             }
             else
             {

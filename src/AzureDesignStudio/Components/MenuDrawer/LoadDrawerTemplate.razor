@@ -1,17 +1,26 @@
 ﻿@using AzureDesignStudio.Services
 @inject DesignGrpcService designService
 @inject MessageService messageService
-
+@inject NavigationManager _navManager
 @inherits FeedbackComponent<string, string>
 
-<Spin Spinning="@loadingDesigns" Tip="loading...">
-    <Tree @ref="@allDesignTree" DataSource="@allDesignsData" ShowIcon="true" ShowLeafIcon="true" ShowLine="true" DefaultExpandedKeys="@(new[]{"saved-designs"})"
-        TitleExpression="d => d.DataItem?.Name" ChildrenExpression="d => d.DataItem?.ChildNodes!" KeyExpression="d => d.DataItem?.Key" @bind-SelectedData="@selectedData" />
-</Spin>
-<br />
-<br />
-<Button Type="primary" OnClick="HandleButtonClick" >Load</Button>
-<Button Disabled="@(!(selectedData?.Deletable) ?? true)" OnClick="HandleDelete">Delete</Button>
+<AuthorizeView>
+    <Authorized>
+        <Spin Spinning="@_loadingDesigns" Tip="loading...">
+            <Tree @ref="@_allDesignTree" DataSource="@_allDesignsData" ShowIcon="true" ShowLeafIcon="true" ShowLine="true" DefaultExpandedKeys="@(new[]{"saved-designs"})"
+                  TitleExpression="d => d.DataItem?.Name" ChildrenExpression="d => d.DataItem?.ChildNodes!" KeyExpression="d => d.DataItem?.Key" @bind-SelectedData="@selectedData" />
+        </Spin>
+        <br />
+        <br />
+        <Button Type="primary" OnClick="HandleButtonClick">Load</Button>
+        <Button Disabled="@(!(selectedData?.Deletable) ?? true)" OnClick="HandleDelete">Delete</Button>
+    </Authorized>
+    <NotAuthorized>
+        <div>Please log in with your user account first.</div>
+        <br />
+        <Button Type="primary" OnClick="BeginLogin">Log in</Button>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     [CascadingParameter]

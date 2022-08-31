@@ -9,13 +9,13 @@ namespace AzureDesignStudio.Components.MenuDrawer
             public List<TreeData> ChildNodes = new();
         }
 
-        Tree<TreeData?> allDesignTree = null!;
-        List<TreeData> allDesignsData = new();
-        bool loadingDesigns = false;
+        Tree<TreeData?> _allDesignTree = null!;
+        List<TreeData> _allDesignsData = new();
+        bool _loadingDesigns = false;
 
         private async Task LoadTreeData()
         {
-            loadingDesigns = true;
+            _loadingDesigns = true;
             var authState = await authenticationStateTask;
             var user = authState.User;
             if (user.Identity?.IsAuthenticated ?? false)
@@ -35,19 +35,11 @@ namespace AzureDesignStudio.Components.MenuDrawer
                             savedData.ChildNodes.Add(new TreeData($"db:{name}", name, $"usedb://{name}", true));
                         }
                     }
-                    allDesignsData.Add(savedData);
+                    _allDesignsData.Add(savedData);
                 }
             }
-            allDesignsData.Add(
-                new("samples", "Samples", string.Empty, false)
-                {
-                    ChildNodes = new List<TreeData>
-                    {
-                        new ("gallery:Hub and Spoke Networking", "Hub and Spoke Networking", "gallery/hub-spoke-final.json", false),
-                    }
-                }
-            );
-            loadingDesigns = false;
+
+            _loadingDesigns = false;
         }
 
         protected override async Task OnInitializedAsync()
@@ -60,7 +52,7 @@ namespace AzureDesignStudio.Components.MenuDrawer
         async Task HandleButtonClick()
         {
             DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
-            await dr!.CloseAsync(allDesignTree.SelectedData?.Value!);
+            await dr!.CloseAsync(_allDesignTree.SelectedData?.Value!);
         }
 
         async Task HandleDelete()
@@ -81,8 +73,16 @@ namespace AzureDesignStudio.Components.MenuDrawer
             }
 
             // Reload tree data
-            allDesignsData = new();
+            _allDesignsData = new();
             await LoadTreeData();
+        }
+
+        private async Task BeginLogin()
+        {
+            DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
+            await dr!.CloseAsync(string.Empty);
+
+            _navManager.NavigateTo("authentication/login");
         }
     }
 }
