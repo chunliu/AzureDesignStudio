@@ -4,8 +4,6 @@ using AzureDesignStudio.AzureResources.Network;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.Network
 {
@@ -32,6 +30,9 @@ namespace AzureDesignStudio.Core.Network
 
             return (true, string.Empty);
         }
+        public override bool IsValid => 
+            Group is SubnetModel subnet && subnet.Children.Count == 1 && subnet.Name.Equals("AzureBastionSubnet");
+        
         //[Required, DisplayName("Tier")]
         //public string Sku { get; set; } = "Standard";
         //[DisplayName("Instance")]
@@ -84,72 +85,5 @@ namespace AzureDesignStudio.Core.Network
                 publicIp.ResourceId,
             };
         }
-        //private IDictionary<string, dynamic> GetArmResource()
-        //{
-        //    if (Group is not SubnetModel s)
-        //        throw new Exception($"Bastion is not associated with a subnet.");
-
-        //    PublicIpModel? publicIp = null;
-        //    foreach(var port in Ports)
-        //    {
-        //        publicIp = port.Links?.FirstOrDefault(l => l.SourcePort?.Parent is PublicIpModel)?.SourcePort?.Parent as PublicIpModel;
-        //        if (publicIp != null)
-        //            break;
-        //    }
-        //    if (publicIp == null)
-        //        throw new Exception($"Bastion has no public IP address.");
-
-        //    var subnet = new Dictionary<string, string>()
-        //    {
-        //        {"id", s.ResourceId},
-        //    };
-        //    var publicIpAddress = new Dictionary<string, string>()
-        //    {
-        //        {"id", publicIp.ResourceId},
-        //    };
-
-        //    Dictionary<string, dynamic> ipConfiguration = new()
-        //    {
-        //        {"name", Name + "-ipcfg" },
-        //        {"properties", new Dictionary<string, dynamic>() 
-        //            {
-        //                { "subnet", subnet },
-        //                { "publicIPAddress", publicIpAddress },
-        //            } 
-        //        },
-        //    };
-        //    List<Dictionary<string, dynamic>> ipConfigurations = new()
-        //    {
-        //        ipConfiguration,
-        //    };
-
-        //    // Depends on subnet is not enough. Must depend on vnet.
-        //    if (s.Group is not VirtualNetworkModel vnet)
-        //        throw new Exception($"Subnet must be in a vnet.");
-        //    List<string> dependsOn = new()
-        //    {
-        //        vnet.ResourceId,
-        //        s.ResourceId,
-        //        publicIp.ResourceId,
-        //    };
-
-        //    Properties.Clear();
-        //    Properties["scaleUnits"] = ScaleUnits;
-        //    Properties["ipConfigurations"] = ipConfigurations;
-        //    return new Dictionary<string, dynamic>()
-        //    {
-        //        {"type", ResourceType },
-        //        {"apiVersion", ApiVersion },
-        //        {"name", Name},
-        //        {"location", Location},
-        //        {"sku", new Dictionary<string, string>()
-        //            {
-        //                { "name", Sku }
-        //            } 
-        //        },
-        //        {"properties", Properties },
-        //        {"dependsOn", dependsOn},
-        //    };
-        //}
     }
 }
