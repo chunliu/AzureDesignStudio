@@ -18,7 +18,7 @@ namespace AzureDesignStudio.Services
         {
             if (AllStencils == null)
             {
-                var httpClient = clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
+                var httpClient = clientFactory.CreateClient("AzureDesignStudio.Root");
                 AllStencils = (await httpClient.GetFromJsonAsync<IReadOnlyList<StencilModel>>("ads-stencils.json"))!
                     .OrderBy(s => s.Label).ToList();
             }
