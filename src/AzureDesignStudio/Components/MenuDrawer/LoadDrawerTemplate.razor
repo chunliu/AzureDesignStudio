@@ -9,7 +9,10 @@
         <Table DataSource="@_allDesignRecords" @bind-SelectedRows="@_selectedRows" 
             Context="tableCtx" Loading="@_loadingDesigns" HidePagination>
             <Selection Key="@tableCtx.Key" Type="radio" />
-            <PropertyColumn Property="c => c.DesignName" Title="Your saved designs" />
+            <PropertyColumn Property="c => c.DesignName" Title="Your saved designs">
+                <span style="vertical-align: middle"><IconComponent IconPath="assets/azure/reference-arch.svg" /></span>
+                <span style="margin-left: 4px;">@tableCtx.DesignName</span>
+            </PropertyColumn>
         </Table>
         <div style="padding-left: 48px;padding-top: 12px;">
             <Button Type="primary" Disabled="@((_selectedRows?.Count() ?? 0) == 0)" OnClick="HandleButtonClick">Load</Button>
@@ -18,9 +21,9 @@
     </Authorized>
     <NotAuthorized>
         <div style="padding: 24px;">
-            <div>Please log in with your user account first.</div>
+            <div>Please sign in with your user account first.</div>
             <br />
-            <Button Type="primary" OnClick="BeginLogin">Log in</Button>
+            <Button Type="primary" OnClick="BeginLogin">Sign in</Button>
         </div>
     </NotAuthorized>
 </AuthorizeView>

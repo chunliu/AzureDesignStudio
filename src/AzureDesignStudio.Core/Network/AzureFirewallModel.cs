@@ -47,6 +47,8 @@ namespace AzureDesignStudio.Core.Network
 
             return (true, string.Empty);
         }
+        public override bool IsValid 
+            => Group is SubnetModel subnet && subnet.Children.Count == 1 && subnet.Name.Equals("AzureFirewallSubnet");
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {

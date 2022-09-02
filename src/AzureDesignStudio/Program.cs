@@ -12,6 +12,8 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
+builder.Services.AddHttpClient("AzureDesignStudio.Root",
+    client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 builder.Services.AddHttpClient("AzureDesignStudio.ResourceAccess", 
     client => client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ResourceRoot")));
 // AAD B2C Authentication

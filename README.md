@@ -26,7 +26,7 @@ If you want to build and debug the code locally, please follow the instruction b
 
 To build and test the code locally, you will need the following tools:
 
-- Visual Studio 2022
+- Visual Studio 2022 (latest version)
 - (Optional) Azure CLI, if you want to debug and test the code locally.
 - (Optional) Docker Desktop, if you want to build the docker image locally.
 
@@ -37,6 +37,8 @@ git clone --recursive https://github.com/chunliu/AzureDesignStudio.git
 ```
 
 And then open the solution in Visual Studio 2022.
+
+To launch and debug the code locally, set `AzureDesignStudio.Server` as the startup project in Visual Studio 2022. 
 
 ## Frameworks and Libraries
 

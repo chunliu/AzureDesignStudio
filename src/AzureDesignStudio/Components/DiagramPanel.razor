@@ -45,6 +45,7 @@
             OnOk = (e) =>
             {
                 diagram.DeleteSelectedModel();
+                RefreshDiagram();
                 return Task.CompletedTask;
             },
             OkType = "danger",

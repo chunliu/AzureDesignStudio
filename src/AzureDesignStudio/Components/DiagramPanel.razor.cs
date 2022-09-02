@@ -63,7 +63,7 @@ namespace AzureDesignStudio.Components
         /// </summary>
         /// <param name="node"> The node to be added.</param>
         /// <returns>True if the node is added successfully.</returns>
-        private static bool AddNodeToGroup(NodeModel node, GroupModel group)
+        private static bool AddNodeToGroup(NodeModel node, GroupModel? group)
         {
             if (group != null)
             {
@@ -113,7 +113,8 @@ namespace AzureDesignStudio.Components
                         {
                             diagram.Nodes.Add(node);
                         }
-                        AddNodeToGroup(node, overlappedGroup!);
+                        AddNodeToGroup(node, overlappedGroup);
+                        RefreshGroup(overlappedGroup);
                     });
                 }
                 else
@@ -188,8 +189,7 @@ namespace AzureDesignStudio.Components
                     {
                         if (node is GroupModel group)
                         {
-                            foreach (var c in group.Children)
-                                c.Refresh();
+                            RefreshGroup(group);
                         }
                         node.Refresh();
 
@@ -201,6 +201,34 @@ namespace AzureDesignStudio.Components
                     return Task.CompletedTask;
                 };
             }
+        }
+
+        private void RefreshDiagram()
+        {
+            diagram.Batch(() =>
+            {
+                foreach (var group in diagram.Groups)
+                    RefreshGroup(group);
+
+                foreach (var node in diagram.Nodes)
+                    node.Refresh();
+            });
+        }
+
+        private void RefreshGroup(GroupModel? group)
+        {
+            if (group == null)
+                return;
+            
+            foreach (var child in group.Children)
+            {
+                if (child is GroupModel g)
+                {
+                    RefreshGroup(g);
+                }
+                child.Refresh();
+            }
+            group.Refresh();
         }
 
         #endregion
