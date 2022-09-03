@@ -15,7 +15,7 @@
         <div title="User account">
             <AuthorizeView>
                 <NotAuthorized>
-                    <MenuItem Key="user" Icon="@IconType.Outline.User" RouterMatch="@NavLinkMatch.Prefix"></MenuItem>
+                    <MenuItem Key="user" Icon="@IconType.Outline.User" RouterMatch="@NavLinkMatch.Prefix" />
                 </NotAuthorized>
                 <Authorized>
                     <MenuItem Key="user" Icon="@IconType.Outline.User" RouterMatch="@NavLinkMatch.Prefix">
@@ -24,9 +24,8 @@
                 </Authorized>
             </AuthorizeView>
         </div>
-        <div title="Export"><MenuItem Key="export" Icon="@IconType.Outline.Export" RouterMatch="@NavLinkMatch.Prefix"></MenuItem></div>
-        <div title="Load"><MenuItem Key="load" Icon="@IconType.Outline.Book" RouterMatch="@NavLinkMatch.Prefix"></MenuItem></div>
-        <div title="Save"><MenuItem Key="save" Icon="@IconType.Outline.Save" RouterMatch="@NavLinkMatch.Prefix"></MenuItem></div>
+        <div title="Export"><MenuItem Key="export" Icon="@IconType.Outline.Export" RouterMatch="@NavLinkMatch.Prefix" /></div>
+        <div title="Save/Load"><MenuItem Key="save" Icon="@IconType.Outline.Save" RouterMatch="@NavLinkMatch.Prefix" /></div>
     </Menu>
 </div>
 
@@ -69,7 +68,7 @@
 
     private async Task HandleImgPreviewClose()
     {
-        imgUrl = null!;
+        imgUrl = null;
         showImgPreview = false;
         await InvokeAsync(StateHasChanged);
     }

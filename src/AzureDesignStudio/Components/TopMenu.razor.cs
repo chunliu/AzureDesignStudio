@@ -16,7 +16,7 @@ namespace AzureDesignStudio.Components
     {
         private DrawerRef<string>? drawerRef;
         private string openedDrawer = string.Empty;
-        private string imgUrl = null!;
+        private string? imgUrl = null;
 
         private async Task HandleMenuItemClicked(MenuItem menuItem)
         {
@@ -27,9 +27,6 @@ namespace AzureDesignStudio.Components
                     break;
                 case "save":
                     await OpenSaveDrawer();
-                    break;
-                case "load":
-                    await OpenLoadDrawer();
                     break;
                 case "user":
                     await OpenUserDrawer();
@@ -260,11 +257,18 @@ namespace AzureDesignStudio.Components
             if (!await ResetDrawerRef("save"))
                 return;
 
-            drawerRef = await OpenDrawer<SaveDrawerTemplate>("Save the design", "save");
+            drawerRef = await OpenDrawer<SaveDrawerTemplate>("Save or load the design", "save", true);
             drawerRef.OnClosed = async result =>
             {
                 await CloseDrawer();
-                await SaveDiagram(result);
+                if (!string.IsNullOrWhiteSpace(result))
+                {
+                    var splits = result.Split(':');
+                    if (splits[0] == "save")
+                        await SaveDiagram(splits[1]);
+                    else
+                        await LoadDiagram(splits[1]);
+                }
             };
         }
         private async Task SaveDiagram(string designName)
@@ -292,19 +296,6 @@ namespace AzureDesignStudio.Components
             {
                 await messageService.Error($"Failed to save the design. Error code: {statusCode}");
             }
-        }
-
-        private async Task OpenLoadDrawer()
-        {
-            if (!await ResetDrawerRef("load"))
-                return;
-
-            drawerRef = await OpenDrawer<LoadDrawerTemplate>("Load your design", "load", true);
-            drawerRef.OnClosed = async result =>
-            {
-                await CloseDrawer();
-                await LoadDiagram(result);
-            };
         }
 
         private async Task LoadDiagram(string designName)
