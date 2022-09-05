@@ -111,5 +111,21 @@
     "label": "Hub Spoke Topology",
     "referenceArchPath": "gallery/hub-spoke-final.json",
     "category": 5
+  },
+  {
+    "key": "aks-baseline",
+    "name": "aks-baseline",
+    "iconPath": "assets/azure/reference-arch.svg",
+    "label": "AKS Baseline Architecture",
+    "referenceArchPath": "",
+    "category": 5
+  },
+  {
+    "key": "apim-landingzone",
+    "name": "apim-landingzone",
+    "iconPath": "assets/azure/reference-arch.svg",
+    "label": "APIM Landing Zone",
+    "referenceArchPath": "",
+    "category": 5
   }
 ]

@@ -136,19 +136,27 @@ namespace AzureDesignStudio.Components
             adsContext.Diagram.RemoveAllGroups();
 
             var loadingTask = messageService.Loading("Loading the design ...", 0);
-
-            var httpClient = _clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
-            var diagramGraph = await httpClient.GetFromJsonAsync<DiagramGraph>(refArchPath);
-            if (diagramGraph == null)
+            try
             {
-                await messageService.Error("Cannot load the reference architecture.");
+                var httpClient = _clientFactory.CreateClient("AzureDesignStudio.ResourceAccess");
+                var diagramGraph = await httpClient.GetFromJsonAsync<DiagramGraph>(refArchPath);
+                if (diagramGraph == null)
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    DataModelFactory.LoadDiagramFromDto(adsContext.Diagram, diagramGraph, _mapper);
+                }
             }
-            else
+            catch
             {
-                DataModelFactory.LoadDiagramFromDto(adsContext.Diagram, diagramGraph, _mapper);
+                throw new NotImplementedException();
             }
-
-            loadingTask.Start();
+            finally
+            {
+                loadingTask.Start();
+            }
         }
         #endregion
 
