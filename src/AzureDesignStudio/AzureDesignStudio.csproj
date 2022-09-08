@@ -12,7 +12,7 @@
 	<Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.props))\build.props" />
 	
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.12.1" />
+    <PackageReference Include="AntDesign" Version="0.12.2" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Azure.Bicep.Decompiler" Version="0.9.1" />

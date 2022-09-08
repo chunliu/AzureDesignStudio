@@ -48,8 +48,19 @@
 }
 
 @code {
-    Menu topMenu = null!;
+    Menu? topMenu = null;
     bool showImgPreview = true;
+    private static readonly RenderFragment _armTitle =
+    @<span style="font-size: 24px;">
+            <IconComponent IconPath="assets/icons/arm.svg" />
+            <span>ARM Template</span>
+    </span>;
+    private static readonly RenderFragment _bicepTitle =
+    @<span style="font-size: 24px;">
+            <IconComponent IconPath="assets/icons/bicep.svg" />
+            <span>Bicep</span>
+    </span>;
+
 
     private DialogOptions GetDialogOptions()
     {

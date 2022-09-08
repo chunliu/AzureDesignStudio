@@ -49,6 +49,11 @@ namespace AzureDesignStudio.Core.Models
 
         public virtual IList<ResourceBase> GetArmResources()
         {
+            if (!IsValid)
+            {
+                throw new Exception($"{Name} is not valid.");
+            }
+            
             PopulateArmAttributes();
             
             return new List<ResourceBase> { ArmResource };

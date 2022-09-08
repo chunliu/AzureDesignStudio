@@ -17,7 +17,6 @@ namespace AzureDesignStudio.Components
         private DrawerRef<string>? drawerRef;
         private string openedDrawer = string.Empty;
         private string? imgUrl = null;
-
         private async Task HandleMenuItemClicked(MenuItem menuItem)
         {
             switch (menuItem.Key)
@@ -43,7 +42,7 @@ namespace AzureDesignStudio.Components
         {
             // Deselect the ant menu item. A bit strange way.
             // Tracked here: https://github.com/ant-design-blazor/ant-design-blazor/issues/2159
-            topMenu.SelectItem(new MenuItem());
+            topMenu?.SelectItem(new MenuItem());
             drawerRef = null;
             openedDrawer = string.Empty;
             return Task.CompletedTask;
@@ -213,9 +212,9 @@ namespace AzureDesignStudio.Components
             var currentWindowSize = await JS.InvokeAsync<WindowSize>("getWindowSize");
             var title = content.Type switch
             {
-                CodeDrawerContentType.Json => "Arm Template",
-                CodeDrawerContentType.Bicep => "Bicep File",
-                _ => "Generated Code"
+                CodeDrawerContentType.Json => _armTitle,
+                CodeDrawerContentType.Bicep => _bicepTitle,
+                _ => null
             };
 
             var options = new DrawerOptions
