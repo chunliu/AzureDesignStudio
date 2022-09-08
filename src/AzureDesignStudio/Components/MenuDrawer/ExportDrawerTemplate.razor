@@ -1,18 +1,33 @@
 ﻿@inherits FeedbackComponent<string, string>
 
-<Text>Export your design as: </Text>
+<Text style="font-size:16px;">Export your design as: </Text>
 <br />
 <RadioGroup @bind-Value="@exportType">
-    <Radio Style="@style" Value="@("arm")">ARM template</Radio>
-    <Radio Style="@style" Value="@("bicep")">Bicep file</Radio>
-    <Radio Style="@style" Value="@("img")">PNG image</Radio>
+    <Radio Style="@style" Value="@("arm")">
+        <span>
+            <IconComponent IconPath="assets/icons/arm.svg" />
+            <span style="padding-left:4px;">ARM template</span>
+        </span>
+    </Radio>
+    <Radio Style="@style" Value="@("bicep")">
+        <span>
+            <IconComponent IconPath="assets/icons/bicep.svg" />
+            <span style="padding-left:4px;">Bicep</span>
+        </span>
+    </Radio>
+    <Radio Style="@style" Value="@("img")">
+        <span>
+            <IconComponent IconPath="assets/icons/image.svg" />
+            <span style="padding-left:4px;">Image</span>
+        </span>
+    </Radio>
 </RadioGroup>
 <br />
 <br />
 <Button Type="primary" OnClick="HandleButtonClick" >Preview</Button>
 
 @code {
-    string style = "display: block;height:30px;line-height:30px";
+    string style = "display:block;height:30px;line-height:30px;font-size:16px;";
     string exportType = "arm";
     async void HandleButtonClick()
     {
