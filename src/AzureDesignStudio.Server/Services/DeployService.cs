@@ -42,7 +42,7 @@ namespace AzureDesignStudio.Server.Services
             }
             var userId = new Guid(userIdClaim);
 
-            if(!ServiceTools.IsValidSuscriptionName(request.SubscriptionName))
+            if(!ServiceTools.IsValidSubscriptionName(request.SubscriptionName))
             {
                 _logger.LogWarning("{SubscriptionName} is not valid.", request.SubscriptionName);
                 response.StatusCode = StatusCodes.Status400BadRequest;
