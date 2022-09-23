@@ -1,5 +1,56 @@
-﻿<h3>NetworkInterfaceForm</h3>
+﻿@using AzureDesignStudio.Core.Components
+@using AzureDesignStudio.Core.Models
+@using Blazor.Diagrams.Core
+@using Blazor.Diagrams.Core.Models
 
+<Form Model="@nic" LabelColSpan="6" WrapperColSpan="18" Size="@AntSizeLDSType.Small">
+    <NameAndLocation Node="@context" />
+    <FormItem Label="@("IP Config")" LabelColSpan="11" WrapperColSpan="13">
+        <Tooltip Title="@("Add an IP Configuration")">
+            <Button Shape="circle" Icon="plus" Size="small" OnClick="() => { context.IPConfigs.Add(new AzureResources.Network.NetworkInterfaceIPConfiguration() { Properties = new AzureResources.Network.NetworkInterfaceIPConfigurationPropertiesFormat() }); }" />
+        </Tooltip>
+    </FormItem>
+    <AntList DataSource="@context.IPConfigs" Size="small" Split=false>
+        <ChildContent Context="item">
+            <ListItem style="padding: 5px 0px;">
+                <FormItem WrapperColSpan="24" Style="flex:auto;">
+                    <InputGroup Compact>
+                        <FormItem Label="@("Name")" LabelColSpan="11" WrapperColSpan="13">
+                            <Input @bind-Value="@(item.Name)" Size="small" />
+                        </FormItem>
+                        <Tooltip Title=@("Remove the IP Config") Style="display:inline-flex;">
+                            <Button Icon="delete" Size="small" Disabled="@(context.IPConfigs.Count <= 1)"
+                                    OnClick="() => {HandleRemoveIPConfig(item);}" />
+                        </Tooltip>
+                    </InputGroup>
+                </FormItem>
+            </ListItem>
+        </ChildContent>
+    </AntList>
+</Form>
 @code {
+    [CascadingParameter]
+    public NodeModel Node { get; set; } = null!;
+    [CascadingParameter]
+    public Diagram Diagram { get; set; } = null!;
 
+    private NetworkInterfaceModel nic => (NetworkInterfaceModel)Node;
+
+    private void HandleAddIPConfig()
+    {
+        var index = nic.IPConfigs.Count+1;
+        nic.IPConfigs.Add(new AzureResources.Network.NetworkInterfaceIPConfiguration()
+            {
+                Name = "ipConfig" + index.ToString(),
+                Properties = new AzureResources.Network.NetworkInterfaceIPConfigurationPropertiesFormat() {
+                    Subnet = new AzureResources.Network.SubResource() { Id = nic.Group?.Id}
+                }
+            });
+    }
+    
+
+    private void HandleRemoveIPConfig(AzureResources.Network.NetworkInterfaceIPConfiguration ipConfig)
+    {
+        nic.IPConfigs.Remove(ipConfig);
+    }
 }

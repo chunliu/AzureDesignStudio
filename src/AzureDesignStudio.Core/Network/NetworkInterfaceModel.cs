@@ -24,12 +24,16 @@ namespace AzureDesignStudio.Core.Network
         public override Type? DataFormType => typeof(NetworkInterfaceForm);
         private readonly NetworkInterfaces _nic = new();
         protected override ResourceBase ArmResource => _nic;
-
+        
+        public List<NetworkInterfaceIPConfiguration> IPConfigs = new List<NetworkInterfaceIPConfiguration>();
+        
         public override IList<ResourceBase> GetArmResources()
         {
             var result = base.GetArmResources().ToList();
 
             var ports = Ports.Where(p => p.Links.Count > 0).ToList();
+
+            int publicIPCount = 0;
             foreach (var port in ports)
             {
                 foreach (var link in port.Links)
@@ -37,9 +41,15 @@ namespace AzureDesignStudio.Core.Network
                     var node = link.TargetPort?.Parent != this ? link.TargetPort?.Parent : link.SourcePort?.Parent;
                     if (node is PublicIpModel n)
                     {
+                        if (publicIPCount >= IPConfigs.Count)
+                        {
+                            throw new Exception("Only one Public IP can be added to an IP Configuration");
+                        }
+
                         _nic.DependsOn.Add(n.ResourceId);
-                        _nic.Properties.IpConfigurations[0].Properties.PublicIPAddress = new SubResource();
-                        _nic.Properties.IpConfigurations[0].Properties.PublicIPAddress.Id = n.ResourceId;
+                        _nic.Properties.IpConfigurations[publicIPCount].Properties.PublicIPAddress = new SubResource();
+                        _nic.Properties.IpConfigurations[publicIPCount].Properties.PublicIPAddress.Id = n.ResourceId;
+                        publicIPCount++;
                     }
                 }
             }
@@ -61,21 +71,7 @@ namespace AzureDesignStudio.Core.Network
 
             _nic.Properties = new()
             {
-                EnableIPForwarding = false,
-                IpConfigurations = new List<NetworkInterfaceIPConfiguration>() {
-                    new NetworkInterfaceIPConfiguration()
-                    {
-                        Properties = new()
-                        {
-                            Subnet = new SubResource()
-                            {
-                                Id = subnet.ResourceId,
-                            },
-                            PrivateIPAddressVersion = "IPv4"
-                        },
-                        Name = "IPConfig1"
-                    }
-                }
+                IpConfigurations = IPConfigs
             };
         }
 
