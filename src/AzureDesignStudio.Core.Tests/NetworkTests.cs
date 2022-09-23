@@ -53,6 +53,55 @@ namespace AzureDesignStudio.Core.Tests
         }
 
         [Fact]
+        public async void NicTest()
+        {
+            var armTemplate = new ArmTemplate();
+
+            var vnet = new VirtualNetworkModel()
+            {
+                Name = "ads-vnet",
+            };
+
+            armTemplate.AddResource(vnet.GetArmResources());
+            var validateRes = await ValidateTemplate(armTemplate);
+
+            Assert.Null(validateRes.Error);
+
+            vnet.UseResourceGroupLocation = false;
+            vnet.Location = "westus";
+
+            armTemplate.RemoveAllResources();
+            armTemplate.AddResource(vnet.GetArmResources());
+            validateRes = await ValidateTemplate(armTemplate);
+
+            Assert.Null(validateRes.Error);
+
+            vnet.UseResourceGroupLocation = true;
+            vnet.AddSubnet(new SubnetModel()
+            {
+                Name = "subnet1",
+                AddressPrefix = "10.0.0.0/24"
+            });
+            vnet.AddSubnet(new SubnetModel()
+            {
+                Name = "subnet2",
+                AddressPrefix = "10.0.1.0/24"
+            });
+
+            var nic = new NetworkInterfaceModel()
+            {
+                Name = "simpleNic"
+            };
+
+            vnet.Subnets[0].AddChild(nic);
+            armTemplate.RemoveAllResources();
+            armTemplate.AddResource(vnet.GetArmResources());
+
+            var validateRes = await ValidateTemplate(armTemplate);
+            Assert.Null(validateRes.Error);
+        }
+
+        [Fact]
         public async Task PipAndBastionTest()
         {
             var vnet = new VirtualNetworkModel()

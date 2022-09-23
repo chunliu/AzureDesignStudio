@@ -79,6 +79,21 @@ namespace AzureDesignStudio.Core.Network
             }
         }
 
+        /*public override IList<ResourceBase> GetArmResources()
+        {
+            var result = base.GetArmResources().ToList();
+            foreach (var child in Children)
+            {
+                if (child is NetworkInterfaceModel)
+                {
+                    var c = (NetworkInterfaceModel)child;
+
+                    result.AddRange(c.GetArmResources());
+                }
+            }
+            return result;
+        }
+        */
         protected override void PopulateArmAttributes()
         {
             base.PopulateArmAttributes();

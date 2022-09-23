@@ -42,6 +42,13 @@
     "category": 0
   },
   {
+    "key": "network-interface",
+    "name": "nic",
+    "iconPath": "assets/azure/network-interface.svg",
+    "label": "Network Interface",
+    "category": 0
+  },
+  {
     "key": "public-ip",
     "name": "pip",
     "iconPath": "assets/azure/public-ip.svg",

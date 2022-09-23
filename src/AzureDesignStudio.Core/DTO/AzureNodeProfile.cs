@@ -37,6 +37,7 @@ namespace AzureDesignStudio.Core.DTO
                 .AfterMap((s, d) => d.Group = null);
 
             CreateMapForAzureNode<VirtualNetworkModel, VirtualNetworkDto>(AdsConstants.VirtualNetwork);
+            CreateMapForAzureNode<NetworkInterfaceModel, NetworkInterfaceDto>(AdsConstants.NetworkInterface);
             CreateMapForAzureNode<SubnetModel, SubnetDto>(AdsConstants.Subnet);
             CreateMapForAzureNode<PublicIpModel, PublicIpDto>(AdsConstants.PublicIp);
             CreateMapForAzureNode<BastionsModel, BastionsDto>(AdsConstants.Bastions);
