@@ -26,6 +26,7 @@ public static class DataModelFactory
         //diagram.RegisterModelComponent<ResourceGroupModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<VirtualNetworkModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<SubnetModel, AzureGroupComponent>();
+        diagram.RegisterModelComponent<NetworkInterfaceModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<SqlServerModel, AzureGroupComponent>();
         diagram.RegisterModelComponent<AppServicePlanModel, AzureGroupComponent>();
     }
@@ -36,6 +37,7 @@ public static class DataModelFactory
             //AdsConstants.ResourceGroup => new ResourceGroupModel(),
             AdsConstants.StorageAccount => new StorageAccountModel(),
             AdsConstants.VirtualNetwork => new VirtualNetworkModel(),
+            AdsConstants.NetworkInterface => new NetworkInterfaceModel(),
             AdsConstants.VirtualMachine => new VirtualMachineModel(),
             AdsConstants.Subnet => new SubnetModel(),
             AdsConstants.AzureFirewall => new AzureFirewallModel(),
@@ -88,6 +90,7 @@ public static class DataModelFactory
         return key switch
         {
             AdsConstants.VirtualNetwork => typeof(VirtualNetworkDto),
+            AdsConstants.NetworkInterface => typeof(NetworkInterfaceDto),
             AdsConstants.Subnet => typeof(SubnetDto),
             AdsConstants.Bastions => typeof(BastionsDto),
             AdsConstants.PublicIp => typeof(PublicIpDto),
@@ -108,6 +111,7 @@ public static class DataModelFactory
         {
             AdsConstants.VirtualNetwork => mapper.Map<VirtualNetworkModel>(dto),
             AdsConstants.Subnet => mapper.Map<SubnetModel>(dto),
+            AdsConstants.NetworkInterface => mapper.Map<NetworkInterfaceModel>(dto),
             AdsConstants.PublicIp => mapper.Map<PublicIpModel>(dto),
             AdsConstants.Bastions => mapper.Map<BastionsModel>(dto),
             AdsConstants.AzureFirewall => mapper.Map<AzureFirewallModel>(dto),

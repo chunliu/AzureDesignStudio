@@ -28,4 +28,8 @@ namespace AzureDesignStudio.Core.DTO
     {
         public string AddressPrefix { get; set; } = string.Empty;
     }
+
+    public class NetworkInterfaceDto: AzureNodeDto
+    {
+    }
 }
