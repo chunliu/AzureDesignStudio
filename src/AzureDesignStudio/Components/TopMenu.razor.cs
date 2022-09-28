@@ -16,8 +16,7 @@ namespace AzureDesignStudio.Components
     {
         private DrawerRef<string>? drawerRef;
         private string openedDrawer = string.Empty;
-        private string imgUrl = null!;
-
+        private string? imgUrl = null;
         private async Task HandleMenuItemClicked(MenuItem menuItem)
         {
             switch (menuItem.Key)
@@ -27,9 +26,6 @@ namespace AzureDesignStudio.Components
                     break;
                 case "save":
                     await OpenSaveDrawer();
-                    break;
-                case "load":
-                    await OpenLoadDrawer();
                     break;
                 case "user":
                     await OpenUserDrawer();
@@ -46,7 +42,7 @@ namespace AzureDesignStudio.Components
         {
             // Deselect the ant menu item. A bit strange way.
             // Tracked here: https://github.com/ant-design-blazor/ant-design-blazor/issues/2159
-            topMenu.SelectItem(new MenuItem());
+            topMenu?.SelectItem(new MenuItem());
             drawerRef = null;
             openedDrawer = string.Empty;
             return Task.CompletedTask;
@@ -216,9 +212,9 @@ namespace AzureDesignStudio.Components
             var currentWindowSize = await JS.InvokeAsync<WindowSize>("getWindowSize");
             var title = content.Type switch
             {
-                CodeDrawerContentType.Json => "Arm Template",
-                CodeDrawerContentType.Bicep => "Bicep File",
-                _ => "Generated Code"
+                CodeDrawerContentType.Json => _armTitle,
+                CodeDrawerContentType.Bicep => _bicepTitle,
+                _ => null
             };
 
             var options = new DrawerOptions
@@ -260,11 +256,18 @@ namespace AzureDesignStudio.Components
             if (!await ResetDrawerRef("save"))
                 return;
 
-            drawerRef = await OpenDrawer<SaveDrawerTemplate>("Save the design", "save");
+            drawerRef = await OpenDrawer<SaveDrawerTemplate>("Save or load the design", "save", true);
             drawerRef.OnClosed = async result =>
             {
                 await CloseDrawer();
-                await SaveDiagram(result);
+                if (!string.IsNullOrWhiteSpace(result))
+                {
+                    var splits = result.Split(':');
+                    if (splits[0] == "save")
+                        await SaveDiagram(splits[1]);
+                    else
+                        await LoadDiagram(splits[1]);
+                }
             };
         }
         private async Task SaveDiagram(string designName)
@@ -292,19 +295,6 @@ namespace AzureDesignStudio.Components
             {
                 await messageService.Error($"Failed to save the design. Error code: {statusCode}");
             }
-        }
-
-        private async Task OpenLoadDrawer()
-        {
-            if (!await ResetDrawerRef("load"))
-                return;
-
-            drawerRef = await OpenDrawer<LoadDrawerTemplate>("Load your design", "load", true);
-            drawerRef.OnClosed = async result =>
-            {
-                await CloseDrawer();
-                await LoadDiagram(result);
-            };
         }
 
         private async Task LoadDiagram(string designName)

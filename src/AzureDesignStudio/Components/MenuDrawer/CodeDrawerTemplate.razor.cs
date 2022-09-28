@@ -18,7 +18,7 @@ namespace AzureDesignStudio.Components.MenuDrawer
     {
         private CodeDrawerContent _drawerContent = null!;
         private string _codeClass = "line-numbers language-json";
-        private const string upperRight = "position:absolute;top:86px;right:41px;z-index:10";
+        private const string upperRight = "position:absolute;top:90px;right:41px;z-index:10";
         private string _buttonStyle = upperRight;
         private bool _showDeployButton = false;
         private bool _showDeployParams = false;

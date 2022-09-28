@@ -2,35 +2,57 @@
 @inherits FeedbackComponent<string, string>
 @inject NavigationManager navManager
 @inject AdsContext adsContext
-@inject DesignGrpcService designService
+@inject DesignGrpcService _designService
+@inject MessageService _messageService
 
 <AuthorizeView>
     <Authorized>
-        <Form @ref="@form" Model="@designName" Context="formContext" ValidateMode="@FormValidateMode.Complex"
-            LabelColSpan="24" WrapperColSpan="24">
-            <FormItem Label="Design name" Rules="@designNameRules">
-                <Input @bind-Value="@formContext.Name" Placeholder="azure design studio" />
-            </FormItem>
-        </Form>
-        <br />
-        <br />
-        <Button Type="primary" OnClick="HandleButtonClick" Disabled="@(savedDesignCount >= 10)">Save</Button>
-        <br />
-        <br />
-        <Alert Type="@AlertType.Info" ShowIcon="true">
-            <MessageTemplate>
-                You can save up to 10 designs. Currently you have: @(savedDesignCount < 0 ? "Unavailable" : $"{savedDesignCount}/10").
-            </MessageTemplate>
-        </Alert>
+        <Collapse DefaultActiveKey="@(new[]{"1"})" Accordion>
+            <Panel Header="Save the design" Key="1">
+                <Form @ref="@_form" Model="@_designName" Context="formContext" ValidateMode="@FormValidateMode.Complex"
+                      LabelColSpan="24" WrapperColSpan="24">
+                    <FormItem Label="Design name" Rules="@designNameRules">
+                        <Input @bind-Value="@formContext.Name" Placeholder="azure design studio" />
+                    </FormItem>
+                </Form>
+                <br />
+                <br />
+                <Button Type="primary" OnClick="SaveButtonClick" Disabled="@(_savedDesignCount >= 10)">Save</Button>
+                <br />
+                <br />
+                <Alert Type="@AlertType.Info" ShowIcon="true">
+                    <MessageTemplate>
+                        You can save up to 10 designs. Currently you have: @(_savedDesignCount < 0 ? "Unavailable" : $"{_savedDesignCount}/10").
+                    </MessageTemplate>
+                </Alert>
+            </Panel>
+            <Panel Header="Load the design" Key="2">
+                <Table DataSource="@_allDesignRecords" @bind-SelectedRows="@_selectedRows"
+                       Context="tableCtx" Loading="@_loadingDesigns" HidePagination Bordered Size="@TableSize.Small">
+                    <Selection Key="@tableCtx.Key" Type="radio" />
+                    <PropertyColumn Property="c => c.DesignName" Title="Your saved designs">
+                        <span style="vertical-align: middle"><IconComponent IconPath="assets/azure/reference-arch.svg" /></span>
+                        <span style="margin-left: 4px;">@tableCtx.DesignName</span>
+                    </PropertyColumn>
+                </Table>
+                <div style="padding-left: 48px;padding-top: 12px;">
+                    <Button Type="primary" Disabled="@((_selectedRows?.Count() ?? 0) == 0)" OnClick="LoadButtonClick">Load</Button>
+                    <Button Disabled="@((_selectedRows?.Count() ?? 0) == 0)" OnClick="HandleDelete">Delete</Button>
+                </div>
+            </Panel>
+        </Collapse>
     </Authorized>
     <NotAuthorized>
-        <div>Please sign in with your user account first.</div>
-        <br />
-        <Button Type="primary" OnClick="BeginLogin">Sign in</Button>
+        <div style="padding: 24px;">
+            <div>Please sign in with your user account first.</div>
+            <br />
+            <Button Type="primary" OnClick="BeginLogin">Sign in</Button>
+        </div>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; } = null!;
+    private IEnumerable<DesignRecord> _selectedRows = default!;
 }

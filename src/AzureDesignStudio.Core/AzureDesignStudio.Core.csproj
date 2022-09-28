@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.12.0.1" />
+    <PackageReference Include="AntDesign" Version="0.12.4" />
     <PackageReference Include="AutoMapper" Version="11.0.1" />
     <PackageReference Include="AzureDesignStudio.AzureResources.ApiManagement" Version="0.2.0" />
     <PackageReference Include="AzureDesignStudio.AzureResources.Compute" Version="0.2.0" />
@@ -21,7 +21,7 @@
 	<PackageReference Include="AzureDesignStudio.AzureResources.Sql" Version="0.3.0" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Storage" Version="0.2.0" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Web" Version="0.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
   </ItemGroup>
