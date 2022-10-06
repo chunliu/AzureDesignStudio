@@ -1,11 +1,11 @@
-﻿using Bicep.Core.Features;
+﻿using Bicep.Core.Analyzers.Linter;
+using Bicep.Core.Features;
 using Bicep.Core.FileSystem;
 using Bicep.Core.Registry;
 using Bicep.Core.Semantics.Namespaces;
 using Bicep.Core.TypeSystem.Az;
 using Bicep.Decompiler;
 using System.Collections.Immutable;
-using IOFileSystem = System.IO.Abstractions.FileSystem;
 
 namespace AzureDesignStudio.Services
 {
@@ -13,7 +13,7 @@ namespace AzureDesignStudio.Services
 
     public class EmptyModuleRegistryProvider : IModuleRegistryProvider
     {
-        public ImmutableArray<IModuleRegistry> Registries => ImmutableArray<IModuleRegistry>.Empty;
+        public ImmutableArray<IModuleRegistry> Registries(Uri _) => ImmutableArray<IModuleRegistry>.Empty;
     }
 
     public class BicepDecompiler
@@ -21,7 +21,8 @@ namespace AzureDesignStudio.Services
         private static readonly IFeatureProvider features = new FeatureProvider();
 
         private static readonly INamespaceProvider namespaceProvider
-            = new DefaultNamespaceProvider(new AzResourceTypeLoader(), features);
+            = new DefaultNamespaceProvider(new AzResourceTypeLoader());
+        private static readonly LinterAnalyzer linterAnalyzer = new LinterAnalyzer();
 
         public static DecompileResult Decompile(string jsonContent)
         {
@@ -36,7 +37,7 @@ namespace AzureDesignStudio.Services
             {
                 var bicepUri = PathHelper.ChangeToBicepExtension(jsonUri);
                 var decompiler = new TemplateDecompiler(features, namespaceProvider, fileResolver,
-                    new EmptyModuleRegistryProvider(), new Bicep.Core.Configuration.ConfigurationManager(new IOFileSystem()));
+                    new EmptyModuleRegistryProvider(), linterAnalyzer);
                 var (entrypointUri, filesToSave) = decompiler.DecompileFileWithModules(jsonUri, bicepUri);
 
                 return new DecompileResult(filesToSave[entrypointUri], null);
