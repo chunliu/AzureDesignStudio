@@ -13,15 +13,15 @@
 	
   <ItemGroup>
     <PackageReference Include="AntDesign" Version="0.12.4" />
-    <PackageReference Include="AutoMapper" Version="11.0.1" />
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Azure.Bicep.Decompiler" Version="0.10.61" />
     <PackageReference Include="BlazorApplicationInsights" Version="1.6.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.6" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.48.0" />
-    <PackageReference Include="Grpc.Net.Client.Web" Version="2.48.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.48.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.48.1">
+    <PackageReference Include="Google.Protobuf" Version="3.21.7" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.49.0" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.49.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.49.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -17,7 +17,7 @@ namespace AzureDesignStudio.Server.Services
         public CryptoService(IConfiguration configuration)
         {
             var chainedTokenCred = new ChainedTokenCredential(
-                new ManagedIdentityCredential(configuration["MIClientId"]),
+                new ManagedIdentityCredential(),
                 new AzureCliCredential());
             var keyClient = new KeyClient(new Uri($"https://{configuration["KeyVaultName"]}.vault.azure.net/"),
                 chainedTokenCred);

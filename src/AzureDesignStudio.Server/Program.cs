@@ -30,7 +30,7 @@ builder.Services.Configure<JwtBearerOptions>(
         var secretClient = new SecretClient(
             new Uri($"https://{builtConfig["KeyVaultName"]}.vault.azure.net/"),
             new ChainedTokenCredential(
-                new ManagedIdentityCredential(builtConfig["MIClientId"]),
+                new ManagedIdentityCredential(),
                 new AzureCliCredential()
             ));
         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());

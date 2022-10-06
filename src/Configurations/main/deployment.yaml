@@ -6,7 +6,7 @@ metadata:
   labels:
     app: ads-main
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: ads-main
@@ -14,21 +14,19 @@ spec:
     metadata:
       labels:
         app: ads-main
-        aadpodidbinding: ads-identity
     spec:
+      serviceAccountName: adssvcaccount
       containers:
       - name: ads-main
-        image: chunliu.azurecr.io/ads-server:0.2.3
+        image: chunliu.azurecr.io/ads-server:0.4.3-7
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            memory: "512Mi"
-            cpu: "500m"
+            memory: 2Gi
+            cpu: 750m
         ports:
         - containerPort: 80
           protocol: TCP
         env:
           - name: ASPNETCORE_HTTPS_PORT
             value: "443"
-          - name: MIClientId
-            value: "<managed identity>"
