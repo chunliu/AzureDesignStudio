@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
-
   <PropertyGroup>
 	<TargetFramework>net6.0</TargetFramework>
 	<Nullable>enable</Nullable>
@@ -7,10 +6,7 @@
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
     <BlazorEnableTimeZoneSupport>false</BlazorEnableTimeZoneSupport>
 	<PublishTrimmed>true</PublishTrimmed>
-  </PropertyGroup>
-
-	<Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), build.props))\build.props" />
-	
+  </PropertyGroup>	
   <ItemGroup>
     <PackageReference Include="AntDesign" Version="0.12.4" />
     <PackageReference Include="AutoMapper" Version="12.0.0" />
@@ -30,6 +26,10 @@
     <PackageReference Include="Microsoft.Authentication.WebAssembly.Msal" Version="6.0.9" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="6.0.2-mauipre.1.22054.8" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.2-mauipre.1.22054.8" />
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.5.113">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
   </ItemGroup>
 
