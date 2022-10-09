@@ -1,8 +1,8 @@
 **/.classpath
 **/.dockerignore
 **/.env
-**/.git
-**/.gitignore
+# **/.git
+# **/.gitignore
 **/.project
 **/.settings
 **/.toolstarget
@@ -23,3 +23,5 @@
 **/values.dev.yaml
 LICENSE
 README.md
+**/.github
+**/assets
