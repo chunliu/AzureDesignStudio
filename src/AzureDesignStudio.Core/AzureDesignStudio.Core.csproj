@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AntDesign" Version="0.12.4" />
+    <PackageReference Include="AntDesign" Version="0.12.7" />
     <PackageReference Include="AutoMapper" Version="12.0.0" />
     <PackageReference Include="AzureDesignStudio.AzureResources.ApiManagement" Version="0.2.0" />
     <PackageReference Include="AzureDesignStudio.AzureResources.Compute" Version="0.2.0" />
@@ -19,10 +19,10 @@
 	<PackageReference Include="AzureDesignStudio.AzureResources.Sql" Version="0.3.0" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Storage" Version="0.2.0" />
 	<PackageReference Include="AzureDesignStudio.AzureResources.Web" Version="0.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
-	<PackageReference Include="Nerdbank.GitVersioning" Version="3.5.113">
+	<PackageReference Include="Nerdbank.GitVersioning" Version="3.5.119">
 		<PrivateAssets>all</PrivateAssets>
 		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
