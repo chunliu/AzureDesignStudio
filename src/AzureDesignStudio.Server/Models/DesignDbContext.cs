@@ -12,7 +12,7 @@ namespace AzureDesignStudio.Server.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DesignModel>()
-                .HasCheckConstraint("ADS_CHECK_JSON", "ISJSON(DesignData)=1");
+                .ToTable(t => t.HasCheckConstraint("ADS_CHECK_JSON", "ISJSON(DesignData)=1"));
         }
 
         public DbSet<DesignModel> AdsDesigns { get; set; } = null!;

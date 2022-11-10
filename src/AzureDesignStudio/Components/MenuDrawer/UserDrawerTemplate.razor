@@ -3,7 +3,6 @@
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @inherits FeedbackComponent<string, string>
 @inject NavigationManager _navManager
-@inject SignOutSessionStateManager _signOutManager
 @inject DrawerService _drawerService
 @inject DeployGrpcService _deployService
 
@@ -78,7 +77,7 @@
         DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
         await dr!.CloseAsync(string.Empty);
 
-        _navManager.NavigateTo("authentication/login");
+        _navManager.NavigateToLogin("authentication/login");
     }
 
     private async Task BeginLogout(MouseEventArgs args)
@@ -86,8 +85,7 @@
         DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
         await dr!.CloseAsync(string.Empty);
 
-        await _signOutManager.SetSignOutState();
-        _navManager.NavigateTo("authentication/logout");
+        _navManager.NavigateToLogout("authentication/logout");
     }
 
     private async Task LinkAzureSubscription()

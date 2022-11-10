@@ -1,4 +1,5 @@
 ﻿using AntDesign;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Components.MenuDrawer
@@ -66,7 +67,7 @@ namespace AzureDesignStudio.Components.MenuDrawer
             DrawerRef<string> dr = (FeedbackRef as DrawerRef<string>)!;
             await dr!.CloseAsync(string.Empty);
 
-            navManager.NavigateTo("authentication/login");
+            _navManager.NavigateToLogin("authentication/login");
         }
 
         async Task LoadButtonClick()

@@ -15,7 +15,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddHttpClient("AzureDesignStudio.Root",
     client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
 builder.Services.AddHttpClient("AzureDesignStudio.ResourceAccess", 
-    client => client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ResourceRoot")));
+    client => client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ResourceRoot")!));
 // AAD B2C Authentication
 builder.Services.AddHttpClient("AzureDesignStudio.ServerAPI", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
     .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
@@ -23,8 +23,7 @@ builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().Cre
 builder.Services.AddMsalAuthentication(options =>
 {
     builder.Configuration.Bind("AzureAdB2C", options.ProviderOptions.Authentication);
-    options.ProviderOptions.DefaultAccessTokenScopes.Add(
-        builder.Configuration.GetValue<string>("B2CScope"));
+    options.ProviderOptions.DefaultAccessTokenScopes.Add(builder.Configuration.GetValue<string>("B2CScope")!);
 });
 
 builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));

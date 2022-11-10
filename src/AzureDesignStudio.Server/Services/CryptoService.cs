@@ -16,13 +16,10 @@ namespace AzureDesignStudio.Server.Services
 
         public CryptoService(IConfiguration configuration)
         {
-            var chainedTokenCred = new ChainedTokenCredential(
-                new ManagedIdentityCredential(),
-                new AzureCliCredential());
-            var keyClient = new KeyClient(new Uri($"https://{configuration["KeyVaultName"]}.vault.azure.net/"),
-                chainedTokenCred);
+            var azCred = new DefaultAzureCredential();
+            var keyClient = new KeyClient(new Uri($"https://{configuration["KeyVaultName"]}.vault.azure.net/"), azCred);
             var key = keyClient.GetKey(configuration["KeyVaultKeyName"]).Value;
-            _cryptoClient = new CryptographyClient(key.Id, chainedTokenCred);
+            _cryptoClient = new CryptographyClient(key.Id, azCred);
         }
         public async Task<string> Decrypt(string encryptedText)
         {

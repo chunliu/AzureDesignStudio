@@ -1,6 +1,4 @@
 ﻿using Bicep.Core.Analyzers.Linter;
-using Bicep.Core.Analyzers.Linter.ApiVersions;
-using Bicep.Core.Configuration;
 using Bicep.Core.Features;
 using Bicep.Core.FileSystem;
 using Bicep.Core.Registry;
@@ -20,15 +18,10 @@ namespace AzureDesignStudio.Services
 
     public class BicepDecompiler
     {
-        private static readonly IConfigurationManager configurationManager = IConfigurationManager.WithStaticConfiguration(IConfigurationManager.GetBuiltInConfiguration().WithAllAnalyzersDisabled());
-
-        private static readonly IFeatureProviderFactory featureProviderFactory = new FeatureProviderFactory(configurationManager);
+        private static readonly IFeatureProvider features = new FeatureProvider();
 
         private static readonly INamespaceProvider namespaceProvider
             = new DefaultNamespaceProvider(new AzResourceTypeLoader());
-
-        private static readonly IApiVersionProviderFactory apiVersionProviderFactory = new ApiVersionProviderFactory(featureProviderFactory, namespaceProvider);
-
         private static readonly LinterAnalyzer linterAnalyzer = new LinterAnalyzer();
 
         public static DecompileResult Decompile(string jsonContent)
@@ -43,8 +36,8 @@ namespace AzureDesignStudio.Services
             try
             {
                 var bicepUri = PathHelper.ChangeToBicepExtension(jsonUri);
-                var decompiler = new TemplateDecompiler(featureProviderFactory, namespaceProvider, fileResolver,
-                    new EmptyModuleRegistryProvider(), apiVersionProviderFactory, linterAnalyzer);
+                var decompiler = new TemplateDecompiler(features, namespaceProvider, fileResolver,
+                    new EmptyModuleRegistryProvider(), linterAnalyzer);
                 var (entrypointUri, filesToSave) = decompiler.DecompileFileWithModules(jsonUri, bicepUri);
 
                 return new DecompileResult(filesToSave[entrypointUri], null);
