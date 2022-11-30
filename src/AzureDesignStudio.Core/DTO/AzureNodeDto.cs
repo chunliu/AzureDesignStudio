@@ -19,10 +19,10 @@ namespace AzureDesignStudio.Core.DTO
         public bool UseResourceGroupLocation { get; set; }
     }
 
-    public class VirtualNetworkDto : AzureNodeDto
-    {
-        public List<AddressSpace>? IpSpace { get; set; }
-    }
+    //public class VirtualNetworkDto : AzureNodeDto
+    //{
+    //    public List<AddressSpace>? IpSpace { get; set; }
+    //}
 
     public class SubnetDto : AzureNodeDto
     {

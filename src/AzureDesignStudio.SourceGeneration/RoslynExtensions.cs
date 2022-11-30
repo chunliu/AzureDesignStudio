@@ -10,14 +10,14 @@ public static class RoslynExtensions
     {
         return classSyntax.AttributeLists.Count > 0 &&
                classSyntax.AttributeLists.SelectMany(al => al.Attributes
-                       .Where(a => (a.Name as IdentifierNameSyntax)!.Identifier.Text == attributeName))
+                       .Where(a => (a.Name as IdentifierNameSyntax)?.Identifier.Text == attributeName))
                    .Any();
     }
 
     public static AttributeSyntax? GetAttribute(this ClassDeclarationSyntax classSyntax, string attributeName)
     {
         return classSyntax.AttributeLists.SelectMany(al => al.Attributes
-                       .Where(a => (a.Name as IdentifierNameSyntax)!.Identifier.Text == attributeName))
+                       .Where(a => (a.Name as IdentifierNameSyntax)?.Identifier.Text == attributeName))
             .FirstOrDefault();
     }
 
@@ -25,7 +25,7 @@ public static class RoslynExtensions
     {
         return propertySyntax.AttributeLists.Count > 0 
             && propertySyntax.AttributeLists.SelectMany(al => al.Attributes
-            .Where(a => (a.Name as IdentifierNameSyntax)!.Identifier.Text == attributeName))
+            .Where(a => (a.Name as IdentifierNameSyntax)?.Identifier.Text == attributeName))
             .Any();
     }
 

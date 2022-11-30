@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
@@ -12,6 +14,7 @@ namespace AzureDesignStudio.Core.Network
         // For AntList binding in UI.
         public string AddressPrefix { get; set; } = string.Empty;
     }
+    [MapToDto(TypeKey = AdsConstants.VirtualNetwork)]
     public class VirtualNetworkModel : AzureGroupBase
     {
         public VirtualNetworkModel() : base()
@@ -25,6 +28,7 @@ namespace AzureDesignStudio.Core.Network
         public override Type? DataFormType => typeof(VirtualNetworkForm);
         private readonly VirtualNetworks _vnet = new();
         protected override ResourceBase ArmResource => _vnet;
+        [MapToDto]
         public List<AddressSpace> IpSpace { get; set; } = new List<AddressSpace>()
         {
             new AddressSpace()
@@ -105,7 +109,7 @@ namespace AzureDesignStudio.Core.Network
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            var vnetDto = mapper.Map<VirtualNetworkDto>(this);
+            var vnetDto = mapper.Map<VirtualNetworkModelDto>(this);
 
             return vnetDto;
         }

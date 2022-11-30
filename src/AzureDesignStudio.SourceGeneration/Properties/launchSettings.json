@@ -1,8 +1,1 @@
-{
-  "profiles": {
-    "SourceGeneration": {
-      "commandName": "DebugRoslynComponent",
-      "targetProject": "..\\AzureDesignStudio.SourceGenerator.Tester\\AzureDesignStudio.SourceGeneration.Tester.csproj"
-    }
-  }
-}
+{}

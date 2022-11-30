@@ -33,4 +33,9 @@
     <ProjectReference Include="..\Blazor.Diagrams\src\Blazor.Diagrams\Blazor.Diagrams.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\AzureDesignStudio.SourceGeneration\AzureDesignStudio.SourceGeneration.csproj" 
+						  OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+	</ItemGroup>
+	
 </Project>

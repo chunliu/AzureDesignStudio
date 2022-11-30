@@ -87,7 +87,7 @@ public static class DataModelFactory
     {
         return key switch
         {
-            AdsConstants.VirtualNetwork => typeof(VirtualNetworkDto),
+            AdsConstants.VirtualNetwork => typeof(VirtualNetworkModelDto),
             AdsConstants.Subnet => typeof(SubnetDto),
             AdsConstants.Bastions => typeof(BastionsDto),
             AdsConstants.PublicIp => typeof(PublicIpDto),

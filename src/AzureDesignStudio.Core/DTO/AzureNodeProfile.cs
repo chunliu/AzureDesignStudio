@@ -8,7 +8,7 @@ using Blazor.Diagrams.Core.Models;
 
 namespace AzureDesignStudio.Core.DTO
 {
-    public class AzureNodeProfile : Profile
+    public partial class AzureNodeProfile : Profile
     {
         private void CreateMapForAzureNode<TSource, TTarget>(string typeKey) where TSource : NodeModel where TTarget : AzureNodeDto
         {
@@ -36,7 +36,7 @@ namespace AzureDesignStudio.Core.DTO
                 .ReverseMap()
                 .AfterMap((s, d) => d.Group = null);
 
-            CreateMapForAzureNode<VirtualNetworkModel, VirtualNetworkDto>(AdsConstants.VirtualNetwork);
+            //CreateMapForAzureNode<VirtualNetworkModel, VirtualNetworkDto>(AdsConstants.VirtualNetwork);
             CreateMapForAzureNode<SubnetModel, SubnetDto>(AdsConstants.Subnet);
             CreateMapForAzureNode<PublicIpModel, PublicIpDto>(AdsConstants.PublicIp);
             CreateMapForAzureNode<BastionsModel, BastionsDto>(AdsConstants.Bastions);
@@ -46,6 +46,8 @@ namespace AzureDesignStudio.Core.DTO
             CreateMapForAzureNode<WebAppModel, WebAppDto>(AdsConstants.WebApp);
             CreateMapForAzureNode<FunctionAppModel, FunctionAppDto>(AdsConstants.FunctionApp);
             CreateMapForAzureNode<APIMModel, APIMDto>(AdsConstants.APIM);
+
+            CreateAzureNodeMaps();
         }
     }
 }

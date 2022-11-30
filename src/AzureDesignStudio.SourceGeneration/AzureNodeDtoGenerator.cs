@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Scriban;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace AzureDesignStudio.SourceGeneration
@@ -15,13 +16,22 @@ namespace AzureDesignStudio.SourceGeneration
         private readonly DiagnosticDescriptor _errorDescriptor = new("ADS001",
             "ADS001: Error in source generation", "Error in source generator<{0}>: '{1}'", "SourceGenerator",
             DiagnosticSeverity.Error, true);
+        private readonly DiagnosticDescriptor _infoDescriptor = new("ADS002",
+            "ADS001: Generation working", "Info in source generator<{0}>: '{1}'", "SourceGenerator",
+            DiagnosticSeverity.Info, true);
         public void Initialize(GeneratorInitializationContext context)
         {
+            //if (!Debugger.IsAttached)
+            //{
+            //    Debugger.Launch();
+            //}
+
             context.RegisterForSyntaxNotifications(() => new DtoGeneratorSyntaxReceiver());
         } 
         
         public void Execute(GeneratorExecutionContext context)
         {
+
             if (context.SyntaxReceiver is not DtoGeneratorSyntaxReceiver dtoReceiver)
                 return;
 
@@ -34,7 +44,10 @@ namespace AzureDesignStudio.SourceGeneration
             var mapProfile = new MapProfileModel()
             {
                 Maps = new List<MapModel>(),
-                Usings = new HashSet<string>(),
+                Usings = new HashSet<string>
+                {
+                    dtoReceiver.TypeKeyNamespace!,
+                },
                 Namespace = dtoReceiver.MapProfileNamespace!
             };
 
