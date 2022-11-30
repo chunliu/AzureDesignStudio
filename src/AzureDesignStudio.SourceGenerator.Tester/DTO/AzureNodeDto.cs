@@ -1,6 +1,6 @@
 ﻿using Blazor.Diagrams.Core.Geometry;
 
-namespace AzureDesignStudio.SourceGeneration.Tester
+namespace AzureDesignStudio.SourceGeneration.Tester.DTO
 {
     public class AzureNodeDto
     {

@@ -1,4 +1,11 @@
-﻿namespace AzureDesignStudio.SourceGeneration.Tester;
+﻿using Blazor.Diagrams.Core.Models;
+
+namespace AzureDesignStudio.SourceGeneration.Tester;
+
+public static class TestConstants
+{
+    public const string VnetKey = "VirtualNetwork";
+}
 
 public class AddressSpace
 {
@@ -6,8 +13,8 @@ public class AddressSpace
     public string AddressPrefix { get; set; } = string.Empty;
 }
 
-[GenerateDto]
-public class VirtualNetworkModel
+[MapToDto(TypeKey = TestConstants.VnetKey)]
+public class VirtualNetworkModel : NodeModel
 {
     [MapToDto]
     public List<AddressSpace> IpSpace { get; set; } = new List<AddressSpace>()

@@ -11,10 +11,12 @@
 
   <ItemGroup>
     <None Remove="Templates\AzureNodeDto.scriban" />
+    <None Remove="Templates\AzureNodeProfile.scriban" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\AzureNodeDto.scriban" />
+    <EmbeddedResource Include="Templates\AzureNodeProfile.scriban" />
   </ItemGroup>
 
   <ItemGroup>

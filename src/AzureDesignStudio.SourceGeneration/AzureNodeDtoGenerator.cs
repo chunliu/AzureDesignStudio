@@ -31,13 +31,44 @@ namespace AzureDesignStudio.SourceGeneration
                 return;
             }
 
+            var mapProfile = new MapProfileModel()
+            {
+                Maps = new List<MapModel>(),
+                Usings = new HashSet<string>(),
+                Namespace = dtoReceiver.MapProfileNamespace!
+            };
+
             foreach (var model in dtoReceiver.ModelTypes)
             {
                 var dtoTypeModel = CreateDtoTypeModel(model, dtoReceiver.DtoNamespace!);
-                var source = GenerateSource(dtoTypeModel);
+                var source = GenerateSourceFromDtoTypeModel(dtoTypeModel);
 
                 context.AddSource($"{dtoTypeModel.ClassName}.g.cs", source);
+
+                var typeKey = GetTypeKeyFromAttribute(model);
+                mapProfile.Maps.Add(new MapModel
+                {
+                    TypeKey = typeKey!,
+                    SourceType = model.Identifier.Text,
+                    DestinationType = dtoTypeModel.ClassName
+                });
+                mapProfile.Usings.Add(dtoTypeModel.Namespace);
             }
+
+            var mpSource = GenerateSourceFromMapProfileModel(mapProfile);
+
+            context.AddSource($"AzureNodeProfile.g.cs", mpSource);
+        }
+
+        private static string? GetTypeKeyFromAttribute(ClassDeclarationSyntax classDecl)
+        {
+            var attributeSyntax = classDecl.GetAttribute("MapToDto");
+            var expression = attributeSyntax?.ArgumentList?.Arguments
+                .Where(a => a.NameEquals?.Name.Identifier.Text == "TypeKey")
+                .FirstOrDefault()?
+                .ToString();
+
+            return expression?.Split('=').Last();
         }
 
         private static DtoTypeModel CreateDtoTypeModel(ClassDeclarationSyntax classDecl, string dtoNamespace)
@@ -69,9 +100,27 @@ namespace AzureDesignStudio.SourceGeneration
             return model;
         }
 
-        private static string GenerateSource(DtoTypeModel model)
+        private static string GenerateSourceFromDtoTypeModel(DtoTypeModel model)
         {
             var templateStr = ResourceReader.GetResource("AzureNodeDto.scriban");
+            var template = Template.Parse(templateStr);
+            if (template.HasErrors)
+            {
+                var errors = string.Join(" | ", template.Messages.Select(x => x.Message));
+                throw new InvalidOperationException($"Template parse error: {template.Messages}");
+            }
+
+            var source = template.Render(model, memberRenamer: member => member.Name);
+
+            return SyntaxFactory.ParseCompilationUnit(source)
+                                  .NormalizeWhitespace()
+                                  .GetText()
+                                  .ToString();
+        }
+
+        private static string GenerateSourceFromMapProfileModel(MapProfileModel model)
+        {
+            var templateStr = ResourceReader.GetResource("AzureNodeProfile.scriban");
             var template = Template.Parse(templateStr);
             if (template.HasErrors)
             {

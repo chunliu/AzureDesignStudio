@@ -32,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDesignStudio.SourceGen
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGeneration", "SourceGeneration", "{8D4D29DD-63A3-4328-B8FD-8F938FF230CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDesignStudio.SourceGeneration.Tester", "AzureDesignStudio.SourceGenerator.Tester\AzureDesignStudio.SourceGeneration.Tester.csproj", "{54624942-4C89-4A60-A9BD-105FFBB80BEA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDesignStudio.SourceGeneration.Tester", "AzureDesignStudio.SourceGenerator.Tester\AzureDesignStudio.SourceGeneration.Tester.csproj", "{54624942-4C89-4A60-A9BD-105FFBB80BEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

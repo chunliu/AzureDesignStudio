@@ -14,6 +14,13 @@ public static class RoslynExtensions
                    .Any();
     }
 
+    public static AttributeSyntax? GetAttribute(this ClassDeclarationSyntax classSyntax, string attributeName)
+    {
+        return classSyntax.AttributeLists.SelectMany(al => al.Attributes
+                       .Where(a => (a.Name as IdentifierNameSyntax)!.Identifier.Text == attributeName))
+            .FirstOrDefault();
+    }
+
     public static bool HasAttribute(this PropertyDeclarationSyntax propertySyntax, string attributeName)
     {
         return propertySyntax.AttributeLists.Count > 0 
