@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Web;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.Network;
@@ -10,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.Web
 {
+    [MapToDto(TypeKey = AdsConstants.AppServicePlan)]
     public class AppServicePlanModel : AzureGroupBase
     {
         private GroupStyle groupStyle = null!;
@@ -23,7 +26,7 @@ namespace AzureDesignStudio.Core.Web
         }
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<AppServicePlanDto>(this);
+            return mapper.Map<AppServicePlanModelDto>(this);
         }
         public override (bool result, string message) IsDrappable(GroupModel overlappedGroup)
         {
@@ -48,18 +51,21 @@ namespace AzureDesignStudio.Core.Web
             }
         };
         protected override ResourceBase ArmResource => _servicePlan;
+        [MapToDto]
         [Required, DisplayName("OS")]
         public string Kind 
         { 
             get => _servicePlan.Kind; 
             set => _servicePlan.Kind = value; 
         }
+        [MapToDto]
         [Required, DisplayName("SKU Name")]
         public string SkuName 
         { 
             get => _servicePlan.Sku.Name; 
             set => _servicePlan.Sku.Name = value; 
         }
+        [MapToDto]
         [Required, DisplayName("Tier")]
         public string SkuTier 
         {
@@ -84,33 +90,5 @@ namespace AzureDesignStudio.Core.Web
             base.PopulateArmAttributes();
             _servicePlan.Properties.Reserved = Kind == "linux";
         }
-        //public override IList<IDictionary<string, dynamic>> GetArmResources()
-        //{
-        //    var result = new List<IDictionary<string, dynamic>>();
-
-        //    var sku = new Dictionary<string, string>
-        //    {
-        //        {"name", SkuName},
-        //        {"tier", SkuTier},
-        //    };
-
-        //    Properties.Clear();
-        //    Properties["name"] = Name;
-        //    Properties["numberOfWorkers"] = "1";
-        //    Properties["reserved"] = Kind == "linux" ? "true" : "false";
-
-        //    result.Add(new Dictionary<string, dynamic>()
-        //    {
-        //        {"type", ResourceType },
-        //        {"apiVersion", ApiVersion },
-        //        {"name", Name},
-        //        {"location", Location},
-        //        {"kind", Kind == "linux" ? Kind : ""},
-        //        {"sku", sku},
-        //        {"properties", Properties },
-        //    });
-
-        //    return result;
-        //}
     }
 }

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
@@ -8,6 +10,7 @@ using System.ComponentModel;
 
 namespace AzureDesignStudio.Core.Network
 {
+    [MapToDto(TypeKey = AdsConstants.PublicIp)]
     public class PublicIpModel : AzureNodeBase
     {
         public PublicIpModel() : base()
@@ -34,24 +37,28 @@ namespace AzureDesignStudio.Core.Network
         };
         protected override ResourceBase ArmResource => _pipAddress;
         public override Type? DataFormType => typeof(PublicIpForm);
+        [MapToDto]
         [DisplayName("IP version")]
         public string IpVersion 
         { 
             get => _pipAddress.Properties.PublicIPAddressVersion; 
             set => _pipAddress.Properties.PublicIPAddressVersion = value; 
         }
+        [MapToDto]
         [DisplayName("IP assignment")]
         public string IpAllocationMethod 
         { 
             get => _pipAddress.Properties.PublicIPAllocationMethod;
             set => _pipAddress.Properties.PublicIPAllocationMethod = value; 
         }
+        [MapToDto]
         [DisplayName("SKU")]
         public string Sku 
         { 
             get => _pipAddress.Sku.Name; 
             set => _pipAddress.Sku.Name = value; 
         }
+        [MapToDto]
         [DisplayName("Tier")]
         public string Tier 
         { 
@@ -67,7 +74,7 @@ namespace AzureDesignStudio.Core.Network
         }
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<PublicIpDto>(this);
+            return mapper.Map<PublicIpModelDto>(this);
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Sql;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
 
 namespace AzureDesignStudio.Core.SQL
 {
+    [MapToDto(TypeKey = AdsConstants.SqlServer)]
     public class SqlServerModel : AzureGroupBase
     {
         public override GroupStyle GroupStyle
@@ -28,7 +31,7 @@ namespace AzureDesignStudio.Core.SQL
         }
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<SqlServerDto>(this);
+            return mapper.Map<SqlServerModelDto>(this);
         }
         public override string ServiceName => "Azure SQL Server";
         public override Type? DataFormType => typeof(SqlServerForm);

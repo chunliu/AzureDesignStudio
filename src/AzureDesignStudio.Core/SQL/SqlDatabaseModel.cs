@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Sql;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
@@ -9,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.SQL
 {
+    [MapToDto(TypeKey = AdsConstants.SqlDatabase)]
     public class SqlDatabaseModel : AzureNodeBase
     {
         public SqlDatabaseModel() : base()
@@ -51,12 +54,14 @@ namespace AzureDesignStudio.Core.SQL
                 return $"[resourceId('{_database.Type}', '{sqlServer.Name}','{Name}')]";
             }
         }
+        [MapToDto]
         [Required, DisplayName("SKU Name")]
         public string SkuName 
         { 
             get => _database.Sku.Name; 
             set => _database.Sku.Name = value; 
         }
+        [MapToDto]
         [Required, DisplayName("Tier")]
         public string SkuTier 
         { 
@@ -66,7 +71,7 @@ namespace AzureDesignStudio.Core.SQL
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<SqlDatabaseDto>(this);
+            return mapper.Map<SqlDatabaseModelDto>(this);
         }
         protected override void PopulateArmAttributes()
         {

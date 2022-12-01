@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Web;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Storage;
 using System.ComponentModel;
@@ -8,11 +10,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.Web
 {
+    [MapToDto(TypeKey = AdsConstants.FunctionApp, DtoBase = "WebAppModelDto")]
     public class FunctionAppModel : WebAppModel
     {
         public override string ServiceName => "Function App";
         public override Type? DataFormType => typeof(FunctionAppForm);
-        [Required, DisplayName("Hosting plan")]
+        [Required, DisplayName("Hosting plan"), MapToDto]
         public string HostingPlan { get; set; } = null!;
         public StorageAccountModel StorageAccount = new()
         {
@@ -31,7 +34,7 @@ namespace AzureDesignStudio.Core.Web
         }
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<FunctionAppDto>(this);
+            return mapper.Map<FunctionAppModelDto>(this);
         }
         private void CreateFuncAppSettings(ref SiteConfig siteConfig)
         {

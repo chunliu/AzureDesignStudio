@@ -1,11 +1,13 @@
 ﻿using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
+using AzureDesignStudio.Core.Attributes;
 using AzureDesignStudio.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.Network
 {
+    [MapToDto]
     public class FirewallPolicyModel : IAzureResource
     {
         public string ResourceId => $"[resourceId('{ArmResource.Type}', '{Name}')]";
@@ -19,6 +21,7 @@ namespace AzureDesignStudio.Core.Network
             set => ArmResource.Location = value;
         }
         public bool UseResourceGroupLocation { get; set; } = true;
+        [MapToDto]
         [DisplayName("SKU")]
         public string Sku { get; set; } = "Premium";
 

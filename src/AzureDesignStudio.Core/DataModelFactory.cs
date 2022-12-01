@@ -88,16 +88,16 @@ public static class DataModelFactory
         return key switch
         {
             AdsConstants.VirtualNetwork => typeof(VirtualNetworkModelDto),
-            AdsConstants.Subnet => typeof(SubnetDto),
-            AdsConstants.Bastions => typeof(BastionsDto),
-            AdsConstants.PublicIp => typeof(PublicIpDto),
-            AdsConstants.AzureFirewall => typeof(AzureFirewallDto),
-            AdsConstants.SqlServer => typeof(SqlServerDto),
-            AdsConstants.SqlDatabase => typeof(SqlDatabaseDto),
-            AdsConstants.AppServicePlan => typeof(AppServicePlanDto),
-            AdsConstants.WebApp => typeof(WebAppDto),
-            AdsConstants.FunctionApp => typeof(FunctionAppDto),
-            AdsConstants.APIM => typeof(APIMDto),
+            AdsConstants.Subnet => typeof(SubnetModelDto),
+            AdsConstants.Bastions => typeof(BastionsModelDto),
+            AdsConstants.PublicIp => typeof(PublicIpModelDto),
+            AdsConstants.AzureFirewall => typeof(AzureFirewallModelDto),
+            AdsConstants.SqlServer => typeof(SqlServerModelDto),
+            AdsConstants.SqlDatabase => typeof(SqlDatabaseModelDto),
+            AdsConstants.AppServicePlan => typeof(AppServicePlanModelDto),
+            AdsConstants.WebApp => typeof(WebAppModelDto),
+            AdsConstants.FunctionApp => typeof(FunctionAppModelDto),
+            AdsConstants.APIM => typeof(APIMModelDto),
             _ => throw new NotImplementedException(),
         };
     }

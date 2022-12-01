@@ -13,9 +13,10 @@ namespace {{ Namespace }}
 	{
 		private void CreateAzureNodeMaps()
 		{
-			{{ for map in Maps ~}}
+			{{~ for map in Maps }}
+			{{ if !(map.TypeKey | string.empty) ~}}
 			CreateMapForAzureNode<{{ map.SourceType }}, {{ map.DestinationType }}>({{ map.TypeKey}});
-			{{ end ~}}
+			{{ end; end ~}}
 		}
 	}
 }

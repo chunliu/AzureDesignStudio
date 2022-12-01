@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Web;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.Network;
@@ -10,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.Web
 {
+    [MapToDto(TypeKey = AdsConstants.WebApp)]
     public class WebAppModel : AzureNodeBase
     {
         public WebAppModel() : base()
@@ -38,9 +41,9 @@ namespace AzureDesignStudio.Core.Web
         };
         protected override ResourceBase ArmResource => _webapp;
         public virtual string Kind => _webapp.Kind;
-        [Required, DisplayName("Publish")]
+        [Required, DisplayName("Publish"), MapToDto]
         public string Publish { get; set; } = "code";
-        [Required, DisplayName("Runtime")]
+        [Required, DisplayName("Runtime"), MapToDto]
         public string RuntimeStack { get; set; } = null!;
         [Required, DisplayName("OS")]
         public string ServicePlanOS 
@@ -54,7 +57,7 @@ namespace AzureDesignStudio.Core.Web
         }
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<WebAppDto>(this);
+            return mapper.Map<WebAppModelDto>(this);
         }
         protected virtual SiteConfig CreateSiteConfig()
         {

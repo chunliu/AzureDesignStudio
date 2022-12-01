@@ -9,7 +9,7 @@ using {{ using }};
 
 namespace {{ Namespace }}
 {
-	public class {{ ClassName }} : AzureNodeDto
+	public class {{ ClassName }} : {{ DtoBase }}
 	{
 		{{ for property in Properties ~}}
 		public {{ property.Type }} {{ property.Identifier }} { get; set; } = default!;

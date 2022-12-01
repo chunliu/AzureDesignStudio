@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
@@ -8,6 +10,7 @@ using System.ComponentModel;
 
 namespace AzureDesignStudio.Core.Network
 {
+    [MapToDto(TypeKey = AdsConstants.AzureFirewall)]
     public class AzureFirewallModel : AzureNodeBase
     {
         public AzureFirewallModel() : base()
@@ -22,6 +25,7 @@ namespace AzureDesignStudio.Core.Network
         protected override ResourceBase ArmResource => _firewall;
         public override Type? DataFormType => typeof(AzureFirewallForm);
         private string sku = "Premium";
+        [MapToDto]
         [DisplayName("SKU")]
         public string Sku 
         { 
@@ -36,6 +40,7 @@ namespace AzureDesignStudio.Core.Network
                 }
             }
         }
+        [MapToDto(DtoPropertyType = "FirewallPolicyModelDto")]
         public FirewallPolicyModel FirewallPolicy { get; set; } = new FirewallPolicyModel();
         public override (bool result, string message) IsDrappable(GroupModel overlappedGroup)
         {
@@ -52,7 +57,7 @@ namespace AzureDesignStudio.Core.Network
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<AzureFirewallDto>(this);
+            return mapper.Map<AzureFirewallModelDto>(this);
         }
 
         protected override void PopulateArmAttributes()

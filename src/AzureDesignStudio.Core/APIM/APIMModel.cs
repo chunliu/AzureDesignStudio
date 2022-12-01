@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.ApiManagement;
 using AzureDesignStudio.AzureResources.Base;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using AzureDesignStudio.Core.Network;
@@ -10,6 +12,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AzureDesignStudio.Core.APIM;
 
+[MapToDto(TypeKey = AdsConstants.APIM)]
 public class APIMModel : AzureNodeBase
 {
     public APIMModel() : base()
@@ -27,31 +30,31 @@ public class APIMModel : AzureNodeBase
         Properties = new()
     };
     protected override ResourceBase ArmResource => _apimService;
-    [Required, DisplayName("Sku Name")]
+    [Required, DisplayName("Sku Name"), MapToDto]
     public string SkuName 
     { 
         get => _apimService.Sku.Name; 
         set => _apimService.Sku.Name = value; 
     }
-    [Required, DisplayName("Sku Capacity")]
+    [Required, DisplayName("Sku Capacity"), MapToDto]
     public int SkuCapacity 
     { 
         get => _apimService.Sku.Capacity; 
         set => _apimService.Sku.Capacity = value; 
     }
-    [Required, DisplayName("Publisher Email")]
+    [Required, DisplayName("Publisher Email"), MapToDto]
     public string PublisherEmail 
     { 
         get => _apimService.Properties.PublisherEmail;
         set => _apimService.Properties.PublisherEmail = value; 
     }
-    [Required, DisplayName("Publisher Name")]
+    [Required, DisplayName("Publisher Name"), MapToDto]
     public string PublisherName 
     { 
         get => _apimService.Properties.PublisherName; 
         set => _apimService.Properties.PublisherName = value;
     }
-    [Required, DisplayName("VNET Type")]
+    [Required, DisplayName("VNET Type"), MapToDto]
     public string VnetType 
     { 
         get => _apimService.Properties.VirtualNetworkType; 
@@ -76,7 +79,7 @@ public class APIMModel : AzureNodeBase
     }
     public override AzureNodeDto GetNodeDto(IMapper mapper)
     {
-        return mapper.Map<APIMDto>(this);
+        return mapper.Map<APIMModelDto>(this);
     }
 
     protected override void PopulateArmAttributes()

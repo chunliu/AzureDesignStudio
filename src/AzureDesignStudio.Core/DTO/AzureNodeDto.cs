@@ -1,5 +1,4 @@
-﻿using AzureDesignStudio.Core.Network;
-using Blazor.Diagrams.Core.Geometry;
+﻿using Blazor.Diagrams.Core.Geometry;
 
 namespace AzureDesignStudio.Core.DTO
 {
@@ -17,15 +16,5 @@ namespace AzureDesignStudio.Core.DTO
         public string Name { get; set; } = string.Empty;
         public string Location { get; set; } = string.Empty;
         public bool UseResourceGroupLocation { get; set; }
-    }
-
-    //public class VirtualNetworkDto : AzureNodeDto
-    //{
-    //    public List<AddressSpace>? IpSpace { get; set; }
-    //}
-
-    public class SubnetDto : AzureNodeDto
-    {
-        public string AddressPrefix { get; set; } = string.Empty;
     }
 }

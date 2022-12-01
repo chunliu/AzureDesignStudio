@@ -5,20 +5,18 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Scriban;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace AzureDesignStudio.SourceGeneration
 {
+    public static class GeneratorConsts
+    {
+        public const string DtoAttributeName = "MapToDto";
+    }
+
     [Generator]
     public class AzureNodeDtoGenerator : ISourceGenerator
     {
-        private readonly DiagnosticDescriptor _errorDescriptor = new("ADS001",
-            "ADS001: Error in source generation", "Error in source generator<{0}>: '{1}'", "SourceGenerator",
-            DiagnosticSeverity.Error, true);
-        private readonly DiagnosticDescriptor _infoDescriptor = new("ADS002",
-            "ADS001: Generation working", "Info in source generator<{0}>: '{1}'", "SourceGenerator",
-            DiagnosticSeverity.Info, true);
         public void Initialize(GeneratorInitializationContext context)
         {
             //if (!Debugger.IsAttached)
@@ -37,8 +35,7 @@ namespace AzureDesignStudio.SourceGeneration
 
             if (string.IsNullOrEmpty(dtoReceiver.DtoNamespace))
             {
-                context.ReportDiagnostic(Diagnostic.Create(_errorDescriptor, Location.None, "Dto namespace not found."));
-                return;
+                throw new ArgumentNullException(nameof(dtoReceiver.DtoNamespace));
             }
 
             var mapProfile = new MapProfileModel()
@@ -58,10 +55,10 @@ namespace AzureDesignStudio.SourceGeneration
 
                 context.AddSource($"{dtoTypeModel.ClassName}.g.cs", source);
 
-                var typeKey = GetTypeKeyFromAttribute(model);
+                var typeKey = model.GetAttributeParameterValue(GeneratorConsts.DtoAttributeName, "TypeKey");
                 mapProfile.Maps.Add(new MapModel
                 {
-                    TypeKey = typeKey!,
+                    TypeKey = (string.IsNullOrEmpty(typeKey) ? string.Empty : typeKey)!,
                     SourceType = model.Identifier.Text,
                     DestinationType = dtoTypeModel.ClassName
                 });
@@ -73,23 +70,13 @@ namespace AzureDesignStudio.SourceGeneration
             context.AddSource($"AzureNodeProfile.g.cs", mpSource);
         }
 
-        private static string? GetTypeKeyFromAttribute(ClassDeclarationSyntax classDecl)
-        {
-            var attributeSyntax = classDecl.GetAttribute("MapToDto");
-            var expression = attributeSyntax?.ArgumentList?.Arguments
-                .Where(a => a.NameEquals?.Name.Identifier.Text == "TypeKey")
-                .FirstOrDefault()?
-                .ToString();
-
-            return expression?.Split('=').Last();
-        }
-
         private static DtoTypeModel CreateDtoTypeModel(ClassDeclarationSyntax classDecl, string dtoNamespace)
         {
             var model = new DtoTypeModel()
             {
                 ClassName = $"{classDecl.Identifier.Text}Dto",
                 Namespace = classDecl.GetNamespace(),
+                DtoBase = classDecl.GetAttributeParameterValue(GeneratorConsts.DtoAttributeName, "DtoBase") ?? "AzureNodeDto",
                 Usings = new List<string>
                 {
                     "System.Collections.Generic",
@@ -100,11 +87,12 @@ namespace AzureDesignStudio.SourceGeneration
 
             foreach(var member in classDecl.Members)
             {
-                if (member is PropertyDeclarationSyntax propSyntax && propSyntax.HasAttribute("MapToDto"))
+                if (member is PropertyDeclarationSyntax propSyntax && propSyntax.HasAttribute(GeneratorConsts.DtoAttributeName))
                 {
+                    var propType = propSyntax.GetAttributeParameterValue(GeneratorConsts.DtoAttributeName, "DtoPropertyType");
                     model.Properties.Add(new DtoTypeProperty()
                     {
-                        Type = propSyntax.Type.GetText().ToString(),
+                        Type = (string.IsNullOrEmpty(propType) ? propSyntax.Type.GetText().ToString() : propType)!,
                         Identifier = propSyntax.Identifier.Text,
                     });
                 }
@@ -116,25 +104,18 @@ namespace AzureDesignStudio.SourceGeneration
         private static string GenerateSourceFromDtoTypeModel(DtoTypeModel model)
         {
             var templateStr = ResourceReader.GetResource("AzureNodeDto.scriban");
-            var template = Template.Parse(templateStr);
-            if (template.HasErrors)
-            {
-                var errors = string.Join(" | ", template.Messages.Select(x => x.Message));
-                throw new InvalidOperationException($"Template parse error: {template.Messages}");
-            }
-
-            var source = template.Render(model, memberRenamer: member => member.Name);
-
-            return SyntaxFactory.ParseCompilationUnit(source)
-                                  .NormalizeWhitespace()
-                                  .GetText()
-                                  .ToString();
+            return GenerateSourceFromModel(templateStr!, model);
         }
 
         private static string GenerateSourceFromMapProfileModel(MapProfileModel model)
         {
             var templateStr = ResourceReader.GetResource("AzureNodeProfile.scriban");
-            var template = Template.Parse(templateStr);
+            return GenerateSourceFromModel(templateStr!, model);
+        }
+
+        private static string GenerateSourceFromModel(string templateString, object model)
+        {
+            var template = Template.Parse(templateString);
             if (template.HasErrors)
             {
                 var errors = string.Join(" | ", template.Messages.Select(x => x.Message));

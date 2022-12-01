@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using AzureDesignStudio.AzureResources.Base;
 using AzureDesignStudio.AzureResources.Network;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Core.Models;
 using Blazor.Diagrams.Core.Models;
 
 namespace AzureDesignStudio.Core.Network
 {
+    [MapToDto(TypeKey = AdsConstants.Bastions)]
     public class BastionsModel : AzureNodeBase
     {
         public BastionsModel() : base()
@@ -39,7 +42,7 @@ namespace AzureDesignStudio.Core.Network
         //public int ScaleUnits { get; set; } = 2;
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<BastionsDto>(this);
+            return mapper.Map<BastionsModelDto>(this);
         }
 
         protected override void PopulateArmAttributes()

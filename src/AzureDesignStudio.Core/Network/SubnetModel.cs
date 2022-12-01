@@ -8,9 +8,12 @@ using AzureDesignStudio.Core.SQL;
 using Blazor.Diagrams.Core.Models;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using AzureDesignStudio.Core.Attributes;
+using AzureDesignStudio.Core.Common;
 
 namespace AzureDesignStudio.Core.Network
 {
+    [MapToDto(TypeKey = AdsConstants.Subnet)]
     public class SubnetModel : AzureGroupBase
     {
         public override string ServiceName => "Subnet";
@@ -42,6 +45,8 @@ namespace AzureDesignStudio.Core.Network
                 return $"[resourceId('{_subnet.Type}', '{vnet.Name}','{Name}')]";
             }
         }
+
+        [MapToDto]
         [Required, DisplayName("Address space")]
         public string AddressPrefix 
         { 
@@ -132,7 +137,7 @@ namespace AzureDesignStudio.Core.Network
 
         public override AzureNodeDto GetNodeDto(IMapper mapper)
         {
-            return mapper.Map<SubnetDto>(this);
+            return mapper.Map<SubnetModelDto>(this);
         }
     }
 }

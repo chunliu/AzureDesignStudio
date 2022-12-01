@@ -30,8 +30,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureDesignStudio.SourceGeneration", "AzureDesignStudio.SourceGeneration\AzureDesignStudio.SourceGeneration.csproj", "{311EADFE-A4A2-46E5-98EA-DAA3744D3AAC}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SourceGeneration", "SourceGeneration", "{8D4D29DD-63A3-4328-B8FD-8F938FF230CA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,9 +71,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{311EADFE-A4A2-46E5-98EA-DAA3744D3AAC} = {8D4D29DD-63A3-4328-B8FD-8F938FF230CA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {71A37D8E-6683-4DCD-BBEC-669846E0AE97}

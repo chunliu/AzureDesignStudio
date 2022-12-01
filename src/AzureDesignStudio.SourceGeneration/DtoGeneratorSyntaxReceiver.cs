@@ -24,7 +24,7 @@ internal class DtoGeneratorSyntaxReceiver : ISyntaxReceiver
             if ("AdsConstants".Equals(classSyntax.Identifier.Text, StringComparison.InvariantCulture))
                 TypeKeyNamespace = classSyntax.GetNamespace();
 
-            if (classSyntax.HasAttribute("MapToDto"))
+            if (classSyntax.HasAttribute(GeneratorConsts.DtoAttributeName))
                 ModelTypes.Add(classSyntax);
         }
     }
