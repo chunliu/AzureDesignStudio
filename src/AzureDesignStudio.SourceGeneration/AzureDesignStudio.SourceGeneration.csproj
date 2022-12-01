@@ -3,8 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
 	<Nullable>enable</Nullable>
-	<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-	<IsRoslynComponent>true</IsRoslynComponent>
 	<LangVersion>latest</LangVersion>
 	<PackageScribanIncludeSource>true</PackageScribanIncludeSource>
   </PropertyGroup>
@@ -12,11 +10,13 @@
   <ItemGroup>
     <None Remove="Templates\AzureNodeDto.scriban" />
     <None Remove="Templates\AzureNodeProfile.scriban" />
+    <None Remove="Templates\DataModelFactory.scriban" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Templates\AzureNodeDto.scriban" />
     <EmbeddedResource Include="Templates\AzureNodeProfile.scriban" />
+    <EmbeddedResource Include="Templates\DataModelFactory.scriban" />
   </ItemGroup>
 
   <ItemGroup>

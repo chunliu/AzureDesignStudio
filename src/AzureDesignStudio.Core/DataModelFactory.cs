@@ -18,7 +18,7 @@ using System.Text.Json;
 
 namespace AzureDesignStudio.Core;
 
-public static class DataModelFactory
+public static partial class DataModelFactory
 {
     public static void RegisterAzureModels(Diagram diagram)
     {
@@ -80,44 +80,6 @@ public static class DataModelFactory
                 TargetMarker = LinkMarker.Arrow,
                 Width = 1,
             },
-        };
-    }
-
-    public static Type? GetDtoTypeFromKey(string key)
-    {
-        return key switch
-        {
-            AdsConstants.VirtualNetwork => typeof(VirtualNetworkModelDto),
-            AdsConstants.Subnet => typeof(SubnetModelDto),
-            AdsConstants.Bastions => typeof(BastionsModelDto),
-            AdsConstants.PublicIp => typeof(PublicIpModelDto),
-            AdsConstants.AzureFirewall => typeof(AzureFirewallModelDto),
-            AdsConstants.SqlServer => typeof(SqlServerModelDto),
-            AdsConstants.SqlDatabase => typeof(SqlDatabaseModelDto),
-            AdsConstants.AppServicePlan => typeof(AppServicePlanModelDto),
-            AdsConstants.WebApp => typeof(WebAppModelDto),
-            AdsConstants.FunctionApp => typeof(FunctionAppModelDto),
-            AdsConstants.APIM => typeof(APIMModelDto),
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    public static NodeModel? GetNodeModelFromDto(AzureNodeDto dto, IMapper mapper)
-    {
-        return dto.TypeKey switch
-        {
-            AdsConstants.VirtualNetwork => mapper.Map<VirtualNetworkModel>(dto),
-            AdsConstants.Subnet => mapper.Map<SubnetModel>(dto),
-            AdsConstants.PublicIp => mapper.Map<PublicIpModel>(dto),
-            AdsConstants.Bastions => mapper.Map<BastionsModel>(dto),
-            AdsConstants.AzureFirewall => mapper.Map<AzureFirewallModel>(dto),
-            AdsConstants.SqlServer => mapper.Map<SqlServerModel>(dto),
-            AdsConstants.SqlDatabase => mapper.Map<SqlDatabaseModel>(dto),
-            AdsConstants.AppServicePlan => mapper.Map<AppServicePlanModel>(dto),
-            AdsConstants.WebApp => mapper.Map<WebAppModel>(dto),
-            AdsConstants.FunctionApp => mapper.Map<FunctionAppModel>(dto),
-            AdsConstants.APIM => mapper.Map<APIMModel>(dto),
-            _ => throw new NotImplementedException(),
         };
     }
 

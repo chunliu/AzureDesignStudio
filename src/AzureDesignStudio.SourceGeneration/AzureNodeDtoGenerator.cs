@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Scriban;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace AzureDesignStudio.SourceGeneration
@@ -19,6 +20,7 @@ namespace AzureDesignStudio.SourceGeneration
     {
         public void Initialize(GeneratorInitializationContext context)
         {
+            // Uncomment if debugging.
             //if (!Debugger.IsAttached)
             //{
             //    Debugger.Launch();
@@ -66,8 +68,10 @@ namespace AzureDesignStudio.SourceGeneration
             }
 
             var mpSource = GenerateSourceFromMapProfileModel(mapProfile);
-
             context.AddSource($"AzureNodeProfile.g.cs", mpSource);
+
+            var dmfSource = GenerateSourceForDataModelFactory(mapProfile);
+            context.AddSource($"DataModelFactory.g.cs", dmfSource);
         }
 
         private static DtoTypeModel CreateDtoTypeModel(ClassDeclarationSyntax classDecl, string dtoNamespace)
@@ -110,6 +114,12 @@ namespace AzureDesignStudio.SourceGeneration
         private static string GenerateSourceFromMapProfileModel(MapProfileModel model)
         {
             var templateStr = ResourceReader.GetResource("AzureNodeProfile.scriban");
+            return GenerateSourceFromModel(templateStr!, model);
+        }
+
+        private static string GenerateSourceForDataModelFactory(MapProfileModel model)
+        {
+            var templateStr = ResourceReader.GetResource("DataModelFactory.scriban");
             return GenerateSourceFromModel(templateStr!, model);
         }
 
