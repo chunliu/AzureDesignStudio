@@ -16,7 +16,7 @@ namespace AzureDesignStudio.Core;
 
 public static partial class DataModelFactory
 {
-	public static Type? GetDtoTypeFromKey(string key)
+	public static partial Type? GetDtoTypeFromKey(string key)
     {
         return key switch
         {
@@ -28,7 +28,7 @@ public static partial class DataModelFactory
         };
     }
 
-    public static NodeModel? GetNodeModelFromDto(AzureNodeDto dto, IMapper mapper)
+    public static partial NodeModel? GetNodeModelFromDto(AzureNodeDto dto, IMapper mapper)
     {
         return dto.TypeKey switch
         {

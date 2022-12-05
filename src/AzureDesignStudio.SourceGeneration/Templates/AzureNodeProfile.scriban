@@ -11,7 +11,7 @@ namespace {{ Namespace }}
 {
 	public partial class AzureNodeProfile
 	{
-		private void CreateAzureNodeMaps()
+		private partial void CreateAzureNodeMaps()
 		{
 			{{~ for map in Maps }}
 			{{ if !(map.TypeKey | string.empty) ~}}

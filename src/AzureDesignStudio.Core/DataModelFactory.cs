@@ -82,7 +82,8 @@ public static partial class DataModelFactory
             },
         };
     }
-
+    public static partial Type? GetDtoTypeFromKey(string key);
+    public static partial NodeModel? GetNodeModelFromDto(AzureNodeDto dto, IMapper mapper);
     public static async Task<DiagramGraph> SaveDiagramToDto(Diagram diagram, IMapper mapper)
     {
         if (diagram.Groups.Count == 0 && diagram.Nodes.Count == 0)

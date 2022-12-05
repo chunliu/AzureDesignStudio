@@ -29,5 +29,6 @@ namespace AzureDesignStudio.Core.DTO
 
             CreateAzureNodeMaps();
         }
+        private partial void CreateAzureNodeMaps();
     }
 }
