@@ -1,65 +1,48 @@
-﻿using AzureDesignStudio.Core.Models;
-using Microsoft.Azure.Management.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Core;
-using Microsoft.Azure.Management.ResourceManager.Fluent.Models;
-using Newtonsoft.Json.Linq;
+﻿using Azure.Identity;
+using Azure.ResourceManager;
+using Azure.ResourceManager.Resources;
+using Azure.ResourceManager.Resources.Models;
+using AzureDesignStudio.Core.Models;
 using System;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace AzureDesignStudio.Core.Tests
 {
     public class TestBase
     {
-        private readonly ResourceManagementClient managementClient;
+        const string _testRgName = "ads-arm-test-rg";
+        const string _deploymentName = "ads-test-deployment";
+        readonly ArmDeploymentResource _deployment = null!;
 
         public TestBase()
         {
-            var credentials = SdkContext.AzureCredentialsFactory
-                .FromFile(Environment.GetEnvironmentVariable("AZURE_AUTH_LOCATION"));
-
-            var azure = Azure.Configure().Authenticate(credentials).WithDefaultSubscription();
-            var restClient = RestClient.Configure()
-                .WithEnvironment(AzureEnvironment.AzureGlobalCloud)
-                .WithCredentials(credentials)
-                .Build();
-
-            managementClient = new ResourceManagementClient(restClient)
+            var armClient = new ArmClient(new AzureCliCredential());
+            var subResource = armClient.GetDefaultSubscription();
+            var testRg = subResource.GetResourceGroup(_testRgName)?.Value;
+            if (testRg == null)
             {
-                SubscriptionId = azure.SubscriptionId
-            };
+                throw new Exception("Resource group cannot be found.");
+            }
+            var deploymentId = ArmDeploymentResource.CreateResourceIdentifier(testRg.Id.ToString(), _deploymentName);
+            _deployment = armClient.GetArmDeploymentResource(deploymentId);
         }
 
-        protected async Task<DeploymentValidateResultInner> ValidateTemplate(ArmTemplate armTemplate, string parameters = null!)
+        protected async Task ValidateTemplate(ArmTemplate armTemplate, string? parameters = null)
         {
-            var armString = armTemplate.GenerateArmTemplate();
-
-            var obj = JObject.Parse(armString);
-            DeploymentInner di;
-            if (parameters == null)
-                di = new DeploymentInner()
+            var template = armTemplate.GenerateArmTemplate();
+            var param = parameters ?? "{}";
+            var operation = await _deployment.ValidateAsync(Azure.WaitUntil.Completed,
+                new ArmDeploymentContent(new ArmDeploymentProperties(ArmDeploymentMode.Complete)
                 {
-                    Properties = new DeploymentProperties()
-                    {
-                        Template = obj,
-                    }
-                };
-            else
-            {
-                var p = JObject.Parse(parameters);
-                di = new DeploymentInner()
-                {
-                    Properties = new DeploymentProperties()
-                    {
-                        Template = obj,
-                        Parameters = p
-                    }
-                };
-            }
-            var validateRes = await managementClient.Deployments.ValidateAsync("ads-arm-test-rg", "ads-arm-test",
-                                di);
+                    Template = BinaryData.FromString(template),
+                    Parameters = BinaryData.FromString(param)
+                }));
 
-            return validateRes;
+            var result = operation.HasValue ? operation.Value : null;
+
+            Assert.NotNull(result);
+            Assert.Null(result.Error);
         }
     }
 }

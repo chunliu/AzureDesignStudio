@@ -45,8 +45,7 @@ namespace AzureDesignStudio.Core.Tests
             armTemplate.AddResource(vnet.GetArmResources());
             armTemplate.AddResource(APIM.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate);
-            Assert.Null(validateRes?.Error);
+            await ValidateTemplate(armTemplate);
         }
     }
 }

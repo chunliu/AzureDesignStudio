@@ -21,8 +21,7 @@ namespace AzureDesignStudio.Core.Tests
 
             armTemplate.AddResource(appServicePlan.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate);
-            Assert.Null(validateRes?.Error);
+            await ValidateTemplate(armTemplate);
         }
         [Fact]
         public async Task WebAppTest()
@@ -45,8 +44,7 @@ namespace AzureDesignStudio.Core.Tests
 
             armTemplate.AddResource(webApp.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate);
-            Assert.Null(validateRes?.Error);
+            await ValidateTemplate(armTemplate);
         }
         [Fact]
         public async Task FuncAppTest()
@@ -68,8 +66,7 @@ namespace AzureDesignStudio.Core.Tests
             appServicePlan.AddChild(funcApp);
             armTemplate.AddResource(funcApp.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate);
-            Assert.Null(validateRes?.Error);
+            await ValidateTemplate(armTemplate);
         }
     }
 }

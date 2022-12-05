@@ -21,18 +21,14 @@ namespace AzureDesignStudio.Core.Tests
             };
 
             armTemplate.AddResource(vnet.GetArmResources());
-            var validateRes = await ValidateTemplate(armTemplate);
-
-            Assert.Null(validateRes.Error);
+            await ValidateTemplate(armTemplate);
 
             vnet.UseResourceGroupLocation = false;
             vnet.Location = "westus";
 
             armTemplate.RemoveAllResources();
             armTemplate.AddResource(vnet.GetArmResources());
-            validateRes = await ValidateTemplate(armTemplate);
-
-            Assert.Null(validateRes.Error);
+            await ValidateTemplate(armTemplate);
 
             vnet.UseResourceGroupLocation = true;
             vnet.AddSubnet(new SubnetModel()
@@ -48,8 +44,7 @@ namespace AzureDesignStudio.Core.Tests
 
             armTemplate.RemoveAllResources();
             armTemplate.AddResource(vnet.GetArmResources());
-            validateRes = await ValidateTemplate(armTemplate);
-            Assert.Null(validateRes.Error);
+            await ValidateTemplate(armTemplate);
         }
 
         [Fact]
@@ -104,8 +99,7 @@ namespace AzureDesignStudio.Core.Tests
             armTemplate.AddResource(fwpip.GetArmResources());
             armTemplate.AddResource(firewall.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate);
-            Assert.Null(validateRes.Error);
+            await ValidateTemplate(armTemplate);
         }
 
     }

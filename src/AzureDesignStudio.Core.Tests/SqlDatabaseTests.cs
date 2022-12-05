@@ -47,8 +47,7 @@ namespace AzureDesignStudio.Core.Tests
             armTemplate.AddParameters(sqlServer.GetArmParameters());
             armTemplate.AddResource(sqlServer.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate, p);
-            Assert.Null(validateRes?.Error);
+            await ValidateTemplate(armTemplate, p);
         }
 
         [Fact]
@@ -94,8 +93,7 @@ namespace AzureDesignStudio.Core.Tests
 
             armTemplate.AddResource(sqlDatabase.GetArmResources());
 
-            var validateRes = await ValidateTemplate(armTemplate, p);
-            Assert.Null(validateRes?.Error);
+            await ValidateTemplate(armTemplate, p);
         }
 
     }
