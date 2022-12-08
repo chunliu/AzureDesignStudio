@@ -2,6 +2,7 @@
 using AzureDesignStudio.Core.Models;
 using System.Threading.Tasks;
 using Xunit;
+using AzureDesignStudio.Core.Network;
 
 namespace AzureDesignStudio.Core.Tests
 {
@@ -65,6 +66,43 @@ namespace AzureDesignStudio.Core.Tests
             };
             appServicePlan.AddChild(funcApp);
             armTemplate.AddResource(funcApp.GetArmResources());
+
+            await ValidateTemplate(armTemplate);
+        }
+        [Fact]
+        public async Task WebAppInVnetTest()
+        {
+            var armTemplate = new ArmTemplate();
+
+            var vnet = new VirtualNetworkModel()
+            {
+                Name = "ads-vnet",
+            };
+
+            var webappSubnet = new SubnetModel()
+            {
+                Name = "subnet1",
+                AddressPrefix = "10.0.0.0/24"
+            };
+            vnet.AddSubnet(webappSubnet);
+
+            var appServicePlan = new AppServicePlanModel()
+            {
+                Name = "azappserviceplan"
+            };
+            webappSubnet.AddChild(appServicePlan);
+
+            var webApp = new WebAppModel()
+            {
+                Name = "testwebapp4365",
+                //Group = appServicePlan,
+                RuntimeStack = "NODE|14-lts"
+            };
+            appServicePlan.AddChild(webApp);
+
+            armTemplate.AddResource(vnet.GetArmResources());
+            armTemplate.AddResource(appServicePlan.GetArmResources());
+            armTemplate.AddResource(webApp.GetArmResources());
 
             await ValidateTemplate(armTemplate);
         }

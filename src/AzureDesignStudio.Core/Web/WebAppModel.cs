@@ -168,14 +168,6 @@ namespace AzureDesignStudio.Core.Web
         protected virtual void CreateSiteConfigForWinCode(ref SiteConfig siteConfig)
         {
             var stacks = RuntimeStack.Split("|");
-            //siteConfig["metadata"] = new List<IDictionary<string, string>>()
-            //{
-            //    new Dictionary<string, string>
-            //    {
-            //        {"name", "CURRENT_STACK" },
-            //        {"value", stacks[0] }
-            //    }
-            //};
 
             switch(stacks[0])
             {
@@ -231,29 +223,8 @@ namespace AzureDesignStudio.Core.Web
             if (appSvcPlan.Group is SubnetModel subnet)
             {
                 _webapp.DependsOn.Add(subnet.ResourceId);
-                //_webapp.Resources = new List<ResourceBase>
-                //{
-                //    CreateNetworkConfig(subnet)
-                //};
+                _webapp.Properties.VirtualNetworkSubnetId = subnet.ResourceId;
             }
-        }
-        private NetworkConfig CreateNetworkConfig(SubnetModel subnet)
-        {
-            return new NetworkConfig
-            {
-                Name = $"{Name}/virtualNetwork",
-                Kind = Kind,
-                Properties = new()
-                {
-                    SubnetResourceId = subnet.ResourceId,
-                    SwiftSupported = true,
-                },
-                DependsOn = new List<string>
-                {
-                    ResourceId,
-                    subnet.ResourceId,
-                }
-            };
         }
     }
 }
