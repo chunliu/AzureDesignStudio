@@ -13,12 +13,11 @@
   <ItemGroup>
     <PackageReference Include="AntDesign" Version="0.13.0" />
     <PackageReference Include="AutoMapper" Version="12.0.0" />
-    <PackageReference Include="AzureDesignStudio.AzureResources.ApiManagement" Version="0.2.0" />
-    <PackageReference Include="AzureDesignStudio.AzureResources.Compute" Version="0.2.0" />
-	<PackageReference Include="AzureDesignStudio.AzureResources.Network" Version="0.3.2" />
-	<PackageReference Include="AzureDesignStudio.AzureResources.Sql" Version="0.3.0" />
-	<PackageReference Include="AzureDesignStudio.AzureResources.Storage" Version="0.2.0" />
-	<PackageReference Include="AzureDesignStudio.AzureResources.Web" Version="0.2.0" />
+    <!--<PackageReference Include="AzureDesignStudio.AzureResources.ApiManagement" Version="0.2.0" />-->
+    <!--<PackageReference Include="AzureDesignStudio.AzureResources.Compute" Version="0.2.0" />-->
+	<!--<PackageReference Include="AzureDesignStudio.AzureResources.Sql" Version="0.3.0" />-->
+	<!--<PackageReference Include="AzureDesignStudio.AzureResources.Storage" Version="0.2.0" />-->
+	<!--<PackageReference Include="AzureDesignStudio.AzureResources.Web" Version="0.2.0" />-->
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
@@ -29,13 +28,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AzureDesignStudio.AzureResources\AzureDesignStudio.AzureResources.csproj" />
     <ProjectReference Include="..\Blazor.Diagrams\src\Blazor.Diagrams.Core\Blazor.Diagrams.Core.csproj" />
     <ProjectReference Include="..\Blazor.Diagrams\src\Blazor.Diagrams\Blazor.Diagrams.csproj" />
   </ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\AzureDesignStudio.SourceGeneration\AzureDesignStudio.SourceGeneration.csproj" 
-						  OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\AzureDesignStudio.SourceGeneration\AzureDesignStudio.SourceGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
 	</ItemGroup>
 	
 </Project>

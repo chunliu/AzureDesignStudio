@@ -231,15 +231,15 @@ namespace AzureDesignStudio.Core.Web
             if (appSvcPlan.Group is SubnetModel subnet)
             {
                 _webapp.DependsOn.Add(subnet.ResourceId);
-                _webapp.Resources = new List<ResourceBase>
-                {
-                    CreateNetworkConfig(subnet)
-                };
+                //_webapp.Resources = new List<ResourceBase>
+                //{
+                //    CreateNetworkConfig(subnet)
+                //};
             }
         }
-        private SitesNetworkConfig CreateNetworkConfig(SubnetModel subnet)
+        private NetworkConfig CreateNetworkConfig(SubnetModel subnet)
         {
-            return new SitesNetworkConfig
+            return new NetworkConfig
             {
                 Name = $"{Name}/virtualNetwork",
                 Kind = Kind,

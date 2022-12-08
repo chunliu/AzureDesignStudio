@@ -30,7 +30,7 @@ namespace AzureDesignStudio.Core.SQL
 
             return base.IsDrappable(overlappedGroup);
         }
-        private readonly ServersDatabases _database = new()
+        private readonly Databases _database = new()
         {
             Sku = new()
             {
