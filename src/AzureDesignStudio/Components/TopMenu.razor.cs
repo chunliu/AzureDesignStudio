@@ -175,7 +175,7 @@ namespace AzureDesignStudio.Components
             
             await Task.Delay(10);
 
-            var bicep = BicepDecompiler.Decompile(jsonString);
+            var bicep = await _adsBicepDecompiler.Decompile(jsonString);
             await modalRef.CloseAsync();
 
             if (!string.IsNullOrEmpty(bicep.Error))
