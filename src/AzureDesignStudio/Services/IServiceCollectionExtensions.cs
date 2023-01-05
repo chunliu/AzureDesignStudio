@@ -18,7 +18,7 @@ namespace AzureDesignStudio.Services;
 
 public static class IServiceCollectionExtensions
 {
-    public static IServiceCollection AddBicepCore(this IServiceCollection services) => services
+    public static IServiceCollection AddAdsBicepDecompiler(this IServiceCollection services) => services
         .AddSingleton<INamespaceProvider, DefaultNamespaceProvider>()
         .AddSingleton<IAzResourceTypeLoader, AzResourceTypeLoader>()
         .AddSingleton<IModuleDispatcher, ModuleDispatcher>()
@@ -31,8 +31,7 @@ public static class IServiceCollectionExtensions
         .AddSingleton<IBicepAnalyzer, LinterAnalyzer>()
         .AddSingleton<IFeatureProviderFactory, FeatureProviderFactory>()
         .AddSingleton<ILinterRulesProvider, LinterRulesProvider>()
-        .AddSingleton<BicepCompiler>();
-
-    public static IServiceCollection AddBicepDecompiler(this IServiceCollection services) => services
-        .AddSingleton<BicepDecompiler>();
+        .AddSingleton<BicepCompiler>()
+        .AddSingleton<BicepDecompiler>()
+        .AddSingleton<IAdsBicepDecompiler, AdsBicepDecompiler>();
 }

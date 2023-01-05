@@ -2,14 +2,11 @@ using AzureDesignStudio;
 using AzureDesignStudio.Core.DTO;
 using AzureDesignStudio.Services;
 using AzureDesignStudio.SharedModels.Protos;
-using Bicep.Core.Registry;
 using BlazorApplicationInsights;
 using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using System.IO.Abstractions.TestingHelpers;
-using System.IO.Abstractions;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -54,16 +51,11 @@ builder.Services.AddGrpcClient<Deploy.DeployClient>("DeployClientWithAuth", o =>
     return new GrpcWebHandler(GrpcWebMode.GrpcWeb, baseAddressMessageHandler);
 });
 
-
 builder.Services.AddAntDesign();
 builder.Services.AddSingleton<AdsContext>();
 builder.Services.AddAutoMapper(typeof(AzureNodeProfile));
 // Bicep decompiler service
-builder.Services.AddSingleton<IFileSystem, MockFileSystem>();
-builder.Services.AddSingleton<IModuleRegistryProvider, EmptyModuleRegistryProvider>();
-builder.Services.AddBicepCore();
-builder.Services.AddBicepDecompiler();
-builder.Services.AddSingleton<IAdsBicepDecompiler, AdsBicepDecompiler>();
+builder.Services.AddAdsBicepDecompiler();
 
 var host = builder.Build();
 
