@@ -19,4 +19,8 @@ jobs:
         submodules: 'recursive'
         
     - name: Build the Docker image
-      run: docker build '.' --file 'src/Dockerfile' --tag azuredesignstudioserver --force-rm
+      shell: pwsh
+      working-directory: src
+      run: |
+        dotnet tool install -g nbgv  
+        .\DockerBuild.ps1
