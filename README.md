@@ -2,15 +2,15 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0) [![build](https://github.com/chunliu/AzureDesignStudio/actions/workflows/build.yml/badge.svg)](https://github.com/chunliu/AzureDesignStudio/actions/workflows/build.yml)
 
-Azure Design Studio is a web app that can help you:
+Azure Design Studio is a web application designed to simplify and streamline the process of creating solution architectures for Azure. With a focus on ease of use, efficiency, and consistency, it offers several key features:
 
-- design solution architecture for Azure visually with consistent styling.
-- validate your design with rules and constraints of Azure resources as much as possible.
-- export and use the design as pictures in your documents.
-- save the design in the cloud to keep it alive and be accessible from anywhere.
-- and most importantly, generate IaC _(Infrastructure as Code, currently limited to ARM templates and Bicep)_ from the design automatically.
+- **Visual design**: Create solution architecture for Azure using a visually appealing and consistent styling.
+- **Validation**: Ensure your design adheres to the rules and constraints of Azure resources to reduce errors.
+- **Export**: Export your design as images for easy integration into your documents and presentations.
+- **Cloud storage**: Save your design in the cloud for convenient access from any location.
+- **Infrastructure as Code (IaC) generation**: Automatically generate IaC for your design, with support for both ARM templates and Bicep.
 
-With Azure Design Studio, I hope it can help you create high quiality solution architecture for Azure, and save you some time from learning ARM or Bicep, and therefore improve the user experience of designing and deploying solutions on Azure. 
+The primary goal of Azure Design Studio is to help users create high-quality solution architectures for Azure while reducing the learning curve associated with ARM and Bicep. By improving the overall user experience, Azure Design Studio enables more efficient design and deployment of solutions on Azure.
 
 You can try Azure Design Studio here: https://www.azuredesign.app/.
 
