@@ -12,6 +12,8 @@ Azure Design Studio is a web application designed to simplify and streamline the
 
 The primary goal of Azure Design Studio is to help users create high-quality solution architectures for Azure while reducing the learning curve associated with ARM and Bicep. By improving the overall user experience, Azure Design Studio enables more efficient design and deployment of solutions on Azure.
 
+As an award winning project, Azure Design Studio won the [3rd Place Winner award](https://www.credly.com/badges/08684d43-a00e-418c-8cf3-4b5eb48f601f/linked_in_profile) of **Microsoft Global Hackathon 2022**. 
+
 You can try Azure Design Studio here: https://www.azuredesign.app/.
 
 ![screenshot](/assets/AzureDesignStudio.gif)
