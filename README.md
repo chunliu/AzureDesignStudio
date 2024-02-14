@@ -14,7 +14,7 @@ The primary goal of Azure Design Studio is to help users create high-quality sol
 
 As an award winning project, Azure Design Studio won the [3rd Place Winner award](https://www.credly.com/badges/08684d43-a00e-418c-8cf3-4b5eb48f601f/linked_in_profile) of **Microsoft Global Hackathon 2022**. 
 
-![screenshot](/assets/AzureDesignStudio.gif)
+![screenshot](/assets/AzureDesignStudioV1.gif)
 
 ## Contribution
 
